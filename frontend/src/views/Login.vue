@@ -1,5 +1,5 @@
 <template>
-    <Navbar />
+  <Navbar />
   <div class="app-container">
     <div class="login-card">
       <div class="login-content">
@@ -49,26 +49,34 @@
         </div>
       </div>
     </div>
-    <p v-if="message" class="message">{{ message }}</p>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router'; // Import the useRouter hook
 import { Mail, Lock, ArrowRight } from 'lucide-vue-next';
 import Navbar from '../components/Navbar.vue'; // Import Navbar component
+import axios from 'axios'; // Import Axios for API calls
 
 const email = ref('');
 const password = ref('');
-const message = ref('');
+const router = useRouter(); // Initialize router
 
 const handleSubmit = async () => {
   try {
-    // Simulating API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    message.value = 'Login successful!';
+    const response = await axios.post('http://localhost:5000/login', {
+      email: email.value,
+      password: password.value,
+    });
+
+    alert(response.data.message); // Success notification
+    // Optionally store the token in local storage for later use
+    localStorage.setItem('token', response.data.token);
+    // Redirect to user home page upon successful login
+    router.push({ name: 'userHome' }); // Use the name defined in your router
   } catch (error) {
-    message.value = 'Login failed. Please try again.';
+    alert(error.response.data.message || 'An error occurred'); // Error notification
   }
 };
 </script>
@@ -214,15 +222,5 @@ const handleSubmit = async () => {
 
 .link:hover {
   text-decoration: underline;
-}
-
-.message {
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  text-align: center;
-  color: #ffffff;
-  background-color: #1e3a5f;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
 }
 </style>

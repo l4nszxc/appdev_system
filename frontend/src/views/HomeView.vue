@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Welcome to the Home Page</h1>
+    <h1>LANS LORENCE</h1>
     <router-link to="/login">Login</router-link>
     <router-link to="/register">Register</router-link>
   </div>

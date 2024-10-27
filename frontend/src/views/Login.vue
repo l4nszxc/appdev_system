@@ -1,4 +1,5 @@
 <template>
+    <Navbar />
   <div class="app-container">
     <div class="login-card">
       <div class="login-content">
@@ -53,32 +54,34 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { Mail, Lock, ArrowRight } from 'lucide-vue-next'
+import { ref } from 'vue';
+import { Mail, Lock, ArrowRight } from 'lucide-vue-next';
+import Navbar from '../components/Navbar.vue'; // Import Navbar component
 
-const email = ref('')
-const password = ref('')
-const message = ref('')
+const email = ref('');
+const password = ref('');
+const message = ref('');
 
 const handleSubmit = async () => {
   try {
     // Simulating API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    message.value = 'Login successful!'
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    message.value = 'Login successful!';
   } catch (error) {
-    message.value = 'Login failed. Please try again.'
+    message.value = 'Login failed. Please try again.';
   }
-}
+};
 </script>
 
 <style scoped>
 .app-container {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column; /* Stack navbar and login card */
+  align-items: center; /* Center items horizontally */
+  justify-content: flex-start; /* Start from top to leave space for navbar */
   background: linear-gradient(to bottom right, #1a1a2e, #16213e);
-  padding: 1rem;
+  padding-top: 80px; /* Add padding to the top to prevent overlap with navbar */
 }
 
 .login-card {
@@ -88,6 +91,7 @@ const handleSubmit = async () => {
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
+  margin-top: 2rem; /* Add margin-top for spacing from navbar */
 }
 
 .login-content {

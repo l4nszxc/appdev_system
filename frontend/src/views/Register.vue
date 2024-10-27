@@ -1,4 +1,5 @@
 <template>
+  <Navbar />
   <div class="app-container">
     <div class="register-card">
       <div class="register-content">
@@ -17,39 +18,6 @@
                 class="form-input"
               />
             </div>
-          </div>
-
-          <!-- First, Middle, and Last Name Fields in Column Layout -->
-          <div class="form-group">
-            <label for="firstname" class="form-label">First Name</label>
-            <input
-              id="firstname"
-              v-model="firstname"
-              placeholder="First Name"
-              required
-              class="form-input"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="middlename" class="form-label">Middle Name</label>
-            <input
-              id="middlename"
-              v-model="middlename"
-              placeholder="Middle Name"
-              class="form-input"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="lastname" class="form-label">Last Name</label>
-            <input
-              id="lastname"
-              v-model="lastname"
-              placeholder="Last Name"
-              required
-              class="form-input"
-            />
           </div>
 
           <!-- Email Field -->
@@ -114,42 +82,42 @@
         </p>
       </div>
     </div>
-    <p v-if="message" class="message">{{ message }}</p>
   </div>
 </template>
-
 
 <script setup>
 import { ref } from 'vue'
 import { User, Mail, Lock, UserPlus } from 'lucide-vue-next'
 import axios from 'axios'
+import Navbar from '../components/Navbar.vue'; // Import Navbar component
 
 const username = ref('')
-const firstname = ref('')
-const middlename = ref('')
-const lastname = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-const message = ref('')
 
 const register = async () => {
+  if (password.value !== confirmPassword.value) {
+    alert('Passwords do not match!'); // Password mismatch notification
+    return;
+  }
+
   try {
     const response = await axios.post('http://localhost:5000/register', {
       username: username.value,
-      firstname: firstname.value,
-      middlename: middlename.value,
-      lastname: lastname.value,
       email: email.value,
       password: password.value,
       confirmPassword: confirmPassword.value
-    })
-    message.value = response.data.message
+    });
+    
+    alert(response.data.message); // Success notification
   } catch (error) {
-    message.value = error.response.data.message || 'Registration failed'
+    // Remove the "Registration failed" alert
+    alert(error.response.data.message || 'An error occurred'); // Generic error message
   }
 }
 </script>
+
 <style scoped>
 .app-container {
   min-height: 100vh;
@@ -191,12 +159,6 @@ const register = async () => {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-}
-
-.form-row {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
 }
 
 .form-group {

@@ -12,7 +12,7 @@
     <div class="posts-list">
       <div v-for="post in posts" :key="post.id" class="post">
         <div class="post-header">
-          <img :src="post.authorAvatar" :alt="post.authorName" class="author-avatar" />
+          <img :src="post.authorAvatar" :alt="post.authorName" class="authogit pusr-avatar" />
           <span class="author-name">{{ post.authorName }}</span>
         </div>
         <p class="post-content">{{ post.content }}</p>

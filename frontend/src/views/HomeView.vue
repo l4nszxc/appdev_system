@@ -43,7 +43,7 @@ body {
 .welcome-title {
   font-size: 2.5rem;
   margin-bottom: 20px;
-  color: #e94560; /* Matching primary color for consistency */
+  color: #ffffff; /* Matching primary color for consistency */
 }
 
 /* Responsive adjustments */

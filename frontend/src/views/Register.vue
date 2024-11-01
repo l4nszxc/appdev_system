@@ -119,19 +119,21 @@ const register = async () => {
 </script>
 
 <style scoped>
+/* Main container with gradient background */
 .app-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to bottom right, #1a1a2e, #16213e);
+  background: linear-gradient(to bottom right, #afe0bb, #11b14e); /* Soft green-blue gradient */
   padding: 1rem;
 }
 
+/* Card for registration form */
 .register-card {
   width: 100%;
   max-width: 32rem;
-  background-color: #0f3460;
+  background-color: #128535; /* Soft green background */
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -147,14 +149,16 @@ const register = async () => {
   }
 }
 
+/* Title styling */
 .register-title {
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
-  color: #e94560;
+  color: #ffffff;
   margin-bottom: 1.5rem;
 }
 
+/* Form layout */
 .register-form {
   display: flex;
   flex-direction: column;
@@ -169,10 +173,11 @@ const register = async () => {
   min-width: 0;
 }
 
+/* Label and icon colors */
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #a5b1c2;
+  color: #f1faee;
 }
 
 .input-wrapper {
@@ -184,38 +189,40 @@ const register = async () => {
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #a5b1c2;
+  color: #f1faee;
 }
 
+/* Input field styling */
 .form-input {
   width: 87%;
   padding: 0.7rem 1rem;
-  padding-left: 2.5rem; /* Maintain padding for icons */
-  border: 1px solid #2c3e50;
+  padding-left: 2.5rem;
+  border: 1px solid #ffffff;
   border-radius: 0.375rem;
   font-size: 1rem;
-  background-color: #1e3a5f;
-  color: #ffffff;
+  background-color: #9da09d; /* Dark blue-green */
+  color: #f1faee;
 }
 
 .form-input::placeholder {
-  color: #718096;
+  color: #747c7c;
 }
 
 .form-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #e94560;
+  box-shadow: 0 0 0 2px #2a9d8f;
   border-color: transparent;
 }
 
+/* Submit button styling */
 .submit-button {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   padding: 0.5rem 1rem;
-  background-color: #e94560;
-  color: white;
+  background-color: #2464c4;
+  color: #ffffff;
   border-radius: 0.375rem;
   font-size: 1rem;
   font-weight: 500;
@@ -223,32 +230,33 @@ const register = async () => {
 }
 
 .submit-button:hover {
-  background-color: #d63553;
+  background-color: #457b9d;
 }
 
 .submit-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #e94560, 0 0 0 4px rgba(233, 69, 96, 0.3);
+  box-shadow: 0 0 0 2px #2a9d8f, 0 0 0 4px rgba(42, 157, 143, 0.3);
 }
 
 .button-icon {
   margin-left: 0.5rem;
 }
 
+/* Footer styling */
 .register-footer {
   padding: 1rem 1.5rem;
-  background-color: #16213e;
-  border-top: 1px solid #2c3e50;
+  background-color: #0f6016;
+  border-top: 1px solid #2a9d8f;
 }
 
 .login-text {
-  color: #a5b1c2;
+  color: #f1faee;
   font-size: 0.875rem;
   text-align: center;
 }
 
 .link {
-  color: #e94560;
+  color: #1d3557;
   text-decoration: none;
 }
 
@@ -256,12 +264,13 @@ const register = async () => {
   text-decoration: underline;
 }
 
+/* Message styling */
 .message {
   margin-top: 1rem;
   font-size: 0.875rem;
   text-align: center;
   color: #ffffff;
-  background-color: #1e3a5f;
+  background-color: #457b9d;
   padding: 0.5rem 1rem;
   border-radius: 9999px;
 }

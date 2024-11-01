@@ -82,24 +82,29 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
+/* Main container with background gradient */
 .app-container {
   min-height: 100vh;
   display: flex;
-  flex-direction: column; /* Stack navbar and login card */
-  align-items: center; /* Center items horizontally */
-  justify-content: flex-start; /* Start from top to leave space for navbar */
-  background: linear-gradient(to bottom right, #1a1a2e, #16213e);
-  padding-top: 80px; /* Add padding to the top to prevent overlap with navbar */
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-image: url('../assets/bg minsu.png');
+  background-size: cover;
+  background-position: center; /* Centers the background image */
+  background-repeat: no-repeat;
+  padding-top: 80px;
 }
 
+/* Login card styling */
 .login-card {
   width: 100%;
   max-width: 28rem;
-  background-color: #0f3460;
+  background-color: #4b8f5f; /* Calming green */
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  margin-top: 2rem; /* Add margin-top for spacing from navbar */
+  margin-top: 2rem;
 }
 
 .login-content {
@@ -112,14 +117,16 @@ const handleSubmit = async () => {
   }
 }
 
+/* Title styling */
 .login-title {
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
-  color: #e94560;
+  color: #ffffff;
   margin-bottom: 1.5rem;
 }
 
+/* Form layout */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -135,7 +142,7 @@ const handleSubmit = async () => {
 .form-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #a5b1c2;
+  color: #f1faee;
 }
 
 .input-wrapper {
@@ -147,37 +154,39 @@ const handleSubmit = async () => {
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #a5b1c2;
+  color: #f1faee;
 }
 
+/* Input field styling */
 .form-input {
   width: 85%;
   padding: 0.5rem 1rem 0.5rem 2.5rem;
-  border: 1px solid #2c3e50;
+  border: 1px solid #ffffff;
   border-radius: 0.375rem;
   font-size: 1rem;
-  background-color: #1e3a5f;
-  color: #ffffff;
+  background-color: #9da09d; /* Dark blue-green */
+  color: #f1faee;
 }
 
 .form-input::placeholder {
-  color: #718096;
+  color: #747c7c;
 }
 
 .form-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #e94560;
+  box-shadow: 0 0 0 2px #2a9d8f;
   border-color: transparent;
 }
 
+/* Submit button styling */
 .submit-button {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   padding: 0.5rem 1rem;
-  background-color: #e94560;
-  color: white;
+  background-color: #2464c4;
+  color: #ffffff;
   border-radius: 0.375rem;
   font-size: 1rem;
   font-weight: 500;
@@ -185,22 +194,23 @@ const handleSubmit = async () => {
 }
 
 .submit-button:hover {
-  background-color: #d63553;
+  background-color: #457b9d;
 }
 
 .submit-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #e94560, 0 0 0 4px rgba(233, 69, 96, 0.3);
+  box-shadow: 0 0 0 2px #2a9d8f, 0 0 0 4px rgba(42, 157, 143, 0.3);
 }
 
 .button-icon {
   margin-left: 0.5rem;
 }
 
+/* Footer styling */
 .login-footer {
   padding: 1rem 1.5rem;
-  background-color: #16213e;
-  border-top: 1px solid #2c3e50;
+  background-color: #457b9d;
+  border-top: 1px solid #2a9d8f;
 }
 
 .footer-links {
@@ -212,11 +222,11 @@ const handleSubmit = async () => {
 }
 
 .signup-text {
-  color: #a5b1c2;
+  color: #f1faee;
 }
 
 .link {
-  color: #e94560;
+  color: #1d3557;
   text-decoration: none;
 }
 

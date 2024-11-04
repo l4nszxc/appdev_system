@@ -3,7 +3,7 @@
   <div class="app-container">
     <div class="login-card">
       <div class="login-content">
-        <h2 class="login-title">Sign in to your account</h2>
+        <h2 class="login-title">LOG IN</h2>
         <form @submit.prevent="handleSubmit" class="login-form">
           <div class="form-group">
             <label for="email" class="form-label">Email</label>
@@ -34,7 +34,7 @@
             </div>
           </div>
           <button type="submit" class="submit-button">
-            Sign in
+            Log In
             <ArrowRight class="button-icon" :size="20" />
           </button>
         </form>
@@ -99,12 +99,11 @@ const handleSubmit = async () => {
 /* Login card styling */
 .login-card {
   width: 100%;
-  max-width: 28rem;
-  background-color: #4b8f5f; /* Calming green */
+  max-width: 32rem;
+  background-color: #128535; /* Soft green background */
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  margin-top: 2rem;
 }
 
 .login-content {
@@ -209,9 +208,8 @@ const handleSubmit = async () => {
 /* Footer styling */
 .login-footer {
   padding: 1rem 1.5rem;
-  background-color: #457b9d;
-  border-top: 1px solid #2a9d8f;
-}
+  background-color: #0f6016;
+  border-top: 1px solid #2a9d8f;}
 
 .footer-links {
   display: flex;

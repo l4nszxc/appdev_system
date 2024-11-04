@@ -49,6 +49,9 @@
         </div>
       </div>
     </div>
+    <div v-if="isLoggedIn" class="welcome-message">
+      Logged in as: {{ username }} <!-- Use local state instead -->
+    </div>
   </div>
 </template>
 
@@ -62,6 +65,7 @@ import axios from 'axios';
 const email = ref('');
 const password = ref('');
 const isLoggedIn = ref(false); // State to track login status
+const username = ref(''); // State for username
 const router = useRouter();
 
 const handleSubmit = async () => {
@@ -72,8 +76,10 @@ const handleSubmit = async () => {
     });
     alert(response.data.message); // Success notification
     localStorage.setItem('token', response.data.token);
+    localStorage.setItem('username', response.data.username);  // Store username
     localStorage.setItem('isLoggedIn', 'true'); // Set login flag
     isLoggedIn.value = true;
+    username.value = response.data.username; // Store username in local state
     router.push({ name: 'userHome' }); // Redirect to user home page
   } catch (error) {
     alert(error.response.data.message || 'An error occurred'); // Error notification
@@ -83,6 +89,7 @@ const handleSubmit = async () => {
 // Check login status on component mount
 onMounted(() => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+  username.value = localStorage.getItem('username') || ''; // Retrieve username safely
 });
 </script>
 
@@ -237,5 +244,12 @@ onMounted(() => {
 
 .link:hover {
   text-decoration: underline;
+}
+
+/* Welcome message styling */
+.welcome-message {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #f1faee; /* Adjust color as needed */
 }
 </style>

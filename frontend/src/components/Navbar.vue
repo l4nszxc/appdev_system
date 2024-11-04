@@ -5,6 +5,7 @@
     <h1 class="navbar-brand">MINDCONNECT</h1>
   </div>
     <div class="navbar-links">
+      <router-link to="/admin" class="nav-link">Admin</router-link>
       <router-link to="/login" class="nav-link">Login</router-link>
       <router-link to="/register" class="nav-link">Register</router-link>
     </div>

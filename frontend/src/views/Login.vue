@@ -49,19 +49,24 @@
         </div>
       </div>
     </div>
+    <div v-if="isLoggedIn" class="welcome-message">
+      Logged in as: {{ username }} <!-- Use local state instead -->
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router'; // Import the useRouter hook
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { Mail, Lock, ArrowRight } from 'lucide-vue-next';
-import Navbar from '../components/Navbar.vue'; // Import Navbar component
-import axios from 'axios'; // Import Axios for API calls
+import Navbar from '../components/Navbar.vue';
+import axios from 'axios';
 
 const email = ref('');
 const password = ref('');
-const router = useRouter(); // Initialize router
+const isLoggedIn = ref(false); // State to track login status
+const username = ref(''); // State for username
+const router = useRouter();
 
 const handleSubmit = async () => {
   try {
@@ -69,16 +74,23 @@ const handleSubmit = async () => {
       email: email.value,
       password: password.value,
     });
-
     alert(response.data.message); // Success notification
-    // Optionally store the token in local storage for later use
     localStorage.setItem('token', response.data.token);
-    // Redirect to user home page upon successful login
-    router.push({ name: 'userHome' }); // Use the name defined in your router
+    localStorage.setItem('username', response.data.username);  // Store username
+    localStorage.setItem('isLoggedIn', 'true'); // Set login flag
+    isLoggedIn.value = true;
+    username.value = response.data.username; // Store username in local state
+    router.push({ name: 'userHome' }); // Redirect to user home page
   } catch (error) {
     alert(error.response.data.message || 'An error occurred'); // Error notification
   }
 };
+
+// Check login status on component mount
+onMounted(() => {
+  isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+  username.value = localStorage.getItem('username') || ''; // Retrieve username safely
+});
 </script>
 
 <style scoped>
@@ -230,5 +242,12 @@ const handleSubmit = async () => {
 
 .link:hover {
   text-decoration: underline;
+}
+
+/* Welcome message styling */
+.welcome-message {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #f1faee; /* Adjust color as needed */
 }
 </style>

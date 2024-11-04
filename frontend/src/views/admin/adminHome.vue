@@ -1,16 +1,15 @@
 <template>
     <div>
         <NavbarAdmin />
-
     </div>
 </template>
 
 <script>
-import NavbarAdmin from './components/NavbarAdmin.vue'
+import NavbarAdmin from '@/components/NavbarAdmin.vue';
 
-export default{
-    components:{
+export default {
+    components: {
         NavbarAdmin,
-    }
-}
+    },
+};
 </script>

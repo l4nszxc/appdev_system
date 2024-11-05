@@ -7,7 +7,18 @@
     <div class="navbar-links">
       <template v-if="isLoggedIn">
         <span class="username-display">Logged in as: {{ username }}</span>
-        <button @click="confirmLogout" class="nav-link logout-button">Logout</button>
+        <div class="profile-menu">
+          <img 
+            src="../assets/logo.png" 
+            alt="Profile" 
+            class="profile-icon" 
+            @click="toggleDropdown" 
+          />
+          <div v-if="dropdownVisible" class="dropdown-content">
+            <router-link to="/user/userprofile" class="dropdown-item">View Profile</router-link> <!-- Updated link -->
+            <button @click="confirmLogout" class="dropdown-item">Logout</button>
+          </div>
+        </div>
       </template>
       <template v-else>
         <router-link to="/admin-home" class="nav-link">Admin</router-link>
@@ -27,6 +38,7 @@ export default {
   setup() {
     const isLoggedIn = ref(false);
     const username = ref('');
+    const dropdownVisible = ref(false); // Dropdown visibility state
     const router = useRouter();
 
     // Check login status and retrieve username on component mount
@@ -34,6 +46,10 @@ export default {
       isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
       username.value = localStorage.getItem('username') || '';
     });
+
+    const toggleDropdown = () => {
+      dropdownVisible.value = !dropdownVisible.value; // Toggle dropdown visibility
+    };
 
     const confirmLogout = () => {
       if (confirm('Are you sure you want to log out?')) {
@@ -49,7 +65,9 @@ export default {
     return {
       isLoggedIn,
       username,
+      toggleDropdown,
       confirmLogout,
+      dropdownVisible,
     };
   },
 };
@@ -90,6 +108,39 @@ export default {
   align-items: center;
 }
 
+.profile-menu {
+  position: relative; /* Position for dropdown */
+}
+
+.profile-icon {
+  width: 40px; /* Adjust size of profile icon */
+  height: 40px; /* Adjust size of profile icon */
+  cursor: pointer;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 100%; /* Position dropdown below the icon */
+  right: 0; /* Align dropdown to the right */
+  background-color: #ffffff; /* Background color of dropdown */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for dropdown */
+  border-radius: 5px; /* Rounded corners */
+  z-index: 1000; /* Make sure it appears above other elements */
+}
+
+.dropdown-item {
+  display: block;
+  padding: 10px 15px;
+  color: #000; /* Text color for dropdown items */
+  text-decoration: none;
+  font-size: 1rem; /* Font size for dropdown items */
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* Hover effect for dropdown items */
+}
+
 .nav-link {
   padding: 8px 15px;
   text-decoration: none;
@@ -99,19 +150,8 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.logout-button {
-  background: none;
-  border: none;
-  color: #ffffff;
-  font-size: 1.3rem;
-  cursor: pointer;
-  padding: 8px 15px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.nav-link:hover,
-.logout-button:hover {
+/* Separate hover effect for .nav-link */
+.nav-link:not(.logout-button):hover {
   background-color: rgba(9, 117, 76, 0.3);
 }
 

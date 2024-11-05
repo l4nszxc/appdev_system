@@ -123,10 +123,14 @@ const register = async () => {
 .app-container {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: linear-gradient(to bottom right, #afe0bb, #11b14e); /* Soft green-blue gradient */
-  padding: 1rem;
+  justify-content: flex-start;
+  background-image: url('../assets/bg minsu.png');
+  background-size: cover;
+  background-position: center; /* Centers the background image */
+  background-repeat: no-repeat;
+  padding-top: 80px;
 }
 
 /* Card for registration form */

@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
-import UserHome from '../views/user/userHome.vue'; // Import the UserHome component
-import UserProfile from '../views/user/UserProfile.vue'; // Import the UserProfile component
+import UserHome from '../views/user/userHome.vue';
+import UserProfile from '../views/user/UserProfile.vue';
 import AdminHome from '@/views/admin/adminHome.vue';
 
 const routes = [
@@ -16,25 +16,29 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login,
+    meta: { requiresGuest: true }, // Add meta field for guest requirement
   },
   {
     path: '/register',
     name: 'register',
     component: Register,
+    meta: { requiresGuest: true }, // Add meta field for guest requirement
   },
   {
     path: '/user-home',
-    name: 'userHome', // Define a name for the route
+    name: 'userHome',
     component: UserHome,
+    meta: { requiresAuth: true },
   },
   {
-    path: '/user/userprofile', // Define the path for UserProfile
-    name: 'userProfile', // Define a name for the UserProfile route
+    path: '/user/userprofile',
+    name: 'userProfile',
     component: UserProfile,
+    meta: { requiresAuth: true },
   },
   {
     path: '/admin-home',
-    name: 'adminHome', // Define a name for the route
+    name: 'adminHome',
     component: AdminHome,
   },
 ];
@@ -42,6 +46,19 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+// Navigation guard to check authentication
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next({ name: 'login' }); // Redirect to login if not authenticated
+  } else if (to.meta.requiresGuest && isLoggedIn) {
+    next({ name: 'userHome' }); // Redirect to user home if already logged in
+  } else {
+    next(); // Proceed to the route
+  }
 });
 
 export default router;

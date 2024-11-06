@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import UserHome from '../views/user/userHome.vue'; // Import the UserHome component
+import MindfulnessExercises from '../views/MindfulnessExercises.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/user-home',
     name: 'userHome', // Define a name for the route
     component: UserHome,
+  },
+  {
+    path: '/mindfulness',
+    name: 'mindfulness',
+    component: MindfulnessExercises
   },
 ];
 

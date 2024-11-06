@@ -50,6 +50,9 @@
       </div>
     </div>
   </div>
+  <button @click="authenticateWithFingerprint" class="fingerprint-button">
+    <FingerprintIcon /> Login with Fingerprint
+  </button>
 </template>
 
 <script setup>
@@ -58,6 +61,9 @@ import { useRouter } from 'vue-router'; // Import the useRouter hook
 import { Mail, Lock, ArrowRight } from 'lucide-vue-next';
 import Navbar from '../components/Navbar.vue'; // Import Navbar component
 import axios from 'axios'; // Import Axios for API calls
+import { ref } from 'vue';
+import { FingerprintIcon } from 'lucide-vue-next';
+import axios from 'axios';
 
 const email = ref('');
 const password = ref('');
@@ -77,6 +83,41 @@ const handleSubmit = async () => {
     router.push({ name: 'userHome' }); // Use the name defined in your router
   } catch (error) {
     alert(error.response.data.message || 'An error occurred'); // Error notification
+  }
+};
+const authenticateWithFingerprint = async () => {
+  if (!window.PublicKeyCredential) {
+    alert('Your browser does not support fingerprint authentication.');
+    return;
+  }
+
+  try {
+    const response = await axios.post('http://localhost:5000/auth/fingerprint/start');
+    const options = response.data;
+
+    const credential = await navigator.credentials.get(options);
+
+    const result = await axios.post('http://localhost:5000/auth/fingerprint/finish', {
+      id: credential.id,
+      rawId: Array.from(new Uint8Array(credential.rawId)),
+      response: {
+        authenticatorData: Array.from(new Uint8Array(credential.response.authenticatorData)),
+        clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON)),
+        signature: Array.from(new Uint8Array(credential.response.signature))
+      },
+      type: credential.type
+    });
+
+    if (result.data.success) {
+      alert('Fingerprint authentication successful!');
+      localStorage.setItem('token', result.data.token);
+      router.push({ name: 'userHome' });
+    } else {
+      alert('Fingerprint authentication failed.');
+    }
+  } catch (error) {
+    console.error('Fingerprint authentication error:', error);
+    alert('An error occurred during fingerprint authentication.');
   }
 };
 </script>
@@ -232,5 +273,25 @@ const handleSubmit = async () => {
 
 .link:hover {
   text-decoration: underline;
+}
+
+.fingerprint-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.fingerprint-button:hover {
+  background-color: #45a049;
 }
 </style>

@@ -15,7 +15,7 @@
             @click="toggleDropdown" 
           />
           <div v-if="dropdownVisible" class="dropdown-content">
-            <router-link to="/user/userprofile" class="dropdown-item">View Profile</router-link> <!-- Updated link -->
+            <router-link to="/user/userprofile" class="dropdown-item">View Profile</router-link>
             <button @click="confirmLogout" class="dropdown-item">Logout</button>
           </div>
         </div>
@@ -35,17 +35,19 @@ import { useRouter } from 'vue-router';
 
 export default {
   name: 'Navbar',
-  setup() {
-    const isLoggedIn = ref(false);
-    const username = ref('');
-    const dropdownVisible = ref(false); // Dropdown visibility state
+  props: {
+    isLoggedIn: {
+      type: Boolean,
+      required: true
+    },
+    username: {
+      type: String,
+      required: true
+    }
+  },
+  setup(props) {
+    const dropdownVisible = ref(false);
     const router = useRouter();
-
-    // Check login status and retrieve username on component mount
-    onMounted(() => {
-      isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
-      username.value = localStorage.getItem('username') || '';
-    });
 
     const toggleDropdown = () => {
       dropdownVisible.value = !dropdownVisible.value; // Toggle dropdown visibility
@@ -56,15 +58,12 @@ export default {
         localStorage.removeItem('token');
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('username');
-        isLoggedIn.value = false;
-        username.value = '';
-        router.push('/login');
+        dropdownVisible.value = false; // Hide dropdown
+        router.push('/login'); // Redirect to login
       }
     };
 
     return {
-      isLoggedIn,
-      username,
       toggleDropdown,
       confirmLogout,
       dropdownVisible,

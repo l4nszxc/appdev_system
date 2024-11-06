@@ -3,8 +3,9 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
 // Register new user
+// Register new user
 exports.register = (req, res) => {
-  const { username, email, password, confirmPassword } = req.body;
+  const { student_id, username, email, password, confirmPassword, firstname, middlename, lastname, gender, birthdate, program } = req.body;
 
   if (password !== confirmPassword) {
     return res.status(400).json({ message: 'Passwords do not match!' });
@@ -14,16 +15,33 @@ exports.register = (req, res) => {
     if (err) return res.status(500).json({ error: err.message });
     if (results.length > 0) return res.status(400).json({ message: 'Email already exists!' });
 
-    bcrypt.hash(password, 10, (err, hashedPassword) => {
+    userModel.findUserByStudentId(student_id, (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
+      if (results.length > 0) return res.status(400).json({ message: 'Student ID already exists!' });
 
-      userModel.createUser({ username, email, password: hashedPassword }, (err, result) => {
+      bcrypt.hash(password, 10, (err, hashedPassword) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(201).json({ message: 'User registered successfully!' });
+
+        userModel.createUser  ({
+          student_id,  // Include student_id here
+          username,
+          email,
+          password: hashedPassword,
+          firstname,
+          middlename,
+          lastname,
+          gender,
+          birthdate,
+          program
+        }, (err, result) => {
+          if (err) return res.status(500).json({ error: err.message });
+          res.status(201).json({ message: 'User  registered successfully!' });
+        });
       });
     });
   });
 };
+
 
 // Login user
 exports.login = (req, res) => {

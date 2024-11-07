@@ -1,14 +1,8 @@
 <template>
   <div>
-    <Navbar />
+    <Navbar :isLoggedIn="isLoggedIn" :username="username" />
     <div class="user-profile">
       <h2>User Profile</h2>
-      <div class="profile-pic-section">
-        <label for="profile-pic" class="profile-pic-label">
-          <img :src="profilePic" alt="Profile Picture" class="profile-pic" />
-          <input type="file" id="profile-pic" @change="uploadProfilePic" accept="image/*" hidden />
-        </label>
-      </div>
       <form @submit.prevent="updateProfile" class="profile-form">
         <div class="form-group">
           <label for="firstname">First Name:</label>
@@ -51,10 +45,6 @@
           <label for="id-number">ID Number:</label>
           <input type="text" id="id-number" v-model="idNumber" required />
         </div>
-        <div class="form-group">
-          <label for="school-id">Upload School ID:</label>
-          <input type="file" id="school-id" @change="uploadSchoolID" accept="image/*" required />
-        </div>
         <button type="submit" class="submit-button">Update Profile</button>
       </form>
     </div>
@@ -62,16 +52,17 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import Navbar from '../../components/Navbar.vue'; // Corrected import path
+import { ref, onMounted } from 'vue';
+import Navbar from '../../components/Navbar.vue';
 
 export default {
-  name: 'User Profile',
+  name: 'UserProfile',
   components: {
     Navbar,
   },
   setup() {
-    const profilePic = ref('../assets/default-profile.png'); // Default profile picture
+    const isLoggedIn = ref(false);
+    const username = ref('');
     const firstname = ref('');
     const middlename = ref('');
     const lastname = ref('');
@@ -81,22 +72,21 @@ export default {
     const course = ref('');
     const section = ref('');
     const idNumber = ref('');
-    const schoolIdFile = ref(null); // To hold the uploaded school ID file
 
-    const uploadProfilePic = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          profilePic.value = e.target.result; // Set the profile picture to the uploaded file
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-
-    const uploadSchoolID = (event) => {
-      schoolIdFile.value = event.target.files[0]; // Store the uploaded school ID file
-    };
+    // Fetch user data from local storage (or API)
+    onMounted(() => {
+      isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+      username.value = localStorage.getItem('username') || '';
+      firstname.value = localStorage.getItem('firstname') || '';
+      middlename.value = localStorage.getItem('middlename') || '';
+      lastname.value = localStorage.getItem('lastname') || '';
+      gender.value = localStorage.getItem('gender') || '';
+      birthdate.value = localStorage.getItem('birthdate') || '';
+      address.value = localStorage.getItem('address') || '';
+      course.value = localStorage.getItem('course') || '';
+      section.value = localStorage.getItem('section') || '';
+      idNumber.value = localStorage.getItem('idNumber') || '';
+    });
 
     const updateProfile = () => {
       // Handle the profile update logic, like sending the data to an API
@@ -110,14 +100,14 @@ export default {
         course: course.value,
         section: section.value,
         idNumber: idNumber.value,
-        schoolIdFile: schoolIdFile.value, // This will need special handling for file upload
       };
       console.log('Profile Updated:', profileData);
       // Reset form or show success message as needed
     };
 
     return {
-      profilePic,
+      isLoggedIn,
+      username,
       firstname,
       middlename,
       lastname,
@@ -127,8 +117,6 @@ export default {
       course,
       section,
       idNumber,
-      uploadProfilePic,
-      uploadSchoolID,
       updateProfile,
     };
   },
@@ -143,24 +131,6 @@ export default {
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #f9f9f9;
-}
-
-.profile-pic-section {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.profile-pic-label {
-  cursor: pointer;
-}
-
-.profile-pic {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #0f6016;
 }
 
 .profile-form {

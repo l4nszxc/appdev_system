@@ -7,6 +7,7 @@
     <div class="navbar-links">
       <template v-if="isLoggedIn">
         <span class="username-display">Logged in as: {{ username }}</span>
+        <router-link to="/feed" class="nav-link">Feed</router-link> <!-- Add this line -->
         <div class="profile-menu">
           <img 
             src="../assets/logo.png" 
@@ -30,7 +31,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {

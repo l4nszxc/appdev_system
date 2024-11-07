@@ -1,5 +1,8 @@
 <template>
+  
+  <Navbar :isLoggedIn="isLoggedIn" :username="username" /> <!-- Include the Navbar -->
   <div class="feed-container">
+
     <h1 class="feed-title">Mental Health Support Network</h1>
     
     <!-- Post creation form -->
@@ -12,7 +15,7 @@
     <div class="posts-list">
       <div v-for="post in posts" :key="post.id" class="post">
         <div class="post-header">
-          <img :src="post.authorAvatar" :alt="post.authorName" class="authogit pusr-avatar" />
+          <img :src="post.authorAvatar" :alt="post.authorName" class="author-avatar" />
           <span class="author-name">{{ post.authorName }}</span>
         </div>
         <p class="post-content">{{ post.content }}</p>
@@ -40,12 +43,16 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive } from 'vue';
+import Navbar from '../../components/Navbar.vue'; // Import Navbar
 
 export default {
+  components: {
+    Navbar // Register the Navbar component
+  },
   setup() {
-    const newPostContent = ref('')
-    const newComments = reactive({})
+    const newPostContent = ref('');
+    const newComments = reactive({});
     const posts = ref([
       {
         id: 1,
@@ -69,7 +76,11 @@ export default {
         comments: [],
         showComments: false
       }
-    ])
+    ]);
+
+    // Fetching username and login status from local storage
+    const isLoggedIn = ref(localStorage.getItem('isLoggedIn') === 'true');
+    const username = ref(localStorage.getItem('username') || '');
 
     const createPost = () => {
       if (newPostContent.value.trim()) {
@@ -82,41 +93,41 @@ export default {
           reacted: false,
           comments: [],
           showComments: false
-        })
-        newPostContent.value = ''
+        });
+        newPostContent.value = '';
       }
-    }
+    };
 
     const reactToPost = (postId) => {
-      const post = posts.value.find(p => p.id === postId)
+      const post = posts.value.find(p => p.id === postId);
       if (post) {
         if (post.reacted) {
-          post.reactions--
+          post.reactions--;
         } else {
-          post.reactions++
+          post.reactions++;
         }
-        post.reacted = !post.reacted
+        post.reacted = !post.reacted;
       }
-    }
+    };
 
     const toggleComments = (postId) => {
-      const post = posts.value.find(p => p.id === postId)
-      if (post) {
-        post.showComments = !post.showComments
+      const post = posts.value.find(p => p.id === postId);
+      if (post ) {
+        post.showComments = !post.showComments;
       }
-    }
+    };
 
     const addComment = (postId) => {
-      const post = posts.value.find(p => p.id === postId)
+      const post = posts.value.find(p => p.id === postId);
       if (post && newComments[postId]?.trim()) {
         post.comments.push({
           id: Date.now(),
           authorName: 'Current User',
           content: newComments[postId]
-        })
-        newComments[postId] = ''
+        });
+        newComments[postId] = '';
       }
-    }
+    };
 
     return {
       newPostContent,
@@ -125,8 +136,10 @@ export default {
       createPost,
       reactToPost,
       toggleComments,
-      addComment
-    }
+      addComment,
+      isLoggedIn,
+      username
+    };
   }
 }
 </script>
@@ -166,6 +179,10 @@ export default {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.posts-list {
+  margin-top: 20px;
 }
 
 .post {

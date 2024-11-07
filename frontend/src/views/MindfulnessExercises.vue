@@ -1,17 +1,4 @@
-<!-- <template>
-    <div class="mindfulness-container">
-      <h2>Daily Mindfulness Exercise</h2>
-      <div v-if="currentExercise">
-        <h3>{{ currentExercise.title }}</h3>
-        <p>{{ currentExercise.description }}</p>
-        <button @click="startExercise" v-if="!isExerciseActive">Start Exercise</button>
-        <div v-else>
-          <p>{{ timerDisplay }}</p>
-          <button @click="stopExercise">Stop</button>
-        </div>
-      </div>
-    </div>
-  </template> -->
+
   <template>
     <div class="mindfulness-page">
       <div class="mindfulness-container">

@@ -67,6 +67,41 @@ const routes = [
     component: AdminHome,
   },
   {
+    path: '/admin-home',
+    name: 'adminHome',
+    component: AdminHome,
+  },
+  {
+    path: '/admin/adminEmpathyC',
+    name: 'adminEmpathyC',
+    component: AdminEmpathyC,
+  },
+  {
+    path: '/admin/adminFeed',
+    name: 'adminFeed',
+    component: AdminFeed,
+  },
+  {
+    path: '/admin/adminMessages',
+    name: 'adminMessages',
+    component: AdminMessages,
+  },
+  {
+    path: '/admin/heartToHeartRoom',
+    name: 'heartToHeartRoom',
+    component: HeartToHeartRoom,
+  },
+  {
+    path: '/admin/moodReport',
+    name: 'moodReport',
+    component: MoodReport,
+  },
+  {
+    path: '/admin/users',
+    name: 'users',
+    component: Users,
+  },
+  {
 
     path: '/feed',
     name: 'feed',

@@ -5,6 +5,20 @@
 
     <h1 class="feed-title">Mental Health Support Network</h1>
     
+    <h2 class="text-xl font-semibold mb-4 text-green-800">How are you feeling today?</h2>
+    <div class="flex justify-between mb-4 bg-white rounded-lg shadow-md p-6">
+      <button
+        v-for="emotion in emotions"
+        :key="emotion"
+        @click="selectEmotion(emotion)"
+        :class="[
+          'px-4 py-2 rounded-full transition-colors',
+          selectedEmotion === emotion ? 'bg-green-500 text-white' : 'bg-green-100 text-green-800 hover:bg-green-200'
+        ]"
+      >
+        {{ emotion }}
+      </button>
+    </div>
     <!-- Post creation form -->
     <div class="post-form">
       <textarea v-model="newPostContent" placeholder="Share your thoughts..." class="post-input"></textarea>

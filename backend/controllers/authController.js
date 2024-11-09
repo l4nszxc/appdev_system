@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
 // Register new user
-// Register new user
+
 exports.register = (req, res) => {
   const { student_id, username, email, password, confirmPassword, firstname, middlename, lastname, gender, birthdate, program } = req.body;
 

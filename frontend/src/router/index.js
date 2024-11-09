@@ -67,34 +67,11 @@ const routes = [
     component: AdminHome,
   },
   {
-    path: '/admin/adminEmpathyC',
-    name: 'adminEmpathyC',
-    component: AdminEmpathyC,
-  },
-  {
-    path: '/admin/adminFeed',
-    name: 'adminFeed',
-    component: AdminFeed,
-  },
-  {
-    path: '/admin/adminMessages',
-    name: 'adminMessages',
-    component: AdminMessages,
-  },
-  {
-    path: '/admin/heartToHeartRoom',
-    name: 'heartToHeartRoom',
-    component: HeartToHeartRoom,
-  },
-  {
-    path: '/admin/moodReport',
-    name: 'moodReport',
-    component: MoodReport,
-  },
-  {
-    path: '/admin/users',
-    name: 'users',
-    component: Users,
+
+    path: '/feed',
+    name: 'feed',
+    component: () => import('../views/user/Feed.vue'), // Lazy-load the Feed component
+    meta: { requiresAuth: true }, // Ensure this route requires authentication
   },
 ];
 

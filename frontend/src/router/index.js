@@ -4,7 +4,18 @@ import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import UserHome from '../views/user/userHome.vue';
 import UserProfile from '../views/user/UserProfile.vue';
+import UserChat from '@/views/user/userChat.vue';   
+import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
+
+
+//Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
+import AdminEmpathyC from '@/views/admin/adminEmpathyC.vue';
+import AdminFeed from '@/views/admin/adminFeed.vue';
+import AdminMessages from '@/views/admin/adminMessages.vue';
+import HeartToHeartRoom from '@/views/admin/heartToHeartRoom.vue';
+import MoodReport from '@/views/admin/moodReport.vue';
+import Users from '@/views/admin/users.vue';
 
 const routes = [
   {
@@ -37,9 +48,53 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/user/userChat',
+    name: 'userChat',
+    component: UserChat,
+    meta: { requiresAuth: true},
+  },
+  {
+    path:'/user/userHeartToHeartRoom',
+    name: 'userHeartToHeartRoom',
+    component: UserHeartToHeartRoom,
+    meta: {requiresAuth: true},
+  },
+
+  //ADMIN ROUTES
+  {
     path: '/admin-home',
     name: 'adminHome',
     component: AdminHome,
+  },
+  {
+    path: '/admin/adminEmpathyC',
+    name: 'adminEmpathyC',
+    component: AdminEmpathyC,
+  },
+  {
+    path: '/admin/adminFeed',
+    name: 'adminFeed',
+    component: AdminFeed,
+  },
+  {
+    path: '/admin/adminMessages',
+    name: 'adminMessages',
+    component: AdminMessages,
+  },
+  {
+    path: '/admin/heartToHeartRoom',
+    name: 'heartToHeartRoom',
+    component: HeartToHeartRoom,
+  },
+  {
+    path: '/admin/moodReport',
+    name: 'moodReport',
+    component: MoodReport,
+  },
+  {
+    path: '/admin/users',
+    name: 'users',
+    component: Users,
   },
 ];
 

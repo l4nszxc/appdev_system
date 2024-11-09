@@ -1,4 +1,5 @@
 <template>
+  <NavbarAdmin/>
     <div class="admin-feed-container">
       <h1 class="admin-feed-title">Admin Dashboard - Pending Posts</h1>
       
@@ -23,9 +24,13 @@
   </template>
   
   <script>
-  import { ref, onMounted } from 'vue'
+  import NavbarAdmin from '@/components/NavbarAdmin.vue';
+import { ref, onMounted } from 'vue'
   
   export default {
+    components: {
+      NavbarAdmin,
+    },
     setup() {
       const pendingPosts = ref([])
       const loading = ref(true)

@@ -11,7 +11,7 @@
           <img 
             src="../assets/logo.png" 
             alt="Profile" 
-            class="profile-icon" 
+            class="profile-icon"
             @click="toggleDropdown" 
           />
           <div v-if="dropdownVisible" class="dropdown-content">

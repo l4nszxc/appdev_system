@@ -1,4 +1,5 @@
 <template>
+  <NavbarAdmin/>
     <div class="bg-white rounded-lg shadow-md p-6">
       <h2 class="text-2xl font-semibold mb-4 text-green-800">Supporter Dashboard</h2>
       <div v-if="!activeChatId">
@@ -63,6 +64,7 @@
   </template>
   
   <script setup>
+  import NavbarAdmin from '@/components/NavbarAdmin.vue';
   import { ref, onMounted, onUnmounted } from 'vue';
   
   const waitingChats = ref([]);
@@ -74,7 +76,7 @@
   
   const fetchWaitingChats = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/chat/waiting');
+      const response = await fetch('http://localhost:5000/api/chat/waiting');
       if (response.ok) {
         waitingChats.value = await response.json();
       }
@@ -85,7 +87,7 @@
   
   const joinChat = async (chatId) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/chat/join/${chatId}`, {
+      const response = await fetch(`http://localhost:5000/api/chat/join/${chatId}`, {
         method: 'POST'
       });
       if (response.ok) {
@@ -103,7 +105,7 @@
     if (!newMessage.value.trim()) return;
   
     try {
-      await fetch(`http://localhost:3000/api/chat/${activeChatId.value}/message`, {
+      await fetch(`http://localhost:5000/api/chat/${activeChatId.value}/message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +123,7 @@
   
   const fetchMessages = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/chat/${activeChatId.value}/messages`);
+      const response = await fetch(`http://localhost:5000/api/chat/${activeChatId.value}/messages`);
       if (response.ok) {
         messages.value = await response.json();
       }
@@ -132,7 +134,7 @@
   
   const fetchAllMessages = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/supporter/all-messages');
+      const response = await fetch('http://localhost:5000/api/supporter/all-messages');
       if (response.ok) {
         allMessages.value = await response.json();
       }

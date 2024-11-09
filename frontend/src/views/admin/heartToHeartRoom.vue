@@ -1,4 +1,5 @@
 <template>
+  <NavbarAdmin/>
     <div>
       <h1 class="green--text">Heart-to-Heart Room</h1>
   
@@ -49,9 +50,13 @@
   </template>
   
   <script>
+  import NavbarAdmin from '@/components/NavbarAdmin.vue';
   import axios from 'axios';
   
   export default {
+    components:{
+      NavbarAdmin,
+    },
     data() {
       return {
         newSchedule: { date: '', startTime: '', endTime: '' },
@@ -66,16 +71,16 @@
     },
     methods: {
       async fetchSchedules() {
-        const response = await axios.get('http://localhost:3000/api/schedule');
+        const response = await axios.get('http://localhost:5000/api/schedule');
         this.schedules = response.data;
       },
       async addSchedule() {
-        await axios.post('http://localhost:3000/api/schedule/add', this.newSchedule);
+        await axios.post('http://localhost:5000/api/schedule/add', this.newSchedule);
         this.newSchedule = { date: '', startTime: '', endTime: '' };
         this.fetchSchedules();
       },
       async removeSchedule(id) {
-        await axios.delete(`http://localhost:3000/api/schedule/${id}`);
+        await axios.delete(`http://localhost:5000/api/schedule/${id}`);
         this.fetchSchedules();
       },
     },

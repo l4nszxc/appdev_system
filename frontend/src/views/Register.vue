@@ -149,7 +149,6 @@
 
           <!-- Confirm Password Field -->
           <div class="form-group">
-            <label for="confirmPassword" class="form-label">Confirm Password</ ```vue
             <label for="confirmPassword" class="form-label">Confirm Password</label>
             <div class="input-wrapper">
               <Lock class="input-icon" :size="20" />

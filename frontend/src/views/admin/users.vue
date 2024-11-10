@@ -1,4 +1,5 @@
 <template>
+  <NavbarAdmin/>
     <div class="college-container">
       <h1 class="text-2xl font-bold mb-4 text-green-800">Manage Students by College</h1>
   
@@ -43,9 +44,13 @@
   </template>
   
   <script>
+  import NavbarAdmin from '@/components/NavbarAdmin.vue';
   import axios from 'axios';
   
   export default {
+    components:{
+      NavbarAdmin,
+    },
     data() {
       return {
         colleges: ['CCS', 'CBM', 'CCJE', 'BTVTED', 'CTE'],
@@ -65,7 +70,7 @@
       },
       async fetchStudents() {
         try {
-          const response = await axios.get(`http://localhost:3000/api/students/${this.selectedCollege}`);
+          const response = await axios.get(`http://localhost:5000/api/students/${this.selectedCollege}`);
           this.students = response.data;
         } catch (error) {
           console.error('Error fetching students:', error);
@@ -75,13 +80,13 @@
         try {
           if (this.studentForm.id) {
             // Update existing student
-            await axios.put(`http://localhost:3000/api/students/${this.studentForm.id}`, {
+            await axios.put(`http://localhost:5000/api/students/${this.studentForm.id}`, {
               studentId: this.studentForm.studentId,
               name: this.studentForm.name,
             });
           } else {
             // Add new student
-            await axios.post('http://localhost:3000/api/students', {
+            await axios.post('http://localhost:5000/api/students', {
               studentId: this.studentForm.studentId,
               name: this.studentForm.name,
               college: this.selectedCollege,
@@ -98,7 +103,7 @@
       },
       async deleteStudent(id) {
         try {
-          await axios.delete(`http://localhost:3000/api/students/${id}`);
+          await axios.delete(`http://localhost:5000/api/students/${id}`);
           this.fetchStudents();
         } catch (error) {
           console.error('Error deleting student:', error);

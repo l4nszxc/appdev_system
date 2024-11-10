@@ -26,35 +26,57 @@ export default {
   components: {
     Navbar,
   },
+  // setup() {
+  //   const isLoggedIn = ref(false);
+  //   const username = ref('');
+  //   const userInfo = ref({}); // To hold user information
+
+  //   // Fetch user login state and username from local storage
+  //   onMounted(async () => {
+  //     isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+  //     username.value = localStorage.getItem('username') || '';
+
+  //     if (isLoggedIn.value) {
+  //       try {
+  //         const token = localStorage.getItem('token');
+  //         const response = await axios.get('http://localhost:5000/user', {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`, // Send the token in the header
+  //           },
+  //         });
+  //         userInfo.value = response.data; // Store user information
+  //       } catch (error) {
+  //         console.error(error);
+  //         alert('Failed to fetch user details.');
+  //       }
+  //     }
+  //   });
+
+  //   return {
+  //     isLoggedIn,
+  //     username,
+  //     userInfo,
+  //   };
+  // },
   setup() {
-    const isLoggedIn = ref(false);
-    const username = ref('');
     const userInfo = ref({}); // To hold user information
 
-    // Fetch user login state and username from local storage
     onMounted(async () => {
-      isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
-      username.value = localStorage.getItem('username') || '';
-
-      if (isLoggedIn.value) {
-        try {
-          const token = localStorage.getItem('token');
-          const response = await axios.get('http://localhost:5000/user', {
-            headers: {
-              Authorization: `Bearer ${token}`, // Send the token in the header
-            },
-          });
-          userInfo.value = response.data; // Store user information
-        } catch (error) {
-          console.error(error);
-          alert('Failed to fetch user details.');
-        }
+      const token = localStorage.getItem('token'); // Retrieve token from local storage
+      try {
+        const response = await axios.get('http://localhost:5000/user', {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token in header
+          },
+        });
+        userInfo.value = response.data; // Store user information
+      } catch (error) {
+        console.error(error);
+        alert('Failed to fetch user details.');
       }
     });
 
     return {
-      isLoggedIn,
-      username,
       userInfo,
     };
   },

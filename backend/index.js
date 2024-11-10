@@ -14,7 +14,6 @@ app.get('/', (req, res) => {
     console.log(`Received a ${req.method} request to ${req.url}`);
     res.json({ message: 'Welcome to the API' });
 });
-app.get('/user', authMiddleware, userController.getUser ,Profile);
 
 // Define routes
 app.post('/register', authController.register);

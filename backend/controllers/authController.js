@@ -84,13 +84,14 @@ exports.login = (req, res) => {
 exports.getUserProfile = (req, res) => {
   // Assume you have a function to get user info by ID from the token
   const userId = req.user.id; // Get user ID from the token payload
-  userModel.findUserById(userId, (err, user) => {
+  userModel.findUserByStudentId(userId, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
-    if (!user) return res.status(404).json({ message: 'User  not found' });
+    if (results.length = 0) return res.status(404).json({ message: 'User  not found' });
 
+    const user = results[0];
     // Send user data excluding password
-    const { password, ...userData } = user;
-    res.json(userData);
+    const { password, ...userProfile } = user;
+    res.status(200).json(userProfile);
   });
 }
 

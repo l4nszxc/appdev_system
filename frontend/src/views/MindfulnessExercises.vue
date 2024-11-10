@@ -24,6 +24,7 @@
   import { ref, onMounted } from 'vue';
   
   export default {
+    name: 'MindfulnessExercises',
     setup() {
       const exercises = [
         {

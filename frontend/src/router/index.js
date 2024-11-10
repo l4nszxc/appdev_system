@@ -30,6 +30,7 @@ import UserHome from '../views/user/userHome.vue';
 import UserProfile from '../views/user/UserProfile.vue';
 import UserChat from '@/views/user/userChat.vue';   
 import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
+import MindfulnessExercises from '../views/MindfulnessExercises.vue';
 // Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
 import AdminEmpathyC from '@/views/admin/adminEmpathyC.vue';
@@ -133,7 +134,7 @@ const routes = [
   {
     path: '/mindfulness',
     name: 'mindfulness',
-    component: MindfulnessExercises
+    component: MindfulnessExercises,
   },
 ];
 

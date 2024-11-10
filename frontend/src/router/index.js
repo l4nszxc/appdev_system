@@ -1,18 +1,36 @@
+// import { createRouter, createWebHistory } from 'vue-router';
+// import HomeView from '../views/HomeView.vue';
+// import Login from '../views/Login.vue';
+// import Register from '../views/Register.vue';
+// <<<<<<< HEAD
+// import UserHome from '../views/user/userHome.vue'; // Import the UserHome component
+// import MindfulnessExercises from '../views/MindfulnessExercises.vue'
+// =======
+// import UserHome from '../views/user/userHome.vue';
+// import UserProfile from '../views/user/UserProfile.vue';
+// import UserChat from '@/views/user/userChat.vue';   
+// import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
+
+
+// //Admin imports
+// import AdminHome from '@/views/admin/adminHome.vue';
+// import AdminEmpathyC from '@/views/admin/adminEmpathyC.vue';
+// import AdminFeed from '@/views/admin/adminFeed.vue';
+// import AdminMessages from '@/views/admin/adminMessages.vue';
+// import HeartToHeartRoom from '@/views/admin/heartToHeartRoom.vue';
+// import MoodReport from '@/views/admin/moodReport.vue';
+// import Users from '@/views/admin/users.vue';
+// >>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
+
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
-<<<<<<< HEAD
-import UserHome from '../views/user/userHome.vue'; // Import the UserHome component
-import MindfulnessExercises from '../views/MindfulnessExercises.vue'
-=======
 import UserHome from '../views/user/userHome.vue';
 import UserProfile from '../views/user/UserProfile.vue';
 import UserChat from '@/views/user/userChat.vue';   
 import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
-
-
-//Admin imports
+// Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
 import AdminEmpathyC from '@/views/admin/adminEmpathyC.vue';
 import AdminFeed from '@/views/admin/adminFeed.vue';
@@ -20,7 +38,6 @@ import AdminMessages from '@/views/admin/adminMessages.vue';
 import HeartToHeartRoom from '@/views/admin/heartToHeartRoom.vue';
 import MoodReport from '@/views/admin/moodReport.vue';
 import Users from '@/views/admin/users.vue';
->>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
 
 const routes = [
   {

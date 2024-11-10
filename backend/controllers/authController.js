@@ -2,7 +2,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
-<<<<<<< HEAD
 const crypto = require('crypto');
 const base64url = require('base64url');
 const { Fido2Lib } = require('fido2-lib');
@@ -18,8 +17,6 @@ const f2l = new Fido2Lib({
 });
 
 let currentChallenge = null;
-=======
->>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
 
 // Register new user
 

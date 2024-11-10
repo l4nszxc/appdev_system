@@ -5,14 +5,9 @@
       <h1 class="navbar-brand">MINDCONNECT</h1>
     </div>
     <div class="navbar-links">
-<<<<<<< HEAD
-      <router-link to="/login" class="nav-link">Login</router-link>
-      <router-link to="/register" class="nav-link">Register</router-link>
-      <router-link to="/mindfulness" class="nav-link">Mindfulness Exercises</router-link>
-=======
       <template v-if="isLoggedIn">
         <span class="username-display">Logged in as: {{ username }}</span>
-        <router-link to="/feed" class="nav-link">Feed</router-link> <!-- Add this line -->
+        <router-link to="/feed" class="nav-link">Feed</router-link>
         <div class="profile-menu">
           <img 
             src="../assets/logo.png" 
@@ -31,7 +26,6 @@
         <router-link to="/login" class="nav-link">Login</router-link>
         <router-link to="/register" class="nav-link">Register</router-link>
       </template>
->>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
     </div>
   </nav>
 </template>

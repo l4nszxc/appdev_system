@@ -61,25 +61,17 @@
 </template>
 
 <script setup>
-<<<<<<< HEAD
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { Mail, Lock, ArrowRight, FingerprintIcon } from 'lucide-vue-next';
-=======
+
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { Mail, Lock, ArrowRight } from 'lucide-vue-next';
->>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
+import { Mail, Lock, ArrowRight, FingerprintIcon } from 'lucide-vue-next';
 import Navbar from '../components/Navbar.vue';
-import axios from 'axios';
+import axios from 'axios'
 
 const email = ref('');
 const password = ref('');
-<<<<<<< HEAD
-=======
 const isLoggedIn = ref(false); // State to track login status
 const username = ref(''); // State for username
->>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
 const router = useRouter();
 
 const handleSubmit = async () => {
@@ -88,12 +80,6 @@ const handleSubmit = async () => {
       email: email.value,
       password: password.value,
     });
-<<<<<<< HEAD
-
-    alert(response.data.message);
-    localStorage.setItem('token', response.data.token);
-    router.push({ name: 'userHome' });
-=======
     alert(response.data.message); // Success notification
     localStorage.setItem('token', response.data.token);
     localStorage.setItem('username', response.data.username);  // Store username
@@ -101,7 +87,6 @@ const handleSubmit = async () => {
     isLoggedIn.value = true;
     username.value = response.data.username; // Store username in local state
     router.push({ name: 'userHome' }); // Redirect to user home page
->>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
   } catch (error) {
     alert(error.response?.data?.message || 'An error occurred');
   }
@@ -166,13 +151,8 @@ onMounted(() => {
 
 .login-card {
   width: 100%;
-<<<<<<< HEAD
-  max-width: 28rem;
-  background-color: #4b8f5f;
-=======
-  max-width: 32rem;
+  max-width: 32rem; /* Use the desired max-width */
   background-color: #128535; /* Soft green background */
->>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -275,17 +255,25 @@ onMounted(() => {
 
 .login-footer {
   padding: 1rem 1.5rem;
-<<<<<<< HEAD
-  background-color: #457b9d;
-  border-top: 1px
+  background-color: #0f6016; /* Soft green background */
+  border-top: 1px solid #2a9d8f; /* Solid border for the top */
 }
-.fingerprint-button {
-=======
-  background-color: #0f6016;
-  border-top: 1px solid #2a9d8f;}
 
-.footer-links {
->>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
+ .fingerprint-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: #4CAF50; /* Original background color */
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+  .footer-links {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -308,12 +296,8 @@ onMounted(() => {
 .fingerprint-icon {
   margin-right: 0.5rem;
 }
-<<<<<<< HEAD
-</style>
-=======
-
 .link:hover {
-  text-decoration: underline;
+  text-decoration: underline; /* Underline on hover */
 }
 
 /* Welcome message styling */
@@ -323,4 +307,3 @@ onMounted(() => {
   color: #f1faee; /* Adjust color as needed */
 }
 </style>
->>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898

@@ -13,7 +13,13 @@ const findUserByEmail = (email, callback) => {
   db.query(sql, [email], callback);
 };
 
+const findUserByStudentId = (student_id, callback) => {
+  const sql = 'SELECT * FROM users WHERE student_id = ?';
+  db.query(sql, [student_id], callback);
+};
+
 module.exports = {
   createUser,
   findUserByEmail,
+  findUserByStudentId
 };

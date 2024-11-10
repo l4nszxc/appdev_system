@@ -185,8 +185,11 @@ import { ref } from 'vue'
 import { User, Mail, Lock, UserPlus } from 'lucide-vue-next'
 import axios from 'axios'
 import Navbar from '../components/Navbar.vue'; // Import Navbar component
+import { useRouter } from 'vue-router'; // Import useRouter
 
-const student_id = ref('');  // Keep this line for student_id
+const router = useRouter(); // Initialize router
+
+const student_id = ref('');  
 const firstname = ref('');
 const middlename = ref('');
 const lastname = ref('');
@@ -206,7 +209,7 @@ const register = async () => {
 
   try {
     const response = await axios.post('http://localhost:5000/register', {
-      student_id: student_id.value,  // Include student_id here
+      student_id: student_id.value,
       username: username.value,
       email: email.value,
       password: password.value,
@@ -220,6 +223,10 @@ const register = async () => {
     });
 
     alert(response.data.message); // Success notification
+
+    // Redirect to the login page after successful registration
+    router.push({ path: '/login' }); // Change to your login route
+
   } catch (error) {
     alert(error.response.data.message || 'An error occurred'); // Generic error message
   }

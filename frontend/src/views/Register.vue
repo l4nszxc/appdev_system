@@ -150,7 +150,7 @@
           <!-- Confirm Password Field -->
           <div class="form-group">
             <label for="confirmPassword" class="form-label">Confirm Password</label>
-            <div class="input-wrapper">
+            <div class="input -wrapper">
               <Lock class="input-icon" :size="20" />
               <input
                 id="confirmPassword"
@@ -163,10 +163,25 @@
             </div>
           </div>
 
+          <!-- Agreement Checkbox -->
+          <div class="form-group">
+            <label>
+              <input
+                type="checkbox"
+                v-model="agreementAccepted"
+                required
+              />
+              I agree to the 
+              <router-link to="/terms-and-conditions" class="link">Terms of Service</router-link> 
+              and 
+              <router-link to="/privacy-policy" class="link">Privacy Policy</router-link>.
+            </label>
+          </div>
+
           <!-- Register Button -->
           <button type="submit" class="submit-button">
             Register
-            <User Plus class="button-icon" :size="20" />
+            <User  Plus class="button-icon" :size="20" />
           </button>
         </form>
       </div>
@@ -200,10 +215,16 @@ const username = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+const agreementAccepted = ref(false); // State for agreement checkbox
 
 const register = async () => {
   if (password.value !== confirmPassword.value) {
     alert('Passwords do not match!'); // Password mismatch notification
+    return;
+  }
+
+  if (!agreementAccepted.value) {
+    alert('You must accept the Terms of Service and Privacy Policy to register.'); // Agreement not accepted
     return;
   }
 
@@ -223,9 +244,7 @@ const register = async () => {
     });
 
     alert(response.data.message); // Success notification
-
-    // Redirect to the login page after successful registration
-    router.push({ path: '/login' }); // Change to your login route
+    router.push({ path: '/login' }); // Redirect to login page
 
   } catch (error) {
     alert(error.response.data.message || 'An error occurred'); // Generic error message
@@ -233,6 +252,7 @@ const register = async () => {
 };
 
 </script>
+
 
 <style scoped>
 /* Main container with gradient background */
@@ -295,7 +315,7 @@ const register = async () => {
 
 /* Label and icon colors */
 .form-label {
-  font-size: 0.875rem;
+  font-size: 0. 875rem;
   font-weight: 500;
   color: #f1faee;
 }

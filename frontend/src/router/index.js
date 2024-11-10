@@ -6,9 +6,10 @@ import UserHome from '../views/user/userHome.vue';
 import UserProfile from '../views/user/UserProfile.vue';
 import UserChat from '@/views/user/userChat.vue';   
 import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
+import TermsAndConditions from '../views/TermsAndConditions.vue';
+import PrivacyPolicy from '../views/PrivacyPolicy.vue';
 
-
-//Admin imports
+// Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
 import AdminEmpathyC from '@/views/admin/adminEmpathyC.vue';
 import AdminFeed from '@/views/admin/adminFeed.vue';
@@ -27,19 +28,19 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login,
-    meta: { requiresGuest: true }, // Add meta field for guest requirement
+    meta: { requiresGuest: true }, // Only accessible if not logged in
   },
   {
     path: '/register',
     name: 'register',
     component: Register,
-    meta: { requiresGuest: true }, // Add meta field for guest requirement
+    meta: { requiresGuest: true }, // Only accessible if not logged in
   },
   {
     path: '/user-home',
     name: 'userHome',
     component: UserHome,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }, // Requires authentication
   },
   {
     path: '/user/userprofile',
@@ -51,21 +52,27 @@ const routes = [
     path: '/user/userChat',
     name: 'userChat',
     component: UserChat,
-    meta: { requiresAuth: true},
+    meta: { requiresAuth: true },
   },
   {
-    path:'/user/userHeartToHeartRoom',
+    path: '/user/userHeartToHeartRoom',
     name: 'userHeartToHeartRoom',
     component: UserHeartToHeartRoom,
-    meta: {requiresAuth: true},
+    meta: { requiresAuth: true },
   },
-
-  //ADMIN ROUTES
   {
-    path: '/admin-home',
-    name: 'adminHome',
-    component: AdminHome,
+    path: '/terms-and-conditions',
+    name: 'termsAndConditions',
+    component: TermsAndConditions,
+    // No meta, accessible to everyone
   },
+  {
+    path: '/privacy-policy',
+    name: 'privacyPolicy',
+    component: PrivacyPolicy,
+    // No meta, accessible to everyone
+  },
+  // ADMIN ROUTES
   {
     path: '/admin-home',
     name: 'adminHome',
@@ -102,7 +109,6 @@ const routes = [
     component: Users,
   },
   {
-
     path: '/feed',
     name: 'feed',
     component: () => import('../views/user/Feed.vue'), // Lazy-load the Feed component
@@ -123,6 +129,8 @@ router.beforeEach((to, from, next) => {
     next({ name: 'login' }); // Redirect to login if not authenticated
   } else if (to.meta.requiresGuest && isLoggedIn) {
     next({ name: 'userHome' }); // Redirect to user home if already logged in
+  } else if (isLoggedIn && (to.name === 'termsAndConditions' || to.name === 'privacyPolicy')) {
+    next({ name: 'userHome' }); // Redirect logged-in users away from these pages
   } else {
     next(); // Proceed to the route
   }

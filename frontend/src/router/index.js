@@ -58,6 +58,11 @@ const routes = [
     component: Register,
     meta: { requiresGuest: true }, // Add meta field for guest requirement
   },
+  // {
+  // //   path: '/forgot-password',
+  // //   name: 'ForgotPassword',
+  // //   component: () => import('../views/ForgotPassword.vue'), // Import your ForgotPassword component
+  // // },
   {
     path: '/user-home',
     name: 'userHome',

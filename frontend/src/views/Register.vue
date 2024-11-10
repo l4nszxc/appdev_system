@@ -219,9 +219,24 @@ const register = async () => {
       program: program.value
     });
 
-    alert(response.data.message); // Success notification
+  //   alert(response.data.message); // Success notification
+  // } catch (error) {
+  //   alert(error.response.data.message || 'An error occurred'); // Generic error message
+  // }
+  if (response.data) {
+      alert(response.data.message); // Success notification
+    } else {
+      alert('Registration successful, but no message returned.');
+    }
   } catch (error) {
-    alert(error.response.data.message || 'An error occurred'); // Generic error message
+    // Check if error.response is defined
+    if (error.response) {
+      console.error('Error response:', error.response);
+      alert(error.response.data.message || 'An error occurred during registration.');
+    } else {
+      console.error('Error:', error);
+      alert('An unexpected error occurred. Please try again.');
+    }
   }
 };
 

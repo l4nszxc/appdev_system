@@ -4,7 +4,7 @@
   <div class="app-container">
     <div class="login-card">
       <div class="login-content">
-        <h2 class="login-title">Sign in to your account</h2>
+        <h2 class="login-title">LOG IN</h2>
         <form @submit.prevent="handleSubmit" class="login-form">
           <div class="form-group">
             <label for="email" class="form-label">Email</label>
@@ -35,7 +35,7 @@
             </div>
           </div>
           <button type="submit" class="submit-button">
-            Sign in
+            Log In
             <ArrowRight class="button-icon" :size="20" />
           </button>
           <button @click="authenticateWithFingerprint" type="button" class="fingerprint-button">
@@ -54,18 +54,32 @@
         </div>
       </div>
     </div>
+    <div v-if="isLoggedIn" class="welcome-message">
+      Logged in as: {{ username }} <!-- Use local state instead -->
+    </div>
   </div>
 </template>
 
 <script setup>
+<<<<<<< HEAD
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Mail, Lock, ArrowRight, FingerprintIcon } from 'lucide-vue-next';
+=======
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { Mail, Lock, ArrowRight } from 'lucide-vue-next';
+>>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
 import Navbar from '../components/Navbar.vue';
 import axios from 'axios';
 
 const email = ref('');
 const password = ref('');
+<<<<<<< HEAD
+=======
+const isLoggedIn = ref(false); // State to track login status
+const username = ref(''); // State for username
+>>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
 const router = useRouter();
 
 const handleSubmit = async () => {
@@ -74,10 +88,20 @@ const handleSubmit = async () => {
       email: email.value,
       password: password.value,
     });
+<<<<<<< HEAD
 
     alert(response.data.message);
     localStorage.setItem('token', response.data.token);
     router.push({ name: 'userHome' });
+=======
+    alert(response.data.message); // Success notification
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('username', response.data.username);  // Store username
+    localStorage.setItem('isLoggedIn', 'true'); // Set login flag
+    isLoggedIn.value = true;
+    username.value = response.data.username; // Store username in local state
+    router.push({ name: 'userHome' }); // Redirect to user home page
+>>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
   } catch (error) {
     alert(error.response?.data?.message || 'An error occurred');
   }
@@ -118,6 +142,12 @@ const authenticateWithFingerprint = async () => {
     alert('An error occurred during fingerprint authentication.');
   }
 };
+
+// Check login status on component mount
+onMounted(() => {
+  isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+  username.value = localStorage.getItem('username') || ''; // Retrieve username safely
+});
 </script>
 
 <style scoped>
@@ -136,12 +166,16 @@ const authenticateWithFingerprint = async () => {
 
 .login-card {
   width: 100%;
+<<<<<<< HEAD
   max-width: 28rem;
   background-color: #4b8f5f;
+=======
+  max-width: 32rem;
+  background-color: #128535; /* Soft green background */
+>>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  margin-top: 2rem;
 }
 
 .login-content {
@@ -241,10 +275,17 @@ const authenticateWithFingerprint = async () => {
 
 .login-footer {
   padding: 1rem 1.5rem;
+<<<<<<< HEAD
   background-color: #457b9d;
   border-top: 1px
 }
 .fingerprint-button {
+=======
+  background-color: #0f6016;
+  border-top: 1px solid #2a9d8f;}
+
+.footer-links {
+>>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
   display: flex;
   align-items: center;
   justify-content: center;
@@ -267,4 +308,19 @@ const authenticateWithFingerprint = async () => {
 .fingerprint-icon {
   margin-right: 0.5rem;
 }
+<<<<<<< HEAD
 </style>
+=======
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Welcome message styling */
+.welcome-message {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #f1faee; /* Adjust color as needed */
+}
+</style>
+>>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898

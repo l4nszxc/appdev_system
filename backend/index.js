@@ -24,4 +24,7 @@ app.post('/fingerprint/finish', authController.finishFingerprintAuth);
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
+<<<<<<< HEAD
 module.exports = app;
+=======
+>>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898

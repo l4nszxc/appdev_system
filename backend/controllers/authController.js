@@ -2,6 +2,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
+<<<<<<< HEAD
 const crypto = require('crypto');
 const base64url = require('base64url');
 const { Fido2Lib } = require('fido2-lib');
@@ -17,37 +18,54 @@ const f2l = new Fido2Lib({
 });
 
 let currentChallenge = null;
+=======
+>>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
 
 // Register new user
+
 exports.register = (req, res) => {
-  const { username, email, password, confirmPassword } = req.body;
+  const { student_id, username, email, password, confirmPassword, firstname, middlename, lastname, gender, birthdate, program } = req.body;
 
   if (password !== confirmPassword) {
     return res.status(400).json({ message: 'Passwords do not match!' });
   }
 
-  // Check if email already exists
   userModel.findUserByEmail(email, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     if (results.length > 0) return res.status(400).json({ message: 'Email already exists!' });
 
-    bcrypt.hash(password, 10, (err, hashedPassword) => {
+    userModel.findUserByStudentId(student_id, (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
+      if (results.length > 0) return res.status(400).json({ message: 'Student ID already exists!' });
 
-      // Use the user model to insert the user
-      userModel.createUser({ username, email, password: hashedPassword }, (err, result) => {
+      bcrypt.hash(password, 10, (err, hashedPassword) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(201).json({ message: 'User registered successfully!' });
+
+        userModel.createUser  ({
+          student_id,  // Include student_id here
+          username,
+          email,
+          password: hashedPassword,
+          firstname,
+          middlename,
+          lastname,
+          gender,
+          birthdate,
+          program
+        }, (err, result) => {
+          if (err) return res.status(500).json({ error: err.message });
+          res.status(201).json({ message: 'User  registered successfully!' });
+        });
       });
     });
   });
 };
 
+
 // Login user
 exports.login = (req, res) => {
   const { email, password } = req.body;
 
-  // Use the user model to find the user by email
   userModel.findUserByEmail(email, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     if (results.length === 0) return res.status(400).json({ message: 'User not found!' });
@@ -56,8 +74,12 @@ exports.login = (req, res) => {
     bcrypt.compare(password, user.password, (err, isMatch) => {
       if (!isMatch) return res.status(400).json({ message: 'Incorrect password!' });
 
-      const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
-      res.status(200).json({ message: 'Login successful!', token });
+      const token = jwt.sign({ id: user.id, username: user.username }, 'your_jwt_secret', { expiresIn: '1h' });
+      res.status(200).json({
+        message: 'Login successful!',
+        token,
+        username: user.username,  // Include the username in the response
+      });
     });
   });
 };

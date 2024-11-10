@@ -5,11 +5,106 @@
       <div class="register-content">
         <h2 class="register-title">CREATE AN ACCOUNT</h2>
         <form @submit.prevent="register" class="register-form">
+          <!-- Student ID Field -->
+          <div class="form-group">
+            <label for="student_id" class="form-label">Student ID</label>
+            <div class="input-wrapper">
+              <input
+                id="student_id"
+                v-model="student_id"
+                placeholder="Student ID (e.g., MCC2022-0811)"
+                required
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <!-- First Name Field -->
+          <div class="form-group">
+            <label for="firstname" class="form-label">First Name</label>
+            <div class="input-wrapper">
+              <input
+                id="firstname"
+                v-model="firstname"
+                placeholder="First Name"
+                required
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <!-- Middle Name Field -->
+          <div class="form-group">
+            <label for="middlename" class="form-label">Middle Name</label>
+            <div class="input-wrapper">
+              <input
+                id="middlename"
+                v-model="middlename"
+                placeholder="Middle Name"
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <!-- Last Name Field -->
+          <div class="form-group">
+            <label for="lastname" class="form-label">Last Name</label>
+            <div class="input-wrapper">
+              <input
+                id="lastname"
+                v-model="lastname"
+                placeholder="Last Name"
+                required
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <!-- Gender Field -->
+          <div class="form-group">
+            <label for="gender" class="form-label">Gender</label>
+            <div class="input-wrapper">
+              <select id="gender" v-model="gender" required class="form-input">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Birthdate Field -->
+          <div class="form-group">
+            <label for="birthdate" class="form-label">Birthdate</label>
+            <div class="input-wrapper">
+              <input
+                id="birthdate"
+                v-model="birthdate"
+                type="date"
+                required
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <!-- Program Field -->
+          <div class="form-group">
+            <label for="program" class="form-label">Program</label>
+            <div class="input-wrapper">
+              <input
+                id="program"
+                v-model="program"
+                placeholder="Program"
+                required
+                class="form-input"
+              />
+            </div>
+          </div>
+
           <!-- Username Field -->
           <div class="form-group">
             <label for="username" class="form-label">Username</label>
             <div class="input-wrapper">
-              <User class="input-icon" :size="20" />
+              <User  class="input-icon" :size="20" />
               <input
                 id="username"
                 v-model="username"
@@ -71,7 +166,7 @@
           <!-- Register Button -->
           <button type="submit" class="submit-button">
             Register
-            <UserPlus class="button-icon" :size="20" />
+            <User Plus class="button-icon" :size="20" />
           </button>
         </form>
       </div>
@@ -91,6 +186,13 @@ import { User, Mail, Lock, UserPlus } from 'lucide-vue-next'
 import axios from 'axios'
 import Navbar from '../components/Navbar.vue'; // Import Navbar component
 
+const student_id = ref('');  // Keep this line for student_id
+const firstname = ref('');
+const middlename = ref('');
+const lastname = ref('');
+const gender = ref('');
+const birthdate = ref('');
+const program = ref('');
 const username = ref('')
 const email = ref('')
 const password = ref('')
@@ -104,18 +206,25 @@ const register = async () => {
 
   try {
     const response = await axios.post('http://localhost:5000/register', {
+      student_id: student_id.value,  // Include student_id here
       username: username.value,
       email: email.value,
       password: password.value,
-      confirmPassword: confirmPassword.value
+      confirmPassword: confirmPassword.value,
+      firstname: firstname.value,
+      middlename: middlename.value,
+      lastname: lastname.value,
+      gender: gender.value,
+      birthdate: birthdate.value,
+      program: program.value
     });
-    
+
     alert(response.data.message); // Success notification
   } catch (error) {
-    // Remove the "Registration failed" alert
     alert(error.response.data.message || 'An error occurred'); // Generic error message
   }
-}
+};
+
 </script>
 
 <style scoped>
@@ -123,10 +232,14 @@ const register = async () => {
 .app-container {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: linear-gradient(to bottom right, #afe0bb, #11b14e); /* Soft green-blue gradient */
-  padding: 1rem;
+  justify-content: flex-start;
+  background-image: url('../assets/bg minsu.png');
+  background-size: cover;
+  background-position: center; /* Centers the background image */
+  background-repeat: no-repeat;
+  padding-top: 80px;
 }
 
 /* Card for registration form */

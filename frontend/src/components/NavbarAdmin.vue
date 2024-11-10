@@ -5,10 +5,12 @@
         <h1 class="navbar-brand">MINDCONNECT</h1>
       </div>
       <div class="navbar-links">
-        <router-link to="/users" class="nav-link">Users</router-link>
-        <router-link to="/students-mood" class="nav-link">Students' Mood</router-link>
-        <router-link to="/message" class="nav-link">Message</router-link>
-        <router-link to="/heart-to-heart-room" class="nav-link">Heart-to-Heart Room</router-link>
+        <router-link to="/admin/users" class="nav-link">Users</router-link>
+        <router-link to="/admin/adminFeed" class="nav-link">Feed</router-link>
+        <router-link to="/admin/adminEmpathyC" class="nav-link">Empathy Challenge</router-link>
+        <router-link to="/admin/moodReport" class="nav-link">Students' Mood</router-link>
+        <router-link to="/admin/adminMessages" class="nav-link">Message</router-link>
+        <router-link to="/admin/heartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
         <div class="dropdown">
           <router-link to="#" class="nav-link dropdown-toggle">Posts Request</router-link>
           <div class="dropdown-content">

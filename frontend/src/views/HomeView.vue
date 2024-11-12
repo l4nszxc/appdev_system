@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar />
+    <Navbar :isLoggedIn="isLoggedIn" :username="username" />
     <div class="home-container">
       <h1 class="welcome-title">Welcome to Homepage</h1>
     </div>
@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
 import Navbar from '../components/Navbar.vue'; // Adjust the path as necessary
 
 export default {
@@ -15,6 +16,21 @@ export default {
   components: {
     Navbar
   },
+  setup() {
+    const isLoggedIn = ref(false);
+    const username = ref('');
+
+    // Fetch user login state and username from local storage
+    onMounted(() => {
+      isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+      username.value = localStorage.getItem('username') || '';
+    });
+
+    return {
+      isLoggedIn,
+      username
+    };
+  }
 };
 </script>
 

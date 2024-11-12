@@ -1,4 +1,5 @@
 <template>
+  <NavbarAdmin />
     <div class="min-h-screen bg-green-50 p-6">
       <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
         <h1 class="text-3xl font-bold text-green-800 mb-6">Admin Dashboard</h1>
@@ -63,6 +64,7 @@
   </template>
   
   <script setup>
+  import NavbarAdmin from '@/components/NavbarAdmin.vue';
   import { ref, onMounted } from 'vue';
   
   const challenges = ref([]);
@@ -74,7 +76,7 @@
   
   const fetchChallenges = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/admin/challenges');
+      const response = await fetch('http://localhost:5000/api/admin/challenges');
       if (response.ok) {
         challenges.value = await response.json();
       } else {
@@ -87,7 +89,7 @@
   
   const createChallenge = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/admin/challenges', {
+      const response = await fetch('http://localhost:5000/api/admin/challenges', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,4 +116,5 @@
   onMounted(() => {
     fetchChallenges();
   });
+  
   </script>

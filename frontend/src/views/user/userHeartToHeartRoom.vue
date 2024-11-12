@@ -1,4 +1,5 @@
 <template>
+  <Navbar/>
     <div class="bg-white rounded-lg shadow-md p-6">
       <h2 class="text-2xl font-semibold mb-4 text-green-800">Heart-to-Heart Room</h2>
       <div v-if="!appointment && !isInSession">
@@ -58,6 +59,7 @@
   </template>
   
   <script setup>
+  import Navbar from '@/components/Navbar.vue'
   import { ref, computed, onMounted, onUnmounted } from 'vue';
   
   const appointment = ref(null);
@@ -77,7 +79,7 @@
   
   const scheduleAppointment = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/heart-to-heart/schedule', {
+      const response = await fetch('http://localhost:5000/api/heart-to-heart/schedule', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date: appointmentDate.value, time: appointmentTime.value }),
@@ -92,7 +94,7 @@
   
   const joinSession = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/heart-to-heart/join', {
+      const response = await fetch('http://localhost:5000/api/heart-to-heart/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ appointmentId: appointment.value.id }),
@@ -142,7 +144,7 @@
   
   onMounted(() => {
     // Check for existing appointment
-    fetch('http://localhost:3000/api/heart-to-heart/appointment')
+    fetch('http://localhost:5000/api/heart-to-heart/appointment')
       .then(response => response.json())
       .then(data => {
         if (data.appointment) {

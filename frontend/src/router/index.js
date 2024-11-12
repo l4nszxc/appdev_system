@@ -96,6 +96,13 @@ const routes = [
     name: 'users',
     component: Users,
   },
+  {
+
+    path: '/feed',
+    name: 'feed',
+    component: () => import('../views/user/Feed.vue'), // Lazy-load the Feed component
+    meta: { requiresAuth: true }, // Ensure this route requires authentication
+  },
 ];
 
 const router = createRouter({

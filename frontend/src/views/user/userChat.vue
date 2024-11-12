@@ -1,4 +1,5 @@
 <template>
+  <Navbar/>
     <div class="bg-white rounded-lg shadow-md p-6">
       <h2 class="text-2xl font-semibold mb-4 text-green-800">Chat Support</h2>
       <div v-if="!chatId">
@@ -49,6 +50,7 @@
   </template>
   
   <script setup>
+  import Navbar from '@/components/Navbar.vue'
   import { ref, onMounted, onUnmounted } from 'vue';
   
   const chatId = ref(null);
@@ -99,7 +101,7 @@
   
   const fetchMessages = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/chat/${chatId.value}/messages`);
+      const response = await fetch(`http://localhost:5000/api/chat/${chatId.value}/messages`);
       if (response.ok) {
         messages.value = await response.json();
       }

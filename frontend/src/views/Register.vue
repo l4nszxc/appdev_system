@@ -104,7 +104,7 @@
           <div class="form-group">
             <label for="username" class="form-label">Username</label>
             <div class="input-wrapper">
-              <User  class="input-icon" :size="20" />
+              <User class="input-icon" :size="20" />
               <input
                 id="username"
                 v-model="username"
@@ -150,7 +150,7 @@
           <!-- Confirm Password Field -->
           <div class="form-group">
             <label for="confirmPassword" class="form-label">Confirm Password</label>
-            <div class="input -wrapper">
+            <div class="input-wrapper">
               <Lock class="input-icon" :size="20" />
               <input
                 id="confirmPassword"
@@ -181,7 +181,7 @@
           <!-- Register Button -->
           <button type="submit" class="submit-button">
             Register
-            <User  Plus class="button-icon" :size="20" />
+            <UserPlus class="button-icon" :size="20" />
           </button>
         </form>
       </div>
@@ -196,35 +196,37 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { User, Mail, Lock, UserPlus } from 'lucide-vue-next'
-import axios from 'axios'
-import Navbar from '../components/Navbar.vue'; // Import Navbar component
-import { useRouter } from 'vue-router'; // Import useRouter
+import { ref } from 'vue';
+import { User, Mail, Lock, UserPlus } from 'lucide-vue-next';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import Navbar from '../components/Navbar.vue';
 
-const router = useRouter(); // Initialize router
+const router = useRouter();
+const store = useStore();
 
-const student_id = ref('');  
+const student_id = ref('');
 const firstname = ref('');
 const middlename = ref('');
 const lastname = ref('');
 const gender = ref('');
 const birthdate = ref('');
 const program = ref('');
-const username = ref('')
-const email = ref('')
-const password = ref('')
-const confirmPassword = ref('')
-const agreementAccepted = ref(false); // State for agreement checkbox
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const agreementAccepted = ref(false);
 
 const register = async () => {
   if (password.value !== confirmPassword.value) {
-    alert('Passwords do not match!'); // Password mismatch notification
+    alert('Passwords do not match!');
     return;
   }
 
   if (!agreementAccepted.value) {
-    alert('You must accept the Terms of Service and Privacy Policy to register.'); // Agreement not accepted
+    alert('You must accept the Terms of Service and Privacy Policy to register.');
     return;
   }
 
@@ -243,14 +245,23 @@ const register = async () => {
       program: program.value
     });
 
-    alert(response.data.message); // Success notification
-    router.push({ path: '/login' }); // Redirect to login page
+    console.log('Registration response:', response.data);
 
+    if (response.data && response.data.email) {
+      // Store the email in Vuex for OTP verification
+      store.commit('setEmail', response.data.email);
+      console.log('Email stored in Vuex:', store.state.auth.email);
+      
+      // Redirect to OTP verification page
+      router.push({ name: 'otpVerification' });
+    } else {
+      throw new Error('Email not received from server');
+    }
   } catch (error) {
-    alert(error.response.data.message || 'An error occurred'); // Generic error message
+    console.error('Registration error:', error);
+    alert(error.response?.data?.message || 'An error occurred during registration');
   }
 };
-
 </script>
 
 

@@ -8,6 +8,8 @@ import UserChat from '@/views/user/userChat.vue';
 import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
 import TermsAndConditions from '../views/TermsAndConditions.vue';
 import PrivacyPolicy from '../views/PrivacyPolicy.vue';
+import OTPVerification from '../views/OTPVerification.vue';
+import ForgotPassword from '../views/ForgotPassword.vue'; // Import the ForgotPassword component
 
 // Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
@@ -28,19 +30,31 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login,
-    meta: { requiresGuest: true }, // Only accessible if not logged in
+    meta: { requiresGuest: true },
   },
   {
     path: '/register',
     name: 'register',
     component: Register,
-    meta: { requiresGuest: true }, // Only accessible if not logged in
+    meta: { requiresGuest: true },
+  },
+  {
+    path: '/verify-otp',
+    name: 'otpVerification',
+    component: OTPVerification,
+    meta: { requiresGuest: true },
+  },
+  {
+    path: '/forgot-password', // Add this new route
+    name: 'forgotPassword',
+    component: ForgotPassword,
+    meta: { requiresGuest: true },
   },
   {
     path: '/user-home',
     name: 'userHome',
     component: UserHome,
-    meta: { requiresAuth: true }, // Requires authentication
+    meta: { requiresAuth: true },
   },
   {
     path: '/user/userprofile',
@@ -64,13 +78,11 @@ const routes = [
     path: '/terms-and-conditions',
     name: 'termsAndConditions',
     component: TermsAndConditions,
-    // No meta, accessible to everyone
   },
   {
     path: '/privacy-policy',
     name: 'privacyPolicy',
     component: PrivacyPolicy,
-    // No meta, accessible to everyone
   },
   // ADMIN ROUTES
   {
@@ -111,8 +123,8 @@ const routes = [
   {
     path: '/feed',
     name: 'feed',
-    component: () => import('../views/user/Feed.vue'), // Lazy-load the Feed component
-    meta: { requiresAuth: true }, // Ensure this route requires authentication
+    component: () => import('../views/user/Feed.vue'),
+    meta: { requiresAuth: true },
   },
 ];
 
@@ -126,13 +138,13 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   if (to.meta.requiresAuth && !isLoggedIn) {
-    next({ name: 'login' }); // Redirect to login if not authenticated
+    next({ name: 'login' });
   } else if (to.meta.requiresGuest && isLoggedIn) {
-    next({ name: 'userHome' }); // Redirect to user home if already logged in
+    next({ name: 'userHome' });
   } else if (isLoggedIn && (to.name === 'termsAndConditions' || to.name === 'privacyPolicy')) {
-    next({ name: 'userHome' }); // Redirect logged-in users away from these pages
+    next({ name: 'userHome' });
   } else {
-    next(); // Proceed to the route
+    next();
   }
 });
 

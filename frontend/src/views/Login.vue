@@ -61,20 +61,12 @@
 </template>
 
 <script setup>
-<<<<<<< HEAD
 
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { Mail, Lock, ArrowRight, FingerprintIcon } from 'lucide-vue-next';
 import Navbar from '../components/Navbar.vue';
 import axios from 'axios'
-=======
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { Mail, Lock, ArrowRight } from 'lucide-vue-next';
-import Navbar from '../components/Navbar.vue';
-import axios from 'axios';
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 
 const email = ref('');
 const password = ref('');
@@ -100,7 +92,7 @@ const handleSubmit = async () => {
   }
 };
 
-<<<<<<< HEAD
+
 const authenticateWithFingerprint = async () => {
   if (!window.PublicKeyCredential) {
     alert('Your browser does not support fingerprint authentication.');
@@ -136,9 +128,6 @@ const authenticateWithFingerprint = async () => {
     alert('An error occurred during fingerprint authentication.');
   }
 };
-
-=======
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 // Check login status on component mount
 onMounted(() => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
@@ -162,11 +151,7 @@ onMounted(() => {
 
 .login-card {
   width: 100%;
-<<<<<<< HEAD
   max-width: 32rem; /* Use the desired max-width */
-=======
-  max-width: 32rem;
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
   background-color: #128535; /* Soft green background */
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
@@ -270,14 +255,9 @@ onMounted(() => {
 
 .login-footer {
   padding: 1rem 1.5rem;
-<<<<<<< HEAD
   background-color: #0f6016; /* Soft green background */
   border-top: 1px solid #2a9d8f; /* Solid border for the top */
 }
-=======
-  background-color: #0f6016;
-  border-top: 1px solid #2a9d8f;}
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 
  .fingerprint-button {
   display: flex;
@@ -326,8 +306,4 @@ onMounted(() => {
   font-size: 1rem;
   color: #f1faee; /* Adjust color as needed */
 }
-<<<<<<< HEAD
 </style>
-=======
-</style>
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e

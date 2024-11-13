@@ -7,11 +7,8 @@
     <div class="navbar-links">
       <template v-if="isLoggedIn">
         <span class="username-display">Logged in as: {{ username }}</span>
-<<<<<<< HEAD
+
         <router-link to="/feed" class="nav-link">Feed</router-link>
-=======
-        <router-link to="/feed" class="nav-link">Feed</router-link> <!-- Add this line -->
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
         <div class="profile-menu">
           <img 
             src="../assets/logo.png" 

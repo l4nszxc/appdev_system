@@ -22,18 +22,13 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-<<<<<<< HEAD
+
     "fido2-lib": "^3.5.3",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.4",
-    "nodemailer": "^6.9.16"
-=======
-    "install": "^0.13.0",
-    "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.11.3",
     "nodemailer": "^6.9.16",
+    "install": "^0.13.0",
     "npm": "^10.9.0",
     "otp-generator": "^4.0.1"
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
   }
 }

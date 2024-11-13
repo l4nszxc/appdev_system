@@ -39,16 +39,10 @@ export default {
       if (isLoggedIn.value) {
         try {
           const token = localStorage.getItem('token');
-<<<<<<< HEAD
           const username = 'username';
           const response = await axios.get(`http://localhost:5000/user/${username}`, {
             headers: {
-              Authorization: `Bearer ${token}`,
-=======
-          const response = await axios.get('http://localhost:5000/user', {
-            headers: {
               Authorization: `Bearer ${token}`, // Send the token in the header
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
             },
           });
           userInfo.value = response.data; // Store user information

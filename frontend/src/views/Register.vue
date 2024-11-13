@@ -203,32 +203,21 @@ import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import Navbar from '../components/Navbar.vue';
 
-<<<<<<< HEAD
-const student_id = ref('');  // Keep this line for student_id
-=======
+
 const router = useRouter();
 const store = useStore();
-
-const student_id = ref('');
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
+const student_id = ref(''); // Keep this line for student_id
 const firstname = ref('');
 const middlename = ref('');
 const lastname = ref('');
 const gender = ref('');
 const birthdate = ref('');
 const program = ref('');
-<<<<<<< HEAD
-const username = ref('')
-const email = ref('')
-const password = ref('')
-const confirmPassword = ref('')
-=======
 const username = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 const agreementAccepted = ref(false);
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 
 const register = async () => {
   if (password.value !== confirmPassword.value) {
@@ -243,11 +232,7 @@ const register = async () => {
 
   try {
     const response = await axios.post('http://localhost:5000/register', {
-<<<<<<< HEAD
       student_id: student_id.value,  // Include student_id here
-=======
-      student_id: student_id.value,
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
       username: username.value,
       email: email.value,
       password: password.value,
@@ -260,29 +245,6 @@ const register = async () => {
       program: program.value
     });
 
-<<<<<<< HEAD
-  //   alert(response.data.message); // Success notification
-  // } catch (error) {
-  //   alert(error.response.data.message || 'An error occurred'); // Generic error message
-  // }
-  if (response.data) {
-      alert(response.data.message); // Success notification
-    } else {
-      alert('Registration successful, but no message returned.');
-    }
-  } catch (error) {
-    // Check if error.response is defined
-    if (error.response) {
-      console.error('Error response:', error.response);
-      alert(error.response.data.message || 'An error occurred during registration.');
-    } else {
-      console.error('Error:', error);
-      alert('An unexpected error occurred. Please try again.');
-    }
-  }
-};
-
-=======
     console.log('Registration response:', response.data);
 
     if (response.data && response.data.email) {
@@ -300,7 +262,6 @@ const register = async () => {
     alert(error.response?.data?.message || 'An error occurred during registration');
   }
 };
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 </script>
 
 

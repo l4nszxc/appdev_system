@@ -1,12 +1,13 @@
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-<<<<<<< HEAD
 const userModel = require('../models/userModel');
 const crypto = require('crypto');
 const base64url = require('base64url');
 const { Fido2Lib } = require('fido2-lib');
+const nodemailer = require('nodemailer');
 
+// Fido2Lib configuration
 const f2l = new Fido2Lib({
   timeout: 60000,
   rpId: "localhost",
@@ -19,12 +20,6 @@ const f2l = new Fido2Lib({
 
 let currentChallenge = null;
 
-// Register new user
-
-=======
-const nodemailer = require('nodemailer');
-const userModel = require('../models/userModel');
-
 // Nodemailer configuration
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -34,11 +29,39 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Generate OTP function
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
+// Register new user
+// Add your registration logic here
+
+// Example function to use Nodemailer
+const sendEmail = (to, subject, text) => {
+  const mailOptions = {
+    from: 'lanslorence@gmail.com',
+    to,
+    subject,
+    text,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+    } else {
+      console.log('Email sent:', info.response);
+    }
+  });
+};
+
+// Example usage of generating OTP
+const otp = generateOTP();
+console.log('Generated OTP:', otp);
+
+// Example usage of sending an email
+sendEmail('recipient@example.com', 'Your OTP', `Your OTP is: ${otp}`);
+
 exports.register = (req, res) => {
   const { student_id, username, email, password, confirmPassword, firstname, middlename, lastname, gender, birthdate, program } = req.body;
 
@@ -56,63 +79,59 @@ exports.register = (req, res) => {
 
       bcrypt.hash(password, 10, (err, hashedPassword) => {
         if (err) return res.status(500).json({ error: err.message });
-
-<<<<<<< HEAD
-        userModel.createUser  ({
-          student_id,  // Include student_id here
-=======
-        const otp = generateOTP();
-        const otpExpires = new Date(Date.now() + 300000); // OTP expires in 5 minutes
-
-        const newUser = {
-          student_id,
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
-          username,
-          email,
-          password: hashedPassword,
-          firstname,
-          middlename,
-          lastname,
-          gender,
-          birthdate,
-<<<<<<< HEAD
-          program
-        }, (err, result) => {
-          if (err) return res.status(500).json({ error: err.message });
-          res.status(201).json({ message: 'User  registered successfully!' });
-=======
-          program,
-          otp,
-          otpExpires,
-          isVerified: false
-        };
-
-        userModel.createUser(newUser, (err) => {
-          if (err) return res.status(500).json({ error: err.message });
-
-          const mailOptions = {
-            from: 'lanslorence@gmail.com',
-            to: email,
-            subject: 'Your OTP for Email Verification',
-            text: `Your OTP is: ${otp}. It is valid for 5 minutes.`,
-          };
-
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) return res.status(500).json({ error: error.message });
-            res.status(201).json({ 
-              message: 'User registered successfully! Please check your email for the OTP.',
-              email: email // Send back the email for the frontend to use
-            });
-          });
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
-        });
       });
     });
+    
+// Assume necessary imports and middleware are set up, e.g., for hashing passwords and sending mail.
+
+const otp = generateOTP(); // Generates the OTP code
+const otpExpires = new Date(Date.now() + 300000); // OTP expires in 5 minutes
+
+const newUser = {
+  student_id,
+  username,
+  email,
+  password: hashedPassword,
+  firstname,
+  middlename,
+  lastname,
+  gender,
+  birthdate,
+  program,
+  otp,
+  otpExpires,
+  isVerified: false
+};
+
+userModel.createUser(newUser, (err) => {
+  if (err) {
+    return res.status(500).json({ error: err.message });
+  }
+
+  // Send OTP email to the user
+  const mailOptions = {
+    from: 'lanslorence@gmail.com',
+    to: email,
+    subject: 'Your OTP for Email Verification',
+    text: `Your OTP is: ${otp}. It is valid for 5 minutes.`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    // Successful registration with email sent
+    res.status(201).json({ 
+      message: 'User registered successfully! Please check your email for the OTP.',
+      email: email // Sends back the email for frontend use if needed
+    });
+  });
+});
+
   });
 };
 
-<<<<<<< HEAD
-=======
 exports.verifyOTP = (req, res) => {
   const { email, otp } = req.body;
 
@@ -163,7 +182,6 @@ exports.verifyOTP = (req, res) => {
     });
   });
 };
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 
 // Login user
 exports.login = (req, res) => {
@@ -186,17 +204,13 @@ exports.login = (req, res) => {
       res.status(200).json({
         message: 'Login successful!',
         token,
-<<<<<<< HEAD
+
         username: user.username,  // Include the username in the response
-=======
-        username: user.username,
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
+
       });
     });
   });
 };
-<<<<<<< HEAD
-
 // exports.getUserProfile = (req, res) => {
 //   const userId = req.user.id; // Get user ID from the token payload
 //   userModel.findUserById(student_id, (err, results) => {
@@ -299,7 +313,8 @@ module.exports = {
   login: exports.login,
   startFingerprintAuth: exports.startFingerprintAuth,
   finishFingerprintAuth: exports.finishFingerprintAuth
-=======
+}
+
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
@@ -425,5 +440,5 @@ exports.resetPassword = async (req, res) => {
     console.error('Error in password reset:', error);
     res.status(500).json({ message: 'Error in password reset', error: error.message });
   }
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
+
 };

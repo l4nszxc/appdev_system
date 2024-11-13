@@ -2,15 +2,10 @@ const db = require('../config/db');
 
 // Function to create a new user
 const createUser  = (userData, callback) => {
-<<<<<<< HEAD
-  const { student_id, username, email, password, firstname, middlename, lastname, gender, birthdate, program } = userData;
-  const sql = `INSERT INTO users (student_id, username, email, password, firstname, middlename, lastname, gender, birthdate, program) 
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  db.query(sql, [student_id, username, email, password, firstname, middlename, lastname, gender, birthdate, program], callback);
-=======
+
   const sql = `INSERT INTO users (student_id, username, email, password, firstname, middlename, lastname, gender, birthdate, program, otp, otpExpires) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   db.query(sql, [userData.student_id, userData.username, userData.email, userData.password, userData.firstname, userData.middlename, userData.lastname, userData.gender, userData.birthdate, userData.program, userData.otp, userData.otpExpires], callback);
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
+
 };
 // Function to find a user by email
 const findUserByEmail = (email, callback) => {
@@ -24,18 +19,12 @@ const findUserByEmail = (email, callback) => {
   });
 };
 
-<<<<<<< HEAD
 // Function to find a user by student ID
 const findUserByUsername = (username, callback) => {
   const sql = `SELECT * FROM users WHERE username = ?`;
   db.query(sql, [username], callback);
 };
 
-module.exports = {
-  createUser,
-  findUserByEmail,
-  findUserByUsername,
-=======
 const findUserByStudentId = (student_id, callback) => {
   const sql = 'SELECT * FROM users WHERE student_id = ?';
   db.query(sql, [student_id], callback);
@@ -55,12 +44,10 @@ const updateUser = (userData, callback) => {
 };
 
 
-
-
 module.exports = {
   createUser,
   findUserByEmail,
   findUserByStudentId,
+  findUserByUsername,
   updateUser,
->>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 };

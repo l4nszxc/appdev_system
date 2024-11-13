@@ -39,9 +39,10 @@ export default {
       if (isLoggedIn.value) {
         try {
           const token = localStorage.getItem('token');
-          const response = await axios.get('http://localhost:5000/user', {
+          const username = 'username';
+          const response = await axios.get(`http://localhost:5000/user/${username}`, {
             headers: {
-              Authorization: `Bearer ${token}`, // Send the token in the header
+              Authorization: `Bearer ${token}`,
             },
           });
           userInfo.value = response.data; // Store user information
@@ -58,28 +59,6 @@ export default {
       userInfo,
     };
   },
-  // setup() {
-  //   const userInfo = ref({}); // To hold user information
-
-  //   onMounted(async () => {
-  //     const token = localStorage.getItem('token'); // Retrieve token from local storage
-  //     try {
-  //       const response = await axios.get('http://localhost:5000/user', {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`, // Include token in header
-  //         },
-  //       });
-  //       userInfo.value = response.data; // Store user information
-  //     } catch (error) {
-  //       console.error(error);
-  //       alert('Failed to fetch user details.');
-  //     }
-  //   });
-
-  //   return {
-  //     userInfo,
-  //   };
-  // },
 };
 </script>
 

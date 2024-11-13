@@ -10,10 +10,12 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-    console.log(`Received a ${req.method} request to ${req.url}`);
-    res.json({ message: 'Welcome to the API' });
-});
+app.get('/user/:username', async (req, res) => {
+    const username = req.params.username;
+    // Fetch user data from database or API
+    const userData = await userModel.findUserByUsername(username);
+    res.json(userData);
+  });
 
 // Define routes
 app.post('/register', authController.register);

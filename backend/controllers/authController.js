@@ -81,19 +81,35 @@ exports.login = (req, res) => {
   });
 };
 
-exports.getUserProfile = (req, res) => {
-  // Assume you have a function to get user info by ID from the token
-  const userId = req.user.id; // Get user ID from the token payload
-  userModel.findUserByStudentId(userId, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length = 0) return res.status(404).json({ message: 'User  not found' });
+// exports.getUserProfile = (req, res) => {
+//   const userId = req.user.id; // Get user ID from the token payload
+//   userModel.findUserById(student_id, (err, results) => {
+//     if (err) return res.status(500).json({ error: err.message });
+//     if (results.length = 0) return res.status(404).json({ message: 'User  not found' });
 
-    const user = results[0];
-    // Send user data excluding password
-    const { password, ...userProfile } = user;
-    res.status(200).json(userProfile);
-  });
-}
+//     const user = results[0];
+//     // Send user data excluding password
+//     const { password, ...userProfile } = user;
+//     res.status(200).json(userProfile);
+//   });
+// }
+exports.getUserProfile = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const username = decoded.username;
+    const user = await userModel.findUserByUsername({ username: username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const userProfile = { ...user };
+    delete userProfile.password;
+    res.json(userProfile);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 // Start fingerprint authentication
 exports.startFingerprintAuth = async (req, res) => {

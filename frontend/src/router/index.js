@@ -30,7 +30,15 @@ import UserHome from '../views/user/userHome.vue';
 import UserProfile from '../views/user/UserProfile.vue';
 import UserChat from '@/views/user/userChat.vue';   
 import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
+<<<<<<< HEAD
 import MindfulnessExercises from '../views/MindfulnessExercises.vue';
+=======
+import TermsAndConditions from '../views/TermsAndConditions.vue';
+import PrivacyPolicy from '../views/PrivacyPolicy.vue';
+import OTPVerification from '../views/OTPVerification.vue';
+import ForgotPassword from '../views/ForgotPassword.vue'; // Import the ForgotPassword component
+
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 // Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
 import AdminEmpathyC from '@/views/admin/adminEmpathyC.vue';
@@ -50,13 +58,33 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login,
+<<<<<<< HEAD
     meta: { requiresGuest: true }, // Add meta field for guest requirement
+=======
+    meta: { requiresGuest: true },
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
   },
   {
     path: '/register',
     name: 'register',
     component: Register,
+<<<<<<< HEAD
     meta: { requiresGuest: true }, // Add meta field for guest requirement
+=======
+    meta: { requiresGuest: true },
+  },
+  {
+    path: '/verify-otp',
+    name: 'otpVerification',
+    component: OTPVerification,
+    meta: { requiresGuest: true },
+  },
+  {
+    path: '/forgot-password', // Add this new route
+    name: 'forgotPassword',
+    component: ForgotPassword,
+    meta: { requiresGuest: true },
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
   },
   // {
   // //   path: '/forgot-password',
@@ -79,6 +107,7 @@ const routes = [
     path: '/user/userChat',
     name: 'userChat',
     component: UserChat,
+<<<<<<< HEAD
     meta: { requiresAuth: true},
   },
   {
@@ -95,6 +124,28 @@ const routes = [
     component: AdminHome,
   },
   {
+=======
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/user/userHeartToHeartRoom',
+    name: 'userHeartToHeartRoom',
+    component: UserHeartToHeartRoom,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/terms-and-conditions',
+    name: 'termsAndConditions',
+    component: TermsAndConditions,
+  },
+  {
+    path: '/privacy-policy',
+    name: 'privacyPolicy',
+    component: PrivacyPolicy,
+  },
+  // ADMIN ROUTES
+  {
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
     path: '/admin-home',
     name: 'adminHome',
     component: AdminHome,
@@ -130,6 +181,7 @@ const routes = [
     component: Users,
   },
   {
+<<<<<<< HEAD
 
     path: '/feed',
     name: 'feed',
@@ -140,6 +192,12 @@ const routes = [
     path: '/mindfulness',
     name: 'mindfulness',
     component: MindfulnessExercises,
+=======
+    path: '/feed',
+    name: 'feed',
+    component: () => import('../views/user/Feed.vue'),
+    meta: { requiresAuth: true },
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
   },
 ];
 
@@ -153,11 +211,21 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   if (to.meta.requiresAuth && !isLoggedIn) {
+<<<<<<< HEAD
     next({ name: 'login' }); // Redirect to login if not authenticated
   } else if (to.meta.requiresGuest && isLoggedIn) {
     next({ name: 'userHome' }); // Redirect to user home if already logged in
   } else {
     next(); // Proceed to the route
+=======
+    next({ name: 'login' });
+  } else if (to.meta.requiresGuest && isLoggedIn) {
+    next({ name: 'userHome' });
+  } else if (isLoggedIn && (to.name === 'termsAndConditions' || to.name === 'privacyPolicy')) {
+    next({ name: 'userHome' });
+  } else {
+    next();
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
   }
 });
 

@@ -163,6 +163,21 @@
             </div>
           </div>
 
+          <!-- Agreement Checkbox -->
+          <div class="form-group">
+            <label>
+              <input
+                type="checkbox"
+                v-model="agreementAccepted"
+                required
+              />
+              I agree to the 
+              <router-link to="/terms-and-conditions" class="link">Terms of Service</router-link> 
+              and 
+              <router-link to="/privacy-policy" class="link">Privacy Policy</router-link>.
+            </label>
+          </div>
+
           <!-- Register Button -->
           <button type="submit" class="submit-button">
             Register
@@ -181,32 +196,58 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { User, Mail, Lock, UserPlus } from 'lucide-vue-next'
-import axios from 'axios'
-import Navbar from '../components/Navbar.vue'; // Import Navbar component
+import { ref } from 'vue';
+import { User, Mail, Lock, UserPlus } from 'lucide-vue-next';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import Navbar from '../components/Navbar.vue';
 
+<<<<<<< HEAD
 const student_id = ref('');  // Keep this line for student_id
+=======
+const router = useRouter();
+const store = useStore();
+
+const student_id = ref('');
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 const firstname = ref('');
 const middlename = ref('');
 const lastname = ref('');
 const gender = ref('');
 const birthdate = ref('');
 const program = ref('');
+<<<<<<< HEAD
 const username = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+=======
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const agreementAccepted = ref(false);
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 
 const register = async () => {
   if (password.value !== confirmPassword.value) {
-    alert('Passwords do not match!'); // Password mismatch notification
+    alert('Passwords do not match!');
+    return;
+  }
+
+  if (!agreementAccepted.value) {
+    alert('You must accept the Terms of Service and Privacy Policy to register.');
     return;
   }
 
   try {
     const response = await axios.post('http://localhost:5000/register', {
+<<<<<<< HEAD
       student_id: student_id.value,  // Include student_id here
+=======
+      student_id: student_id.value,
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
       username: username.value,
       email: email.value,
       password: password.value,
@@ -219,6 +260,7 @@ const register = async () => {
       program: program.value
     });
 
+<<<<<<< HEAD
   //   alert(response.data.message); // Success notification
   // } catch (error) {
   //   alert(error.response.data.message || 'An error occurred'); // Generic error message
@@ -240,7 +282,27 @@ const register = async () => {
   }
 };
 
+=======
+    console.log('Registration response:', response.data);
+
+    if (response.data && response.data.email) {
+      // Store the email in Vuex for OTP verification
+      store.commit('setEmail', response.data.email);
+      console.log('Email stored in Vuex:', store.state.auth.email);
+      
+      // Redirect to OTP verification page
+      router.push({ name: 'otpVerification' });
+    } else {
+      throw new Error('Email not received from server');
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    alert(error.response?.data?.message || 'An error occurred during registration');
+  }
+};
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
 </script>
+
 
 <style scoped>
 /* Main container with gradient background */
@@ -303,7 +365,7 @@ const register = async () => {
 
 /* Label and icon colors */
 .form-label {
-  font-size: 0.875rem;
+  font-size: 0. 875rem;
   font-weight: 500;
   color: #f1faee;
 }

@@ -15,8 +15,14 @@
     "cors": "^2.8.5",
     "lucide-vue-next": "^0.453.0",
     "register-service-worker": "^1.7.2",
+<<<<<<< HEAD
     "vue": "^3.5.12",
     "vue-router": "^4.4.5"
+=======
+    "vue": "^3.2.13",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.0.2"
+>>>>>>> 0f2941a0bc1337b7083106f0e75ce9460af8ff9e
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.0",

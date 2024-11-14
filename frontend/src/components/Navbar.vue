@@ -3,11 +3,15 @@
     <div class="logo-title">
       <img src="../assets/MINSU LOGO.png" alt="Logo" class="logo" />
       <h1 class="navbar-brand">MINDCONNECT</h1>
+      <span v-if="isLoggedIn" class="username-display">Logged in as: {{ username }}</span>
     </div>
     <div class="navbar-links">
       <template v-if="isLoggedIn">
-        <span class="username-display">Logged in as: {{ username }}</span>
-        <router-link to="/feed" class="nav-link">Feed</router-link> <!-- Add this line -->
+        <div class="vertical-line"></div> <!-- Vertical line -->
+        <router-link to="/feed" class="nav-link">Feed</router-link>
+        <router-link to="/feedback" class="nav-link">Feedback</router-link>
+        <router-link to="/user/userChat" class="nav-link">Chat Support</router-link>
+        <router-link to="/user/userHeartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
         <div class="profile-menu">
           <img 
             src="../assets/logo.png" 
@@ -100,7 +104,15 @@ export default {
   font-size: 1.8rem;
   font-weight: bold;
   color: #ffffff;
+  margin-right: 20px; /* Add some space between the title and the username */
 }
+
+.username-display {
+  font-size: 1.3rem;
+  color: #ffffff;
+  margin-right: 20px; /* Add some space before the vertical line */
+}
+
 
 .navbar-links {
   display: flex;
@@ -154,10 +166,4 @@ export default {
 .nav-link:not(.logout-button):hover {
   background-color: rgba(9, 117, 76, 0.3);
 }
-
-.username-display {
-  font-size: 1.3rem;
-  color: #ffffff;
-  margin-right: 10px;
-}
-</style>
+</style> 

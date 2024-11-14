@@ -133,7 +133,7 @@ exports.login = (req, res) => {
 
   userModel.findUserByEmail(email, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
-    if (results.length === 0) return res.status(400).json({ message: 'User  not found!' });
+    if (results.length === 0) return res.status(400).json({ message: 'User not found!' });
 
     const user = results[0];
     if (!user.isVerified) {
@@ -144,7 +144,7 @@ exports.login = (req, res) => {
       if (err) return res.status(500).json({ error: err.message });
       if (!isMatch) return res.status(400).json({ message: 'Incorrect password!' });
 
-      const token = jwt.sign({ id: user.id, username: user.username }, 'your_jwt_secret', { expiresIn: '1h' });
+      const token = jwt.sign({ student_id: user.student_id, username: user.username }, 'your_jwt_secret', { expiresIn: '1h' });
       res.status(200).json({
         message: 'Login successful!',
         token,

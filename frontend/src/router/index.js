@@ -45,7 +45,7 @@ const routes = [
     meta: { requiresGuest: true },
   },
   {
-    path: '/forgot-password', // Add this new route
+    path: '/forgot-password',
     name: 'forgotPassword',
     component: ForgotPassword,
     meta: { requiresGuest: true },
@@ -72,7 +72,7 @@ const routes = [
     path: '/user/userHeartToHeartRoom',
     name: 'userHeartToHeartRoom',
     component: UserHeartToHeartRoom,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true },   
   },
   {
     path: '/terms-and-conditions',
@@ -83,6 +83,12 @@ const routes = [
     path: '/privacy-policy',
     name: 'privacyPolicy',
     component: PrivacyPolicy,
+  },
+  {
+    path: '/feedback',
+    name: 'feedback',
+    component: () => import('../views/user/Feedback.vue'),
+    meta: { requiresAuth: true },
   },
   // ADMIN ROUTES
   {

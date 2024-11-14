@@ -20,8 +20,8 @@ app.get('/user/:username', async (req, res) => {
 // Define routes
 app.post('/register', authController.register);
 app.post('/login', authController.login);
-app.post('/fingerprint/start', authController.startFingerprintAuth);
-app.post('/fingerprint/finish', authController.finishFingerprintAuth);
+// app.post('/fingerprint/start', authController.startFingerprintAuth);
+// app.post('/fingerprint/finish', authController.finishFingerprintAuth);
 app.post('/verify-otp', authController.verifyOTP);
 app.post('/forgot-password', authController.forgotPassword);
 app.post('/verify-reset-otp', authController.verifyResetOTP);

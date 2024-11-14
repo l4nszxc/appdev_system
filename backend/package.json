@@ -16,19 +16,35 @@
     "nodemon": "^3.1.7"
   },
   "dependencies": {
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-pwa": "^5.0.8",
+    "@vue/cli-plugin-router": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
+    "autoprefixer": "^10.4.20",
+    "axios": "^1.7.7",
     "base64url": "^3.0.1",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
+    "bootstrap": "^5.3.3",
+    "core-js": "^3.39.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-
     "fido2-lib": "^3.5.3",
+    "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",
+    "lucide-vue-next": "^0.456.0",
     "mysql2": "^3.11.4",
     "nodemailer": "^6.9.16",
-    "install": "^0.13.0",
     "npm": "^10.9.0",
-    "otp-generator": "^4.0.1"
+    "otp-generator": "^4.0.1",
+    "postcss": "^8.4.49",
+    "register-service-worker": "^1.7.2",
+    "tailwindcss": "^3.4.14",
+    "vue": "^3.5.12",
+    "vue-router": "^4.4.5",
+    "vuex": "^4.1.0"
   }
 }

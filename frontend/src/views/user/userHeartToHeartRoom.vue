@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <Navbar :isLoggedIn="isLoggedIn" :username="username" />
     <div class="bg-white rounded-lg shadow-md p-6">
       <h2 class="text-2xl font-semibold mb-4 text-green-800">Heart-to-Heart Room</h2>
       <div v-if="!appointment && !isInSession">
@@ -55,106 +57,121 @@
         </button>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, computed, onMounted, onUnmounted } from 'vue';
-  
-  const appointment = ref(null);
-  const appointmentDate = ref('');
-  const appointmentTime = ref('');
-  const isInSession = ref(false);
-  const availableTimes = [
-    '09:00 AM', '10:00 AM', '11:00 AM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'
-  ];
-  
-  const isAppointmentTime = computed(() => {
-    if (!appointment.value) return false;
-    const now = new Date();
-    const appointmentDateTime = new Date(appointment.value.date + 'T' + appointment.value.time);
-    return Math.abs(now - appointmentDateTime) < 5 * 60 * 1000; // Within 5 minutes of appointment time
-  });
-  
-  const scheduleAppointment = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/heart-to-heart/schedule', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: appointmentDate.value, time: appointmentTime.value }),
-      });
-      if (response.ok) {
-        appointment.value = await response.json();
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import Navbar from '@/components/Navbar.vue'; // Import the Navbar component
+
+const appointment = ref(null);
+const appointmentDate = ref('');
+const appointmentTime = ref('');
+const isInSession = ref(false);
+const availableTimes = [
+  '09:00 AM', '10:00 AM', '11:00 AM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'
+];
+
+const isLoggedIn = ref(false);
+const username = ref('');
+
+// Check login status on component mount
+onMounted(() => {
+  isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+  username.value = localStorage.getItem('username') || '';
+});
+
+const isAppointmentTime = computed(() => {
+  if (!appointment.value) return false;
+  const now = new Date();
+  const appointmentDateTime = new Date(appointment.value.date + 'T' + appointment.value.time);
+  return Math.abs(now - appointmentDateTime) < 5 * 60 * 1000; // Within 5 minutes of appointment time
+});
+
+const scheduleAppointment = async () => {
+  try {
+    const response = await fetch('http://localhost:5000/api/ heart-to-heart/schedule', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date: appointmentDate.value, time: appointmentTime.value }),
+    });
+    if (response.ok) {
+      appointment.value = await response.json();
+    }
+  } catch (error) {
+    console.error('Error scheduling appointment:', error);
+  }
+};
+
+const joinSession = async () => {
+  try {
+    const response = await fetch('http://localhost:5000/api/heart-to-heart/join', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ appointmentId: appointment.value.id }),
+    });
+    if (response.ok) {
+      isInSession.value = true;
+      initializeVideoSDK();
+    }
+  } catch (error) {
+    console.error('Error joining session:', error);
+  }
+};
+
+const endSession = () => {
+  isInSession.value = false;
+  appointment.value = null;
+  // Clean up video session
+  const videoContainer = document.getElementById('video-container');
+  while (videoContainer.firstChild) {
+    videoContainer.removeChild(videoContainer.firstChild);
+  }
+};
+
+const formatAppointment = (apt) => {
+  return `${apt.date} at ${apt.time}`;
+};
+
+const initializeVideoSDK = () => {
+  // This is a placeholder for video SDK initialization
+  console.log('Initializing video SDK');
+  const videoContainer = document.getElementById('video-container');
+  const localVideo = document.createElement('video');
+  localVideo.autoplay = true;
+  localVideo.muted = true;
+  localVideo.style.width = '50%';
+  localVideo.style.height = '100%';
+  videoContainer.appendChild(localVideo);
+
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then(stream => {
+      localVideo.srcObject = stream;
+    })
+    .catch(error => {
+      console.error('Error accessing media devices:', error);
+    });
+};
+
+onMounted(() => {
+  // Check for existing appointment
+  fetch('http://localhost:5000/api/heart-to-heart/appointment')
+    .then(response => response.json())
+    .then(data => {
+      if (data.appointment) {
+        appointment.value = data.appointment;
       }
-    } catch (error) {
-      console.error('Error scheduling appointment:', error);
-    }
-  };
-  
-  const joinSession = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/heart-to-heart/join', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ appointmentId: appointment.value.id }),
-      });
-      if (response.ok) {
-        isInSession.value = true;
-        initializeVideoSDK();
-      }
-    } catch (error) {
-      console.error('Error joining session:', error);
-    }
-  };
-  
-  const endSession = () => {
-    isInSession.value = false;
-    appointment.value = null;
-    // Clean up video session
-    const videoContainer = document.getElementById('video-container');
-    while (videoContainer.firstChild) {
-      videoContainer.removeChild(videoContainer.firstChild);
-    }
-  };
-  
-  const formatAppointment = (apt) => {
-    return `${apt.date} at ${apt.time}`;
-  };
-  
-  const initializeVideoSDK = () => {
-    // This is a placeholder for video SDK initialization
-    console.log('Initializing video SDK');
-    const videoContainer = document.getElementById('video-container');
-    const localVideo = document.createElement('video');
-    localVideo.autoplay = true;
-    localVideo.muted = true;
-    localVideo.style.width = '50%';
-    localVideo.style.height = '100%';
-    videoContainer.appendChild(localVideo);
-  
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(stream => {
-        localVideo.srcObject = stream;
-      })
-      .catch(error => {
-        console.error('Error accessing media devices:', error);
-      });
-  };
-  
-  onMounted(() => {
-    // Check for existing appointment
-    fetch('http://localhost:5000/api/heart-to-heart/appointment')
-      .then(response => response.json())
-      .then(data => {
-        if (data.appointment) {
-          appointment.value = data.appointment;
-        }
-      })
-      .catch(error => console.error('Error fetching appointment:', error));
-  });
-  
-  onUnmounted(() => {
-    if (isInSession.value) {
-      endSession();
-    }
-  });
-  </script>
+    })
+    .catch(error => console.error('Error fetching appointment:', error));
+});
+
+onUnmounted(() => {
+  if (isInSession.value) {
+    endSession();
+  }
+});
+</script>
+
+<style scoped>
+/* Add any additional styles you want here */
+</style>

@@ -1,27 +1,3 @@
-// import { createRouter, createWebHistory } from 'vue-router';
-// import HomeView from '../views/HomeView.vue';
-// import Login from '../views/Login.vue';
-// import Register from '../views/Register.vue';
-// <<<<<<< HEAD
-// import UserHome from '../views/user/userHome.vue'; // Import the UserHome component
-// import MindfulnessExercises from '../views/MindfulnessExercises.vue'
-// =======
-// import UserHome from '../views/user/userHome.vue';
-// import UserProfile from '../views/user/UserProfile.vue';
-// import UserChat from '@/views/user/userChat.vue';   
-// import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
-
-
-// //Admin imports
-// import AdminHome from '@/views/admin/adminHome.vue';
-// import AdminEmpathyC from '@/views/admin/adminEmpathyC.vue';
-// import AdminFeed from '@/views/admin/adminFeed.vue';
-// import AdminMessages from '@/views/admin/adminMessages.vue';
-// import HeartToHeartRoom from '@/views/admin/heartToHeartRoom.vue';
-// import MoodReport from '@/views/admin/moodReport.vue';
-// import Users from '@/views/admin/users.vue';
-// >>>>>>> f4753cef5cfcf1d8d3356c1b5d037340b0cf2898
-
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import Login from '../views/Login.vue';
@@ -30,7 +6,6 @@ import UserHome from '../views/user/userHome.vue';
 import UserProfile from '../views/user/UserProfile.vue';
 import UserChat from '@/views/user/userChat.vue';   
 import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
-import MindfulnessExercises from '../views/MindfulnessExercises.vue';
 import TermsAndConditions from '../views/TermsAndConditions.vue';
 import PrivacyPolicy from '../views/PrivacyPolicy.vue';
 import OTPVerification from '../views/OTPVerification.vue';
@@ -55,12 +30,12 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login,
-    meta: { requiresGuest: true }, // Add meta field for guest requirement
+    meta: { requiresGuest: true },
   },
   {
     path: '/register',
     name: 'register',
-    component: Register, // Add meta field for guest requirement
+    component: Register,
     meta: { requiresGuest: true },
   },
   {
@@ -70,16 +45,11 @@ const routes = [
     meta: { requiresGuest: true },
   },
   {
-    path: '/forgot-password', // Add this new route
+    path: '/forgot-password',
     name: 'forgotPassword',
     component: ForgotPassword,
     meta: { requiresGuest: true },
   },
-  // {
-  // //   path: '/forgot-password',
-  // //   name: 'ForgotPassword',
-  // //   component: () => import('../views/ForgotPassword.vue'), // Import your ForgotPassword component
-  // // },
   {
     path: '/user-home',
     name: 'userHome',
@@ -96,28 +66,13 @@ const routes = [
     path: '/user/userChat',
     name: 'userChat',
     component: UserChat,
-    meta: { requiresAuth: true},
-  },
-  {
-    path:'/user/userHeartToHeartRoom',
-    name: 'userHeartToHeartRoom',
-    component: UserHeartToHeartRoom,
-    meta: {requiresAuth: true},
-  },
-
-  //ADMIN ROUTES
-  {
-    path: '/admin-home',
-    name: 'adminHome',
-    component: AdminHome,
     meta: { requiresAuth: true },
   },
-
   {
     path: '/user/userHeartToHeartRoom',
     name: 'userHeartToHeartRoom',
     component: UserHeartToHeartRoom,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true },   
   },
   {
     path: '/terms-and-conditions',
@@ -128,6 +83,12 @@ const routes = [
     path: '/privacy-policy',
     name: 'privacyPolicy',
     component: PrivacyPolicy,
+  },
+  {
+    path: '/feedback',
+    name: 'feedback',
+    component: () => import('../views/user/Feedback.vue'),
+    meta: { requiresAuth: true },
   },
   // ADMIN ROUTES
   {
@@ -168,13 +129,7 @@ const routes = [
   {
     path: '/feed',
     name: 'feed',
-    component: () => import('../views/user/Feed.vue'), // Lazy-load the Feed component
-    meta: { requiresAuth: true }, // Ensure this route requires authentication
-  },
-  {
-    path: '/mindfulness',
-    name: 'mindfulness',
-    component: MindfulnessExercises,
+    component: () => import('../views/user/Feed.vue'),
     meta: { requiresAuth: true },
   },
 ];
@@ -189,13 +144,13 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
   if (to.meta.requiresAuth && !isLoggedIn) {
-    next({ name: 'login' }); // Redirect to login if not authenticated
+    next({ name: 'login' });
   } else if (to.meta.requiresGuest && isLoggedIn) {
-    next({ name: 'userHome' }); // Redirect to user home if already logged in
+    next({ name: 'userHome' });
   } else if (isLoggedIn && (to.name === 'termsAndConditions' || to.name === 'privacyPolicy')) {
-    next({ name: 'userHome' }); // Redirect to user home if logged in and trying to access terms/privacy
+    next({ name: 'userHome' });
   } else {
-    next(); // Proceed to the route
+    next();
   }
 });
 

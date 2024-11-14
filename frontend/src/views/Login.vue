@@ -1,4 +1,3 @@
-
 <template>
   <Navbar />
   <div class="app-container">
@@ -38,10 +37,6 @@
             Log In
             <ArrowRight class="button-icon" :size="20" />
           </button>
-          <button @click="authenticateWithFingerprint" type="button" class="fingerprint-button">
-            <FingerprintIcon :size="20" class="fingerprint-icon" />
-            Login with Fingerprint
-          </button>
         </form>
       </div>
       <div class="login-footer">
@@ -61,12 +56,11 @@
 </template>
 
 <script setup>
-
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { Mail, Lock, ArrowRight, FingerprintIcon } from 'lucide-vue-next';
+import { Mail, Lock, ArrowRight } from 'lucide-vue-next';
 import Navbar from '../components/Navbar.vue';
-import axios from 'axios'
+import axios from 'axios';
 
 const email = ref('');
 const password = ref('');
@@ -88,46 +82,10 @@ const handleSubmit = async () => {
     username.value = response.data.username; // Store username in local state
     router.push({ name: 'userHome' }); // Redirect to user home page
   } catch (error) {
-    alert(error.response?.data?.message || 'An error occurred');
+    alert(error.response.data.message || 'An error occurred'); // Error notification
   }
 };
 
-
-const authenticateWithFingerprint = async () => {
-  if (!window.PublicKeyCredential) {
-    alert('Your browser does not support fingerprint authentication.');
-    return;
-  }
-
-  try {
-    const response = await axios.post('http://localhost:5000/auth/fingerprint/start');
-    const options = response.data;
-
-    const credential = await navigator.credentials.get(options);
-
-    const result = await axios.post('http://localhost:5000/auth/fingerprint/finish', {
-      id: credential.id,
-      rawId: Array.from(new Uint8Array(credential.rawId)),
-      response: {
-        authenticatorData: Array.from(new Uint8Array(credential.response.authenticatorData)),
-        clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON)),
-        signature: Array.from(new Uint8Array(credential.response.signature))
-      },
-      type: credential.type
-    });
-
-    if (result.data.success) {
-      alert('Fingerprint authentication successful!');
-      localStorage.setItem('token', result.data.token);
-      router.push({ name: 'userHome' });
-    } else {
-      alert('Fingerprint authentication failed.');
-    }
-  } catch (error) {
-    console.error('Fingerprint authentication error:', error);
-    alert('An error occurred during fingerprint authentication.');
-  }
-};
 // Check login status on component mount
 onMounted(() => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
@@ -136,6 +94,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Main container with background gradient */
 .app-container {
   min-height: 100vh;
   display: flex;
@@ -144,14 +103,15 @@ onMounted(() => {
   justify-content: flex-start;
   background-image: url('../assets/bg minsu.png');
   background-size: cover;
-  background-position: center;
+  background-position: center; /* Centers the background image */
   background-repeat: no-repeat;
   padding-top: 80px;
 }
 
+/* Login card styling */
 .login-card {
   width: 100%;
-  max-width: 32rem; /* Use the desired max-width */
+  max-width: 32rem;
   background-color: #128535; /* Soft green background */
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
@@ -168,6 +128,7 @@ onMounted(() => {
   }
 }
 
+/* Title styling */
 .login-title {
   font-size: 1.5rem;
   font-weight: bold;
@@ -176,6 +137,7 @@ onMounted(() => {
   margin-bottom: 1.5rem;
 }
 
+/* Form layout */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -206,13 +168,14 @@ onMounted(() => {
   color: #f1faee;
 }
 
+/* Input field styling */
 .form-input {
   width: 85%;
   padding: 0.5rem 1rem 0.5rem 2.5rem;
   border: 1px solid #ffffff;
   border-radius: 0.375rem;
   font-size: 1rem;
-  background-color: #9da09d;
+  background-color: #9da09d; /* Dark blue-green */
   color: #f1faee;
 }
 
@@ -226,6 +189,7 @@ onMounted(() => {
   border-color: transparent;
 }
 
+/* Submit button styling */
 .submit-button {
   display: flex;
   justify-content: center;
@@ -253,51 +217,31 @@ onMounted(() => {
   margin-left: 0.5rem;
 }
 
+/* Footer styling */
 .login-footer {
   padding: 1rem 1.5rem;
-  background-color: #0f6016; /* Soft green background */
-  border-top: 1px solid #2a9d8f; /* Solid border for the top */
-}
+  background-color: #0f6016;
+  border-top: 1px solid #2a9d8f;}
 
- .fingerprint-button {
+.footer-links {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  width: 100%;
-  padding: 0.5rem 1rem;
-  background-color: #4CAF50; /* Original background color */
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-  .footer-links {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 0.5rem 1rem;
-  margin-top: 1rem;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  gap: 0.5rem;
+  font-size: 0.875rem;
 }
 
-.fingerprint-button:hover {
-  background-color: #45a049;
+.signup-text {
+  color: #f1faee;
 }
 
-.fingerprint-icon {
-  margin-right: 0.5rem;
+.link {
+  color: #1d3557;
+  text-decoration: none;
 }
+
 .link:hover {
-  text-decoration: underline; /* Underline on hover */
+  text-decoration: underline;
 }
 
 /* Welcome message styling */

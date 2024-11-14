@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <Navbar :isLoggedIn="isLoggedIn" :username="username" />
     <div class="bg-white rounded-lg shadow-md p-6">
       <h2 class="text-2xl font-semibold mb-4 text-green-800">Chat Support</h2>
       <div v-if="!chatId">
@@ -46,81 +48,95 @@
         </div>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, onMounted, onUnmounted } from 'vue';
-  
-  const chatId = ref(null);
-  const userId = ref(null);
-  const messages = ref([]);
-  const newMessage = ref('');
-  const isAnonymous = ref(false);
-  
-  const initiateChat = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/chat/initiate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ isAnonymous: isAnonymous.value }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        chatId.value = data.chatId;
-        userId.value = data.userId;
-        startPolling();
-      }
-    } catch (error) {
-      console.error('Error initiating chat:', error);
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import Navbar from '@/components/Navbar.vue'; // Import the Navbar component
+
+const chatId = ref(null);
+const userId = ref(null);
+const messages = ref([]);
+const newMessage = ref('');
+const isAnonymous = ref(false);
+const isLoggedIn = ref(false);
+const username = ref('');
+
+// Check login status on component mount
+onMounted(() => {
+  isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+  username.value = localStorage.getItem('username') || '';
+});
+
+const initiateChat = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/chat/initiate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ isAnonymous: isAnonymous.value }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      chatId.value = data.chatId;
+      userId.value = data.userId;
+      startPolling();
     }
-  };
-  
-  const sendMessage = async () => {
-    if (!newMessage.value.trim()) return;
-  
-    try {
-      await fetch(`http://localhost:3000/api/chat/${chatId.value}/message`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          content: newMessage.value,
-          senderId: userId.value
-        }),
-      });
-      newMessage.value = '';
-    } catch (error) {
-      console.error('Error sending message:', error);
+  } catch (error) {
+    console.error('Error initiating chat:', error);
+  }
+};
+
+const sendMessage = async () => {
+  if (!newMessage.value.trim()) return;
+
+  try {
+    await fetch(`http://localhost:3000/api/chat/${chatId.value}/message`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        content: newMessage.value,
+        senderId: userId.value
+      }),
+    });
+    newMessage.value = '';
+  } catch (error) {
+    console.error('Error sending message:', error);
+  }
+};
+
+const fetchMessages = async () => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/chat/${chatId.value}/messages`);
+    if (response.ok) {
+      messages.value = await response.json();
     }
-  };
-  
-  const fetchMessages = async () => {
-    try {
-      const response = await fetch(`http://localhost:3000/api/chat/${chatId.value}/messages`);
-      if (response.ok) {
-        messages.value = await response.json();
-      }
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-    }
-  };
-  
-  const formatDate = (timestamp) => {
-    return new Date(timestamp).toLocaleString();
-  };
-  
-  let pollingInterval;
-  
-  const startPolling = () => {
-    pollingInterval = setInterval(fetchMessages, 3000);
-  };
-  
-  onUnmounted(() => {
-    if (pollingInterval) {
-      clearInterval(pollingInterval);
-    }
-  });
-  </script>
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+  }
+};
+
+const formatDate = (timestamp) => {
+  return new Date(timestamp).toLocaleString();
+};
+
+let pollingInterval;
+
+const startPolling = () => {
+  pollingInterval = setInterval(fetchMessages, 3000);
+};
+
+onUnmounted(() => {
+  if (pollingInterval) {
+    clearInterval(pollingInterval);
+  }
+});
+</script>
+
+<style scoped>
+/* Add any additional styles you want here */
+</style>

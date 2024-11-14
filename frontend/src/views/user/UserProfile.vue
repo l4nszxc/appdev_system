@@ -22,16 +22,15 @@ import Navbar from '../../components/Navbar.vue';
 import axios from 'axios';
 
 export default {
-  name: 'User Profile',
+  name: 'UserProfile',
   components: {
     Navbar,
   },
   setup() {
     const isLoggedIn = ref(false);
     const username = ref('');
-    const userInfo = ref({}); // To hold user information
+    const userInfo = ref({});
 
-    // Fetch user login state and username from local storage
     onMounted(async () => {
       isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
       username.value = localStorage.getItem('username') || '';
@@ -39,16 +38,15 @@ export default {
       if (isLoggedIn.value) {
         try {
           const token = localStorage.getItem('token');
-          const username = 'username';
-          const response = await axios.get(`http://localhost:5000/user/${username}`, {
+          const response = await axios.get('http://localhost:5000/user', {
             headers: {
-              Authorization: `Bearer ${token}`, // Send the token in the header
+              Authorization: `Bearer ${token}`,
             },
           });
-          userInfo.value = response.data; // Store user information
+          userInfo.value = response.data;
         } catch (error) {
-          console.error(error);
-          alert('Failed to fetch user details.');
+          console.error('Failed to fetch user details:', error);
+          alert('Failed to fetch user details. Please try again later.');
         }
       }
     });
@@ -67,5 +65,7 @@ export default {
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 10px;
+  max-width: 600px;
+  margin: 20px auto;
 }
 </style>

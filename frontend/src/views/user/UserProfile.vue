@@ -12,12 +12,14 @@
       <p><strong>Gender:</strong> {{ userInfo.gender }}</p>
       <p><strong>Birthdate:</strong> {{ userInfo.birthdate }}</p>
       <p><strong>Program:</strong> {{ userInfo.program }}</p>
+      <button @click="goToEditProfile" class="edit-profile-btn">EDIT PROFILE</button>
     </div>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import Navbar from '../../components/Navbar.vue';
 import axios from 'axios';
 
@@ -30,6 +32,7 @@ export default {
     const isLoggedIn = ref(false);
     const username = ref('');
     const userInfo = ref({});
+    const router = useRouter();
 
     onMounted(async () => {
       isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
@@ -51,10 +54,15 @@ export default {
       }
     });
 
+    const goToEditProfile = () => {
+      router.push('/update-profile');
+    };
+
     return {
       isLoggedIn,
       username,
       userInfo,
+      goToEditProfile,
     };
   },
 };
@@ -67,5 +75,18 @@ export default {
   border-radius: 10px;
   max-width: 600px;
   margin: 20px auto;
+}
+.edit-profile-btn {
+  background-color: #0f6016;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+.edit-profile-btn:hover {
+  background-color: #0d4f12;
 }
 </style>

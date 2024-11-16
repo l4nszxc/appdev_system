@@ -1,10 +1,10 @@
 const db = require('../config/db');
 
-// Function to create a new user
 const createUser  = (userData, callback) => {
   const sql = `INSERT INTO users (student_id, username, email, password, firstname, middlename, lastname, gender, birthdate, program, otp, otpExpires) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   db.query(sql, [userData.student_id, userData.username, userData.email, userData.password, userData.firstname, userData.middlename, userData.lastname, userData.gender, userData.birthdate, userData.program, userData.otp, userData.otpExpires], callback);
 };
+
 // Function to find a user by email
 const findUserByEmail = (email, callback) => {
   const sql = `SELECT * FROM users WHERE email = ?`;
@@ -35,12 +35,35 @@ const updateUser = (userData, callback) => {
   });
 };
 
+const updateUserProfile = (userData, callback) => {
+  const { student_id, ...updateData } = userData;
+  const sql = `UPDATE users SET ? WHERE student_id = ?`;
+  db.query(sql, [updateData, student_id], (err, result) => {
+    if (err) {
+      console.error('Error in updateUserProfile:', err);
+      return callback(err);
+    }
+    console.log('Profile update result:', result);
+    callback(null, result);
+  });
+};
 
-
+const findUserByUsername = (username, callback) => {
+  const sql = 'SELECT * FROM users WHERE username = ?';
+  db.query(sql, [username], (err, results) => {
+    if (err) {
+      console.error('Error in findUserByUsername:', err);
+      return callback(err);
+    }
+    callback(null, results);
+  });
+};
 
 module.exports = {
   createUser,
   findUserByEmail,
   findUserByStudentId,
+  findUserByUsername,
   updateUser,
+  updateUserProfile
 };

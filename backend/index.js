@@ -19,6 +19,8 @@ app.post('/reset-password', authController.resetPassword);
 
 // User routes
 app.get('/user', authMiddleware, userController.getUserProfile);
+app.put('/user', authMiddleware, userController.updateUserProfile);
+
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

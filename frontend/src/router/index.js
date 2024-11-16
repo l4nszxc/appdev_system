@@ -4,12 +4,13 @@ import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import UserHome from '../views/user/userHome.vue';
 import UserProfile from '../views/user/UserProfile.vue';
+import UpdateUserProfile from '../views/user/UpdateUserProfile.vue';
 import UserChat from '@/views/user/userChat.vue';   
 import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
 import TermsAndConditions from '../views/TermsAndConditions.vue';
 import PrivacyPolicy from '../views/PrivacyPolicy.vue';
 import OTPVerification from '../views/OTPVerification.vue';
-import ForgotPassword from '../views/ForgotPassword.vue'; // Import the ForgotPassword component
+import ForgotPassword from '../views/ForgotPassword.vue';
 
 // Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
@@ -60,6 +61,12 @@ const routes = [
     path: '/user/userprofile',
     name: 'userProfile',
     component: UserProfile,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/update-profile',
+    name: 'updateProfile',
+    component: UpdateUserProfile,
     meta: { requiresAuth: true },
   },
   {

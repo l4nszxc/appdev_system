@@ -1,6 +1,6 @@
 <template>
+  <Navbar :isLoggedIn="isLoggedIn" :username="username" />
   <div>
-    <Navbar />
     <div class="container mt-5 d-flex justify-content-center">
       <div class="card shadow-lg p-4 bg-light" style="max-width: 600px; width: 100%;">
         <h2 class="text-success text-center mb-4">Submit Your Feedback</h2>
@@ -60,7 +60,9 @@ export default {
         content: ''
       },
       message: '',
-      messageType: ''
+      messageType: '',
+      isLoggedIn: false,
+      username: ''
     };
   },
   methods: {
@@ -87,6 +89,11 @@ export default {
         this.messageType = 'error';
       }
     }
+  },
+  mounted() {
+    // Check login status
+    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    this.username = localStorage.getItem('username') || '';
   }
 };
 </script>

@@ -5,11 +5,12 @@
       <h1 class="navbar-brand">MINDCONNECT</h1>
       <span v-if="isLoggedIn" class="username-display">Logged in as: {{ username }}</span>
     </div>
-    <div class="navbar-links">
+    <div class="navbar-links" :class="{ 'show-links': menuVisible }">
       <template v-if="isLoggedIn">
-        <div class="vertical-line"></div> <!-- Vertical line -->
+        <div class="vertical-line"></div>
         <router-link to="/feed" class="nav-link">Feed</router-link>
         <router-link to="/feedback" class="nav-link">Feedback</router-link>
+        <router-link to="/help-center" class="nav-link">Help Center</router-link>
         <router-link to="/user/userChat" class="nav-link">Chat Support</router-link>
         <router-link to="/user/userHeartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
         <div class="profile-menu">
@@ -30,6 +31,11 @@
         <router-link to="/login" class="nav-link">Login</router-link>
         <router-link to="/register" class="nav-link">Register</router-link>
       </template>
+    </div>
+    <div class="hamburger-menu" @click="toggleMenu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
     </div>
   </nav>
 </template>
@@ -53,9 +59,10 @@ export default {
   setup(props) {
     const dropdownVisible = ref(false);
     const router = useRouter();
+    const menuVisible = ref(false);
 
     const toggleDropdown = () => {
-      dropdownVisible.value = !dropdownVisible.value; // Toggle dropdown visibility
+      dropdownVisible.value = !dropdownVisible.value;
     };
 
     const confirmLogout = () => {
@@ -63,15 +70,21 @@ export default {
         localStorage.removeItem('token');
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('username');
-        dropdownVisible.value = false; // Hide dropdown
-        router.push('/login'); // Redirect to login
+        dropdownVisible.value = false;
+        router.push('/login');
       }
+    };
+
+    const toggleMenu = () => {
+      menuVisible.value = !menuVisible.value;
     };
 
     return {
       toggleDropdown,
       confirmLogout,
+      toggleMenu,
       dropdownVisible,
+      menuVisible,
     };
   },
 };
@@ -98,21 +111,21 @@ export default {
   padding: 15px 30px;
   background-color: #0f6016;
   color: #ffffff;
+  position: relative;
 }
 
 .navbar-brand {
   font-size: 1.8rem;
   font-weight: bold;
   color: #ffffff;
-  margin-right: 20px; /* Add some space between the title and the username */
+  margin-right: 20px;
 }
 
 .username-display {
   font-size: 1.3rem;
   color: #ffffff;
-  margin-right: 20px; /* Add some space before the vertical line */
+  margin-right: 20px;
 }
-
 
 .navbar-links {
   display: flex;
@@ -120,37 +133,41 @@ export default {
   align-items: center;
 }
 
+.navbar-links.show-links {
+  display: block;
+}
+
 .profile-menu {
-  position: relative; /* Position for dropdown */
+  position: relative;
 }
 
 .profile-icon {
-  width: 40px; /* Adjust size of profile icon */
-  height: 40px; /* Adjust size of profile icon */
+  width: 40px;
+  height: 40px;
   cursor: pointer;
 }
 
 .dropdown-content {
   position: absolute;
-  top: 100%; /* Position dropdown below the icon */
-  right: 0; /* Align dropdown to the right */
-  background-color: #ffffff; /* Background color of dropdown */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for dropdown */
-  border-radius: 5px; /* Rounded corners */
-  z-index: 1000; /* Make sure it appears above other elements */
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  z-index: 1000;
 }
 
 .dropdown-item {
   display: block;
   padding: 10px 15px;
-  color: #000; /* Text color for dropdown items */
+  color: #000;
   text-decoration: none;
-  font-size: 1rem; /* Font size for dropdown items */
+  font-size: 1rem;
   transition: background-color 0.3s ease;
 }
 
 .dropdown-item:hover {
-  background-color: rgba(0, 0, 0, 0.1); /* Hover effect for dropdown items */
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .nav-link {
@@ -162,8 +179,40 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-/* Separate hover effect for .nav-link */
-.nav-link:not(.logout-button):hover {
+.nav-link:hover {
   background-color: rgba(9, 117, 76, 0.3);
 }
-</style> 
+
+/* Hamburger menu */
+.hamburger-menu {
+  display: none;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hamburger-menu .bar {
+  width: 30px;
+  height: 4px;
+  background-color: #ffffff;
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .navbar-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .hamburger-menu {
+    display: flex;
+  }
+
+  .navbar-links.show-links {
+    display: flex;
+  }
+}
+</style>

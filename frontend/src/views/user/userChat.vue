@@ -111,7 +111,7 @@ const sendMessage = async () => {
 
 const fetchMessages = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/api/chat/${chatId.value}/messages`);
+    const response = await fetch(`http://localhost:5000/api/chat/${chatId.value}/messages`);
     if (response.ok) {
       messages.value = await response.json();
     }

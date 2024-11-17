@@ -1,7 +1,8 @@
 <template>
+  
+  <Navbar :isLoggedIn="isLoggedIn" :username="username" />
   <div class="help-center-wrapper d-flex align-items-center justify-content-center vh-100">
     <div class="container">
-      <Navbar />
       <h2 class="text-success mb-4 fw-bold text-center">MindConnect FAQs</h2>
       <div class="faq-list">
         <div
@@ -142,7 +143,14 @@ export default {
         },
       ],
       activeIndex: null, // Tracks the currently active FAQ
+      isLoggedIn: false,
+      username: ''
     };
+  },
+  created() {
+    // Fetching username and login status from local storage
+    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    this.username = localStorage.getItem('username') || '';
   },
   methods: {
     toggleAnswer(index) {
@@ -159,7 +167,8 @@ export default {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 900px;
+  padding: 0 15px;
 }
 
 .faq-list {
@@ -208,5 +217,50 @@ h2 {
 
 .text-success {
   color: #28a745 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .faq-item {
+    padding: 1.5rem;
+  }
+
+  .faq-question h5 {
+    font-size: 1.1rem;
+  }
+
+  .faq-answer {
+    font-size: 0.9rem;
+  }
+
+  .toggle-icon {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  .faq-item {
+    padding: 1.25rem;
+  }
+
+  .faq-question h5 {
+    font-size: 1rem;
+  }
+
+  .faq-answer {
+    font-size: 0.875rem;
+  }
+
+  .toggle-icon {
+    font-size: 1rem;
+  }
 }
 </style>

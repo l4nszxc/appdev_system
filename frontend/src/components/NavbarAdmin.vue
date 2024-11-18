@@ -10,6 +10,7 @@
         <router-link to="/admin/adminEmpathyC" class="nav-link">Empathy Challenge</router-link>
         <router-link to="/admin/moodReport" class="nav-link">Students' Mood</router-link>
         <router-link to="/admin/adminMessages" class="nav-link">Message</router-link>
+        <router-link to="/admin/adminDashboard" class="nav-link">Dashboard</router-link>
         <router-link to="/admin/heartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
         <div class="dropdown">
           <router-link to="#" class="nav-link dropdown-toggle">Posts Request</router-link>

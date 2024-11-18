@@ -11,6 +11,10 @@ import TermsAndConditions from '../views/TermsAndConditions.vue';
 import PrivacyPolicy from '../views/PrivacyPolicy.vue';
 import OTPVerification from '../views/OTPVerification.vue';
 import ForgotPassword from '../views/ForgotPassword.vue';
+import FeedbackForm from '../views/user/FeedbackForm.vue';
+import HelpCenter from '@/views/user/HelpCenter.vue';
+import DailyExercise from '@/views/user/DailyExercise.vue'
+
 
 // Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
@@ -20,6 +24,7 @@ import AdminMessages from '@/views/admin/adminMessages.vue';
 import HeartToHeartRoom from '@/views/admin/heartToHeartRoom.vue';
 import MoodReport from '@/views/admin/moodReport.vue';
 import Users from '@/views/admin/users.vue';
+import adminDashboard from '@/views/admin/adminDashboard.vue';
 
 const routes = [
   {
@@ -93,8 +98,20 @@ const routes = [
   },
   {
     path: '/feedback',
-    name: 'feedback',
-    component: () => import('../views/user/Feedback.vue'),
+    name: 'feedbackForm',
+    component: FeedbackForm,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/help-center',
+    name: 'helpCenter',
+    component: HelpCenter,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/daily-exercise',
+    name: 'dailyExercise',
+    component: DailyExercise,
     meta: { requiresAuth: true },
   },
   // ADMIN ROUTES
@@ -138,6 +155,11 @@ const routes = [
     name: 'feed',
     component: () => import('../views/user/Feed.vue'),
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/adminDashboard',
+    name: 'dashboard',
+    component: adminDashboard,
   },
 ];
 

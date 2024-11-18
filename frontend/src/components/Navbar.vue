@@ -15,16 +15,16 @@
         <router-link to="/user/userHeartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
         <router-link to="/daily-exercise" class="nav-link">Daily Exercise</router-link>
         <div class="profile-menu">
-          <img 
-            src="../assets/logo.png" 
-            alt="Profile" 
-            class="profile-icon"
-            @click="toggleDropdown" 
-          />
-          <div v-if="dropdownVisible" class="dropdown-content">
-            <router-link to="/user/userprofile" class="dropdown-item">View Profile</router-link>
-            <button @click="confirmLogout" class="dropdown-item">Logout</button>
-          </div>
+        <img 
+          :src="profilePictureUrl"
+          alt="Profile" 
+          class="profile-icon"
+          @click="toggleDropdown" 
+        />
+        <div v-if="dropdownVisible" class="dropdown-content">
+          <router-link to="/user/userprofile" class="dropdown-item">View Profile</router-link>
+          <button @click="confirmLogout" class="dropdown-item">Logout</button>
+      </div>
         </div>
       </template>
       <template v-else>
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -55,12 +55,23 @@ export default {
     username: {
       type: String,
       required: true
+    },
+    profilePicture: {
+      type: String,
+      default: null
     }
   },
   setup(props) {
     const dropdownVisible = ref(false);
     const router = useRouter();
     const menuVisible = ref(false);
+
+    const profilePictureUrl = computed(() => {
+      if (props.profilePicture) {
+        return `http://localhost:5000${props.profilePicture}`;
+      }
+      return require('@/assets/defaultProfile.png');
+    });
 
     const toggleDropdown = () => {
       dropdownVisible.value = !dropdownVisible.value;
@@ -86,6 +97,7 @@ export default {
       toggleMenu,
       dropdownVisible,
       menuVisible,
+      profilePictureUrl,
     };
   },
 };
@@ -215,5 +227,12 @@ export default {
   .navbar-links.show-links {
     display: flex;
   }
+  .profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
 }
 </style>

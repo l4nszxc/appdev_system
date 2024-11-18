@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar :isLoggedIn="isLoggedIn" :username="username" />
+    <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
     <div class="bg-white rounded-lg shadow-md p-6">
       <h2 class="text-2xl font-semibold mb-4 text-green-800">Heart-to-Heart Room</h2>
       <div v-if="!appointment && !isInSession">
@@ -62,23 +62,48 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import Navbar from '@/components/Navbar.vue'; // Import the Navbar component
+import Navbar from '@/components/Navbar.vue';
+import axios from 'axios';
 
 const appointment = ref(null);
 const appointmentDate = ref('');
 const appointmentTime = ref('');
 const isInSession = ref(false);
+const isLoggedIn = ref(false);
+const username = ref('');
+const userInfo = ref({});
 const availableTimes = [
   '09:00 AM', '10:00 AM', '11:00 AM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'
 ];
 
-const isLoggedIn = ref(false);
-const username = ref('');
-
-// Check login status on component mount
-onMounted(() => {
+// Modified onMounted to fetch user details
+onMounted(async () => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
   username.value = localStorage.getItem('username') || '';
+
+  if (isLoggedIn.value) {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/user', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      userInfo.value = response.data;
+    } catch (error) {
+      console.error('Failed to fetch user details:', error);
+    }
+  }
+
+  // Check for existing appointment
+  fetch('http://localhost:5000/api/heart-to-heart/appointment')
+    .then(response => response.json())
+    .then(data => {
+      if (data.appointment) {
+        appointment.value = data.appointment;
+      }
+    })
+    .catch(error => console.error('Error fetching appointment:', error));
 });
 
 const isAppointmentTime = computed(() => {

@@ -1,8 +1,11 @@
 <template>
   <div>
-    <Navbar :isLoggedIn="isLoggedIn" :username="username" />
+    <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
     <div class="user-profile">
       <h2>User Profile</h2>
+      <div class="profile-picture">
+        <img :src="profilePictureUrl" alt="Profile Picture" class="profile-image" />
+      </div>
       <p><strong>Student ID:</strong> {{ userInfo.student_id }}</p>
       <p><strong>Username:</strong> {{ userInfo.username }}</p>
       <p><strong>Email:</strong> {{ userInfo.email }}</p>
@@ -18,7 +21,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import Navbar from '../../components/Navbar.vue';
 import axios from 'axios';
@@ -33,6 +36,13 @@ export default {
     const username = ref('');
     const userInfo = ref({});
     const router = useRouter();
+
+    const profilePictureUrl = computed(() => {
+      if (userInfo.value.profile_picture) {
+        return `http://localhost:5000${userInfo.value.profile_picture}`;
+      }
+      return require('@/assets/defaultProfile.png');
+    });
 
     onMounted(async () => {
       isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
@@ -63,6 +73,7 @@ export default {
       username,
       userInfo,
       goToEditProfile,
+      profilePictureUrl,
     };
   },
 };
@@ -88,5 +99,18 @@ export default {
 }
 .edit-profile-btn:hover {
   background-color: #0d4f12;
+}
+.profile-picture {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>

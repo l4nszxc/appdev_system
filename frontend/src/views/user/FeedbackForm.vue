@@ -1,5 +1,5 @@
 <template>
-  <Navbar :isLoggedIn="isLoggedIn" :username="username" />
+  <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
   <div>
     <div class="container mt-5 d-flex justify-content-center">
       <div class="card shadow-lg p-4 bg-light" style="max-width: 600px; width: 100%;">
@@ -46,27 +46,27 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
 import Navbar from '../../components/Navbar.vue';
+import axios from 'axios';
 
 export default {
   name: 'FeedbackForm',
   components: {
     Navbar
   },
-  data() {
-    return {
-      feedback: {
-        type: 'suggestion',
-        content: ''
-      },
-      message: '',
-      messageType: '',
-      isLoggedIn: false,
-      username: ''
-    };
-  },
-  methods: {
-    async submitFeedback() {
+  setup() {
+    const feedback = ref({
+      type: 'suggestion',
+      content: ''
+    });
+    const message = ref('');
+    const messageType = ref('');
+    const isLoggedIn = ref(false);
+    const username = ref('');
+    const userInfo = ref({});
+
+    const submitFeedback = async () => {
       try {
         const token = localStorage.getItem('token');
         const response = await fetch('http://localhost:5000/api/feedback', {
@@ -75,29 +75,54 @@ export default {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify(this.feedback)
+          body: JSON.stringify(feedback.value)
         });
+        
         if (response.ok) {
           const data = await response.json();
-          this.message = data.message;
-          this.messageType = 'success';
-          this.feedback = { type: 'suggestion', content: '' };
+          message.value = data.message;
+          messageType.value = 'success';
+          feedback.value = { type: 'suggestion', content: '' };
         } else {
           const errorData = await response.json();
-          this.message = errorData.message || 'Failed to submit feedback. Please try again.';
-          this.messageType = 'error';
+          message.value = errorData.message || 'Failed to submit feedback. Please try again.';
+          messageType.value = 'error';
         }
       } catch (error) {
         console.error('Error submitting feedback:', error);
-        this.message = 'An error occurred. Please try again later.';
-        this.messageType = 'error';
+        message.value = 'An error occurred. Please try again later.';
+        messageType.value = 'error';
       }
-    }
-  },
-  mounted() {
-    // Check login status
-    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    this.username = localStorage.getItem('username') || '';
+    };
+
+    onMounted(async () => {
+      isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+      username.value = localStorage.getItem('username') || '';
+
+      if (isLoggedIn.value) {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get('http://localhost:5000/user', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          userInfo.value = response.data;
+        } catch (error) {
+          console.error('Failed to fetch user details:', error);
+        }
+      }
+    });
+
+    return {
+      feedback,
+      message,
+      messageType,
+      isLoggedIn,
+      username,
+      userInfo,
+      submitFeedback
+    };
   }
 };
 </script>

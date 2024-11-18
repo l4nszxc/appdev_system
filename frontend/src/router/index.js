@@ -13,6 +13,7 @@ import OTPVerification from '../views/OTPVerification.vue';
 import ForgotPassword from '../views/ForgotPassword.vue';
 import FeedbackForm from '../views/user/FeedbackForm.vue';
 import HelpCenter from '@/views/user/HelpCenter.vue';
+import DailyExercise from '@/views/user/DailyExercise.vue'
 
 
 // Admin imports
@@ -105,6 +106,12 @@ const routes = [
     path: '/help-center',
     name: 'helpCenter',
     component: HelpCenter,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/daily-exercise',
+    name: 'dailyExercise',
+    component: DailyExercise,
     meta: { requiresAuth: true },
   },
   // ADMIN ROUTES

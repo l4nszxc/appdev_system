@@ -68,19 +68,23 @@ export default {
   methods: {
     async submitFeedback() {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch('http://localhost:5000/api/feedback', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify(this.feedback)
         });
         if (response.ok) {
-          this.message = 'Feedback submitted successfully!';
+          const data = await response.json();
+          this.message = data.message;
           this.messageType = 'success';
           this.feedback = { type: 'suggestion', content: '' };
         } else {
-          this.message = 'Failed to submit feedback. Please try again.';
+          const errorData = await response.json();
+          this.message = errorData.message || 'Failed to submit feedback. Please try again.';
           this.messageType = 'error';
         }
       } catch (error) {

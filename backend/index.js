@@ -4,6 +4,7 @@ const cors = require('cors');
 const authController = require('./controllers/authController');
 const userController = require('./controllers/userController');
 const exerciseController = require('./controllers/exerciseController');
+const userFeedbackController = require('./controllers/userFeedbackController');
 const authMiddleware = require('./middleware/authMiddleware');
 
 const app = express();
@@ -25,6 +26,10 @@ app.put('/user', authMiddleware, userController.updateUserProfile);
 // Exercise routes
 app.get('/exercises', authMiddleware, exerciseController.getWeeklyExercises);
 app.post('/exercises', authMiddleware, exerciseController.saveExercise);
+
+// Feedback routes
+app.post('/api/feedback', authMiddleware, userFeedbackController.submitFeedback);
+app.get('/api/feedback', authMiddleware, userFeedbackController.getUserFeedback);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

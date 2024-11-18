@@ -18,7 +18,7 @@ const findUserByEmail = (email, callback) => {
 };
 
 const findUserByStudentId = (student_id, callback) => {
-  const sql = 'SELECT * FROM users WHERE student_id = ?';
+  const sql = 'SELECT *, profile_picture FROM users WHERE student_id = ?';
   db.query(sql, [student_id], callback);
 };
 
@@ -59,11 +59,25 @@ const findUserByUsername = (username, callback) => {
   });
 };
 
+const updateProfilePicture = (studentId, profilePicturePath, callback) => {
+  const sql = 'UPDATE users SET profile_picture = ? WHERE student_id = ?';
+  db.query(sql, [profilePicturePath, studentId], (err, result) => {
+    if (err) {
+      console.error('Error in updateProfilePicture:', err);
+      return callback(err);
+    }
+    console.log('Profile picture update result:', result);
+    callback(null, result);
+  });
+};
+
+
 module.exports = {
   createUser,
   findUserByEmail,
   findUserByStudentId,
   findUserByUsername,
   updateUser,
-  updateUserProfile
+  updateUserProfile,
+  updateProfilePicture
 };

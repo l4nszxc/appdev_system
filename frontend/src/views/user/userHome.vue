@@ -1,5 +1,5 @@
 <template>
-  <Navbar :isLoggedIn="isLoggedIn" :username="username" />
+  <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
   <div class="user-home">
     <h1>USER HOMEPAGE</h1>
     <p v-if="isLoggedIn">Welcome back, {{ username }}!</p>
@@ -10,14 +10,30 @@
 <script setup>
 import Navbar from '@/components/Navbar.vue';
 import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
 const isLoggedIn = ref(false);
 const username = ref('');
+const userInfo = ref({});
 
-// Check login status on component mount
-onMounted(() => {
+// Check login status and fetch user details on component mount
+onMounted(async () => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
   username.value = localStorage.getItem('username') || '';
+
+  if (isLoggedIn.value) {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/user', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      userInfo.value = response.data;
+    } catch (error) {
+      console.error('Failed to fetch user details:', error);
+    }
+  }
 });
 </script>
 

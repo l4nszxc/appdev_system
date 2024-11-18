@@ -1,52 +1,53 @@
 <template>
-    <Navbar :isLoggedIn="isLoggedIn" :username="username" />
-    <div class="daily-exercise">
-      <div class="exercise-container">
-        <h1>Mindful Exercise for Today</h1>
-        <div v-if="todayExercise" class="exercise-card">
-          <h2>{{ todayExercise.category }}</h2>
-          <h3>{{ todayExercise.title }}</h3>
-          <p>{{ todayExercise.description }}</p>
-          <ol v-if="todayExercise.steps">
-            <li v-for="(step, index) in todayExercise.steps" :key="index">
-              {{ step }}
-            </li>
-          </ol>
-          <button v-if="!exerciseCompleted" @click="completeExercise" :disabled="isLoading" class="complete-btn">
-            {{ isLoading ? 'Saving...' : 'Mark as Completed' }}
-          </button>
-          <p v-else class="completion-message">Great job! You've completed today's exercise.</p>
-        </div>
-        <p v-else-if="exerciseCompleted" class="completion-message">
-          You've already completed today's exercise. Great work!
-        </p>
-        <p v-else class="warning-message">
-          You haven't done your daily exercise for today. Take a moment for mindfulness!
-        </p>
-        <div class="weekly-progress">
-          <h2>Weekly Progress</h2>
-          <div class="progress-grid">
-            <div v-for="(day, index) in weeklyProgress" :key="index" class="progress-day">
-              <span>{{ getDayName(index) }}</span>
-              <span :class="{ 'completed': day }">{{ day ? '✓' : '✗' }}</span>
-            </div>
+  <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
+  <div class="daily-exercise">
+    <div class="exercise-container">
+      <h1>Mindful Exercise for Today</h1>
+      <div v-if="todayExercise" class="exercise-card">
+        <h2>{{ todayExercise.category }}</h2>
+        <h3>{{ todayExercise.title }}</h3>
+        <p>{{ todayExercise.description }}</p>
+        <ol v-if="todayExercise.steps">
+          <li v-for="(step, index) in todayExercise.steps" :key="index">
+            {{ step }}
+          </li>
+        </ol>
+        <button v-if="!exerciseCompleted" @click="completeExercise" :disabled="isLoading" class="complete-btn">
+          {{ isLoading ? 'Saving...' : 'Mark as Completed' }}
+        </button>
+        <p v-else class="completion-message">Great job! You've completed today's exercise.</p>
+      </div>
+      <p v-else-if="exerciseCompleted" class="completion-message">
+        You've already completed today's exercise. Great work!
+      </p>
+      <p v-else class="warning-message">
+        You haven't done your daily exercise for today. Take a moment for mindfulness!
+      </p>
+      <div class="weekly-progress">
+        <h2>Weekly Progress</h2>
+        <div class="progress-grid">
+          <div v-for="(day, index) in weeklyProgress" :key="index" class="progress-day">
+            <span>{{ getDayName(index) }}</span>
+            <span :class="{ 'completed': day }">{{ day ? '✓' : '✗' }}</span>
           </div>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import axios from 'axios';
-  import Navbar from '@/components/Navbar.vue';
-  
-  const isLoggedIn = ref(false);
-  const username = ref('');
-  const todayExercise = ref(null);
-  const exerciseCompleted = ref(false);
-  const weeklyProgress = ref(Array(7).fill(false));
-  const isLoading = ref(false);
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import Navbar from '@/components/Navbar.vue';
+
+const isLoggedIn = ref(false);
+const username = ref('');
+const userInfo = ref({});
+const todayExercise = ref(null);
+const exerciseCompleted = ref(false);
+const weeklyProgress = ref(Array(7).fill(false));
+const isLoading = ref(false);
   
   const exercises = [
     {
@@ -156,19 +157,30 @@
   }
   
   onMounted(async () => {
-    isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
-    username.value = localStorage.getItem('username') || '';
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.error('No token found in localStorage');
-      alert('You are not logged in. Please log in and try again.');
-      return;
+  isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+  username.value = localStorage.getItem('username') || '';
+  
+  if (isLoggedIn.value) {
+    try {
+      const token = localStorage.getItem('token');
+      // Fetch user details including profile picture
+      const response = await axios.get('http://localhost:5000/user', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      userInfo.value = response.data;
+      
+      // Fetch exercises data
+      await fetchWeeklyExercises();
+      if (!exerciseCompleted.value) {
+        todayExercise.value = getRandomExercise();
+      }
+    } catch (error) {
+      console.error('Failed to fetch user details:', error);
     }
-    await fetchWeeklyExercises();
-    if (!exerciseCompleted.value) {
-      todayExercise.value = getRandomExercise();
-    }
-  });
+  }
+});
   </script>
   
   <style scoped>

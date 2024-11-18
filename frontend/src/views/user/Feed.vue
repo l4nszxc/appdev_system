@@ -1,8 +1,6 @@
 <template>
-  
-  <Navbar :isLoggedIn="isLoggedIn" :username="username" /> <!-- Include the Navbar -->
+  <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
   <div class="feed-container">
-
     <h1 class="feed-title">Mental Health Support Network</h1>
     
     <h2 class="text-xl font-semibold mb-4 text-green-800">How are you feeling today?</h2>
@@ -19,6 +17,7 @@
         {{ emotion }}
       </button>
     </div>
+
     <!-- Post creation form -->
     <div class="post-form">
       <textarea v-model="newPostContent" placeholder="Share your thoughts..." class="post-input"></textarea>
@@ -57,57 +56,62 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
-import Navbar from '../../components/Navbar.vue'; // Import Navbar
+import { ref, reactive, computed, onMounted } from 'vue';
+import Navbar from '../../components/Navbar.vue';
+import axios from 'axios';
 
 export default {
   components: {
-    Navbar // Register the Navbar component
+    Navbar
   },
   setup() {
     const newPostContent = ref('');
     const newComments = reactive({});
-    const posts = ref([
-      {
-        id: 1,
-        authorName: 'Jane Doe',
-        authorAvatar: '/placeholder.svg?height=40&width=40',
-        content: 'Just had a great therapy session. Feeling optimistic!',
-        reactions: 5,
-        reacted: false,
-        comments: [
-          { id: 1, authorName: 'John Smith', content: 'That\'s wonderful to hear!' }
-        ],
-        showComments: false
-      },
-      {
-        id: 2,
-        authorName: 'Alex Johnson',
-        authorAvatar: '/placeholder.svg?height=40&width=40',
-        content: 'Struggling with anxiety today. Any tips?',
-        reactions: 3,
-        reacted: false,
-        comments: [],
-        showComments: false
-      }
-    ]);
+    const posts = ref([]);
+    const isLoggedIn = ref(false);
+    const username = ref('');
+    const userInfo = ref({});
+    const emotions = ['Happy', 'Sad', 'Anxious', 'Calm', 'Stressed'];
+    const selectedEmotion = ref(null);
 
-    // Fetching username and login status from local storage
-    const isLoggedIn = ref(localStorage.getItem('isLoggedIn') === 'true');
-    const username = ref(localStorage.getItem('username') || '');
+    const selectEmotion = (emotion) => {
+      selectedEmotion.value = emotion;
+    };
+
+    onMounted(async () => {
+      isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+      username.value = localStorage.getItem('username') || '';
+
+      if (isLoggedIn.value) {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get('http://localhost:5000/user', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          userInfo.value = response.data;
+        } catch (error) {
+          console.error('Failed to fetch user details:', error);
+        }
+      }
+    });
 
     const createPost = () => {
       if (newPostContent.value.trim()) {
-        posts.value.unshift({
+        const newPost = {
           id: Date.now(),
-          authorName: 'Current User',
-          authorAvatar: '/placeholder.svg?height=40&width=40',
+          authorName: username.value,
+          authorAvatar: userInfo.value.profile_picture 
+            ? `http://localhost:5000${userInfo.value.profile_picture}`
+            : require('@/assets/defaultProfile.png'),
           content: newPostContent.value,
           reactions: 0,
           reacted: false,
           comments: [],
           showComments: false
-        });
+        };
+        posts.value.unshift(newPost);
         newPostContent.value = '';
       }
     };
@@ -126,7 +130,7 @@ export default {
 
     const toggleComments = (postId) => {
       const post = posts.value.find(p => p.id === postId);
-      if (post ) {
+      if (post) {
         post.showComments = !post.showComments;
       }
     };
@@ -136,7 +140,7 @@ export default {
       if (post && newComments[postId]?.trim()) {
         post.comments.push({
           id: Date.now(),
-          authorName: 'Current User',
+          authorName: username.value,
           content: newComments[postId]
         });
         newComments[postId] = '';
@@ -152,10 +156,14 @@ export default {
       toggleComments,
       addComment,
       isLoggedIn,
-      username
+      username,
+      userInfo,
+      emotions,
+      selectedEmotion,
+      selectEmotion
     };
   }
-}
+};
 </script>
 
 <style scoped>
@@ -218,6 +226,7 @@ export default {
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+  object-fit: cover;
 }
 
 .author-name {

@@ -28,7 +28,7 @@ import adminDashboard from '@/views/admin/adminDashboard.vue';
 
 const routes = [
   {
-    path: '/',
+    path: '/',  
     name: 'home',
     component: HomeView,
   },

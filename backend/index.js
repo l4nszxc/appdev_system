@@ -10,8 +10,6 @@ const userFeedbackController = require('./controllers/userFeedbackController');
 const postController = require('./controllers/postController');
 const authMiddleware = require('./middleware/authMiddleware');
 
-postController
-
 
 const app = express();
 app.use(cors());

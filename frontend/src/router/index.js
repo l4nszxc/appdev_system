@@ -26,6 +26,8 @@ import MoodReport from '@/views/admin/moodReport.vue';
 import Users from '@/views/admin/users.vue';
 import adminDashboard from '@/views/admin/adminDashboard.vue';
 
+
+
 const routes = [
   {
     path: '/',  

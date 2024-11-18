@@ -7,7 +7,10 @@ const authController = require('./controllers/authController');
 const userController = require('./controllers/userController');
 const exerciseController = require('./controllers/exerciseController');
 const userFeedbackController = require('./controllers/userFeedbackController');
+const postController = require('./controllers/postController');
 const authMiddleware = require('./middleware/authMiddleware');
+
+postController
 
 
 const app = express();
@@ -50,6 +53,13 @@ app.get('/api/feedback', authMiddleware, userFeedbackController.getUserFeedback)
 app.get('/user', authMiddleware, userController.getUserProfile);
 app.put('/user', authMiddleware, userController.updateUserProfile);
 app.post('/user/profile-picture', authMiddleware, upload.single('profilePicture'), userController.uploadProfilePicture);
+
+app.post('/posts', authMiddleware, postController.createPost);
+app.get('/posts', authMiddleware, postController.getPosts);
+app.post('/posts/:postId/reactions', authMiddleware, postController.toggleReaction);
+app.post('/posts/:postId/comments', authMiddleware, postController.addComment);
+app.get('/posts/:postId/comments', authMiddleware, postController.getComments);
+
 
 
 const PORT = process.env.PORT || 5000;

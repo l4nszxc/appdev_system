@@ -12,7 +12,7 @@ import OTPVerification from '../views/OTPVerification.vue';
 import ForgotPassword from '../views/ForgotPassword.vue';
 import FeedbackForm from '../views/user/FeedbackForm.vue';
 import HelpCenter from '@/views/user/HelpCenter.vue';
-import Exercise from '@/views/user/Exercise.vue';
+import DailyExercise from '@/views/user/DailyExercise.vue'
 
 
 // Admin imports
@@ -26,7 +26,7 @@ import adminDashboard from '@/views/admin/adminDashboard.vue';
 
 const routes = [
   {
-    path: '/',
+    path: '/',  
     name: 'home',
     component: HomeView,
   },
@@ -101,9 +101,9 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/user/exercises',
-    name: 'exercises',
-    component: Exercise,
+    path: '/daily-exercise',
+    name: 'dailyExercise',
+    component: DailyExercise,
     meta: { requiresAuth: true },
   },
   // ADMIN ROUTES

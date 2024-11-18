@@ -1,5 +1,5 @@
 <template>
-  <Navbar :isLoggedIn="isLoggedIn" :username="username" />
+  <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
   <div class="help-center-wrapper">
     <div class="container">
       <h2 class="text-success mb-5 fw-bold text-center">MindConnect FAQs</h2>
@@ -53,21 +53,22 @@
 </template>
 
 <script>
+import { ref, onMounted, computed } from 'vue';
 import Navbar from '../../components/Navbar.vue';
+import axios from 'axios';
 
 export default {
   name: 'HelpCenter',
   components: {
     Navbar,
   },
-  data() {
-    return {
-      faqs: [
-        {
-          question: 'What is MindConnect?',
-          answer:
-            'MindConnect is a mental health support app that prioritizes human interaction, offering real-time emotional support, mindfulness exercises, and a community for peer-to-peer interaction.',
-        },
+  setup() {
+    const faqs = ref([
+      {
+        question: 'What is MindConnect?',
+        answer:
+          'MindConnect is a mental health support app that prioritizes human interaction, offering real-time emotional support, mindfulness exercises, and a community for peer-to-peer interaction.',
+      },
         {
           question: 'How do I join the community?',
           answer:
@@ -158,38 +159,67 @@ export default {
           answer:
             'MindConnect is exclusively for Mindoro State University students. To access the app, you must verify your enrollment through the university’s system.',
         },
-      ],
-      activeIndex: null, // Tracks the currently active FAQ
-      currentPage: 1,
-      itemsPerPage: 5,
-      isLoggedIn: false,
-      username: ''
+        ]);
+
+        const activeIndex = ref(null);
+        const currentPage = ref(1);
+        const itemsPerPage = ref(5);
+        const isLoggedIn = ref(false);
+        const username = ref('');
+        const userInfo = ref({});
+
+    const totalPages = computed(() => {
+      return Math.ceil(faqs.value.length / itemsPerPage.value);
+    });
+
+    const paginatedFaqs = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage.value;
+      const end = start + itemsPerPage.value;
+      return faqs.value.slice(start, end);
+    });
+
+    const toggleAnswer = (index) => {
+      activeIndex.value = activeIndex.value === index ? null : index;
     };
-  },
-  computed: {
-    totalPages() {
-      return Math.ceil(this.faqs.length / this.itemsPerPage);
-    },
-    paginatedFaqs() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.faqs.slice(start, end);
-    },
-  },
-  created() {
-    // Fetching username and login status from local storage
-    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    this.username = localStorage.getItem('username') || '';
-  },
-  methods: {
-    toggleAnswer(index) {
-      this.activeIndex = this.activeIndex === index ? null : index;
-    },
-    changePage(page) {
-      if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
+
+    const changePage = (page) => {
+      if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
       }
-    },
+    };
+
+    onMounted(async () => {
+      isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+      username.value = localStorage.getItem('username') || '';
+
+      if (isLoggedIn.value) {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get('http://localhost:5000/user', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          userInfo.value = response.data;
+        } catch (error) {
+          console.error('Failed to fetch user details:', error);
+        }
+      }
+    });
+
+    return {
+      faqs,
+      activeIndex,
+      currentPage,
+      itemsPerPage,
+      isLoggedIn,
+      username,
+      userInfo,
+      totalPages,
+      paginatedFaqs,
+      toggleAnswer,
+      changePage,
+    };
   },
 };
 </script>

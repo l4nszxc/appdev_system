@@ -13,6 +13,8 @@ import ForgotPassword from '../views/ForgotPassword.vue';
 import FeedbackForm from '../views/user/FeedbackForm.vue';
 import HelpCenter from '@/views/user/HelpCenter.vue';
 import DailyExercise from '@/views/user/DailyExercise.vue'
+import userHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
+
 
 
 // Admin imports
@@ -23,6 +25,9 @@ import AdminMessages from '@/views/admin/adminMessages.vue';
 import MoodReport from '@/views/admin/moodReport.vue';
 import Users from '@/views/admin/users.vue';
 import adminDashboard from '@/views/admin/adminDashboard.vue';
+import heartToHeartRoom from '@/views/admin/heartToHeartRoom.vue';
+import announcementForm from '@/views/admin/announcementForm.vue';
+
 
 const routes = [
   {
@@ -106,6 +111,12 @@ const routes = [
     component: DailyExercise,
     meta: { requiresAuth: true },
   },
+  {
+    path: '/user/userHeartToHeartRoom',
+    name: 'userHeartToHeartRoom',
+    component: userHeartToHeartRoom,
+    meta: { requiresAuth: true },
+  },
   // ADMIN ROUTES
   {
     path: '/admin-home',
@@ -147,6 +158,16 @@ const routes = [
     path: '/admin/adminDashboard',
     name: 'dashboard',
     component: adminDashboard,
+  },
+  {
+    path: '/admin/heartToHeartRoom',
+    name: 'heartToHeartRoom',
+    component: heartToHeartRoom,
+  },
+  {
+    path: '/admin/announcementForm',
+    name: 'announcementForm',
+    component: announcementForm,
   },
 ];
 

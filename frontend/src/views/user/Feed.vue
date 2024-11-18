@@ -17,6 +17,16 @@
         {{ emotion }}
       </button>
     </div>
+  
+    <!-- Announcements Section -->
+    <div class="announcements-section mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-green-800">Announcements</h2>
+      <div v-for="announcement in announcements" :key="announcement.id" class="bg-white rounded-lg shadow-md p-4 mb-4">
+        <h3 class="font-bold text-lg mb-2">{{ announcement.title }}</h3>
+        <p class="text-gray-700">{{ announcement.content }}</p>
+        <p class="text-sm text-gray-500 mt-2">Posted on: {{ formatDate(announcement.createdAt) }}</p>
+      </div>
+    </div>
 
     <!-- Post creation form -->
     <div class="post-form">
@@ -56,7 +66,7 @@
 </template>
 
 <script>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import Navbar from '../../components/Navbar.vue';
 import axios from 'axios';
 
@@ -73,6 +83,7 @@ export default {
     const userInfo = ref({});
     const emotions = ['Happy', 'Sad', 'Anxious', 'Calm', 'Stressed'];
     const selectedEmotion = ref(null);
+    const announcements = ref([]);
 
     const selectEmotion = (emotion) => {
       selectedEmotion.value = emotion;
@@ -94,6 +105,14 @@ export default {
         } catch (error) {
           console.error('Failed to fetch user details:', error);
         }
+      }
+
+      // Fetch announcements
+      try {
+        const response = await axios.get('http://localhost:5000/announcements');
+        announcements.value = response.data;
+      } catch (error) {
+        console.error('Failed to fetch announcements:', error);
       }
     });
 
@@ -147,6 +166,11 @@ export default {
       }
     };
 
+    const formatDate = (dateString) => {
+      const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
     return {
       newPostContent,
       newComments,
@@ -160,7 +184,9 @@ export default {
       userInfo,
       emotions,
       selectedEmotion,
-      selectEmotion
+      selectEmotion,
+      announcements,
+      formatDate
     };
   }
 };
@@ -284,5 +310,12 @@ export default {
   border: none;
   border-radius: 3px;
   cursor: pointer;
+}
+
+.announcements-section {
+  background-color: #e9f5f3;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
 }
 </style>

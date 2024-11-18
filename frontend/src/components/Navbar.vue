@@ -11,7 +11,6 @@
         <router-link to="/feed" class="nav-link">Feed</router-link>
         <router-link to="/feedback" class="nav-link">Feedback</router-link>
         <router-link to="/help-center" class="nav-link">Help Center</router-link>
-        <router-link to="/user/daily-exercise" class="nav-link">Exercise</router-link>
         <router-link to="/user/userChat" class="nav-link">Chat Support</router-link>
         <router-link to="/user/userHeartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
         <router-link to="/daily-exercise" class="nav-link">Daily Exercise</router-link>

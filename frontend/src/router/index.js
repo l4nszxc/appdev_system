@@ -6,7 +6,6 @@ import UserHome from '../views/user/userHome.vue';
 import UserProfile from '../views/user/UserProfile.vue';
 import UpdateUserProfile from '../views/user/UpdateUserProfile.vue';
 import UserChat from '@/views/user/userChat.vue';   
-import UserHeartToHeartRoom from '@/views/user/userHeartToHeartRoom.vue';
 import TermsAndConditions from '../views/TermsAndConditions.vue';
 import PrivacyPolicy from '../views/PrivacyPolicy.vue';
 import OTPVerification from '../views/OTPVerification.vue';
@@ -21,7 +20,6 @@ import AdminHome from '@/views/admin/adminHome.vue';
 import AdminEmpathyC from '@/views/admin/adminEmpathyC.vue';
 import AdminFeed from '@/views/admin/adminFeed.vue';
 import AdminMessages from '@/views/admin/adminMessages.vue';
-import HeartToHeartRoom from '@/views/admin/heartToHeartRoom.vue';
 import MoodReport from '@/views/admin/moodReport.vue';
 import Users from '@/views/admin/users.vue';
 import adminDashboard from '@/views/admin/adminDashboard.vue';
@@ -81,12 +79,6 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/user/userHeartToHeartRoom',
-    name: 'userHeartToHeartRoom',
-    component: UserHeartToHeartRoom,
-    meta: { requiresAuth: true },   
-  },
-  {
     path: '/terms-and-conditions',
     name: 'termsAndConditions',
     component: TermsAndConditions,
@@ -134,11 +126,6 @@ const routes = [
     path: '/admin/adminMessages',
     name: 'adminMessages',
     component: AdminMessages,
-  },
-  {
-    path: '/admin/heartToHeartRoom',
-    name: 'heartToHeartRoom',
-    component: HeartToHeartRoom,
   },
   {
     path: '/admin/moodReport',

@@ -10,7 +10,6 @@ const userFeedbackController = require('./controllers/userFeedbackController');
 const postController = require('./controllers/postController');
 const authMiddleware = require('./middleware/authMiddleware');
 
-
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -57,8 +56,6 @@ app.get('/posts', authMiddleware, postController.getPosts);
 app.post('/posts/:postId/reactions', authMiddleware, postController.toggleReaction);
 app.post('/posts/:postId/comments', authMiddleware, postController.addComment);
 app.get('/posts/:postId/comments', authMiddleware, postController.getComments);
-
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

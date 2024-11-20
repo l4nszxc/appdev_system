@@ -15,7 +15,6 @@ import FeedbackForm from '../views/user/FeedbackForm.vue';
 import HelpCenter from '@/views/user/HelpCenter.vue';
 import DailyExercise from '@/views/user/DailyExercise.vue'
 
-
 // Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
 import AdminEmpathyC from '@/views/admin/adminEmpathyC.vue';
@@ -24,9 +23,7 @@ import AdminMessages from '@/views/admin/adminMessages.vue';
 import HeartToHeartRoom from '@/views/admin/heartToHeartRoom.vue';
 import MoodReport from '@/views/admin/moodReport.vue';
 import Users from '@/views/admin/users.vue';
-import adminDashboard from '@/views/admin/adminDashboard.vue';
-
-
+import AdminDashboard from '@/views/admin/adminDashboard.vue';
 
 const routes = [
   {
@@ -62,31 +59,31 @@ const routes = [
     path: '/user-home',
     name: 'userHome',
     component: UserHome,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresUser: true },
   },
   {
     path: '/user/userprofile',
     name: 'userProfile',
     component: UserProfile,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresUser: true },
   },
   {
     path: '/update-profile',
     name: 'updateProfile',
     component: UpdateUserProfile,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresUser: true },
   },
   {
     path: '/user/userChat',
     name: 'userChat',
     component: UserChat,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresUser: true },
   },
   {
     path: '/user/userHeartToHeartRoom',
     name: 'userHeartToHeartRoom',
     component: UserHeartToHeartRoom,
-    meta: { requiresAuth: true },   
+    meta: { requiresAuth: true, requiresUser: true },   
   },
   {
     path: '/terms-and-conditions',
@@ -102,66 +99,74 @@ const routes = [
     path: '/feedback',
     name: 'feedbackForm',
     component: FeedbackForm,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresUser: true },
   },
   {
     path: '/help-center',
     name: 'helpCenter',
     component: HelpCenter,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresUser: true },
   },
   {
     path: '/daily-exercise',
     name: 'dailyExercise',
     component: DailyExercise,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresUser: true },
+  },
+  {
+    path: '/feed',
+    name: 'feed',
+    component: () => import('../views/user/Feed.vue'),
+    meta: { requiresAuth: true, requiresUser: true },
   },
   // ADMIN ROUTES
   {
     path: '/admin-home',
     name: 'adminHome',
     component: AdminHome,
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/admin/adminEmpathyC',
     name: 'adminEmpathyC',
     component: AdminEmpathyC,
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/admin/adminFeed',
     name: 'adminFeed',
     component: AdminFeed,
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/admin/adminMessages',
     name: 'adminMessages',
     component: AdminMessages,
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/admin/heartToHeartRoom',
     name: 'heartToHeartRoom',
     component: HeartToHeartRoom,
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/admin/moodReport',
     name: 'moodReport',
     component: MoodReport,
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/admin/users',
     name: 'users',
     component: Users,
-  },
-  {
-    path: '/feed',
-    name: 'feed',
-    component: () => import('../views/user/Feed.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/admin/adminDashboard',
-    name: 'dashboard',
-    component: adminDashboard,
+    name: 'adminDashboard',
+    component: AdminDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true },
   },
 ];
 
@@ -170,16 +175,18 @@ const router = createRouter({
   routes,
 });
 
-// Navigation guard to check authentication
 router.beforeEach((to, from, next) => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const userRole = localStorage.getItem('role');
 
   if (to.meta.requiresAuth && !isLoggedIn) {
     next({ name: 'login' });
   } else if (to.meta.requiresGuest && isLoggedIn) {
+    next({ name: userRole === 'admin' ? 'adminHome' : 'userHome' });
+  } else if (to.meta.requiresAdmin && userRole !== 'admin') {
     next({ name: 'userHome' });
-  } else if (isLoggedIn && (to.name === 'termsAndConditions' || to.name === 'privacyPolicy')) {
-    next({ name: 'userHome' });
+  } else if (to.meta.requiresUser && userRole === 'admin') {
+    next({ name: 'adminHome' });
   } else {
     next();
   }

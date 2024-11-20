@@ -64,8 +64,8 @@ import axios from 'axios';
 
 const email = ref('');
 const password = ref('');
-const isLoggedIn = ref(false); // State to track login status
-const username = ref(''); // State for username
+const isLoggedIn = ref(false);
+const username = ref('');
 const router = useRouter();
 
 const handleSubmit = async () => {
@@ -74,22 +74,36 @@ const handleSubmit = async () => {
       email: email.value,
       password: password.value,
     });
-    alert(response.data.message); // Success notification
+    alert(response.data.message);
+    
+    // Store login information
     localStorage.setItem('token', response.data.token);
-    localStorage.setItem('username', response.data.username);  // Store username
-    localStorage.setItem('isLoggedIn', 'true'); // Set login flag
-    isLoggedIn.value = true;
-    username.value = response.data.username; // Store username in local state
-    router.push({ name: 'userHome' }); // Redirect to user home page
+    localStorage.setItem('username', response.data.username);
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('role', response.data.role);
+
+    // Routing based on role
+    if (response.data.role === 'admin') {
+      router.push({ name: 'adminHome' });
+    } else {
+      router.push({ name: 'userHome' });
+    }
   } catch (error) {
-    alert(error.response.data.message || 'An error occurred'); // Error notification
+    alert(error.response?.data?.message || 'An error occurred');
   }
 };
 
-// Check login status on component mount
 onMounted(() => {
-  isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
-  username.value = localStorage.getItem('username') || ''; // Retrieve username safely
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const userRole = localStorage.getItem('role');
+  
+  if (isLoggedIn) {
+    if (userRole === 'admin') {
+      router.push({ name: 'adminHome' });
+    } else {
+      router.push({ name: 'userHome' });
+    }
+  }
 });
 </script>
 

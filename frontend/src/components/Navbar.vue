@@ -15,20 +15,19 @@
         <router-link to="/user/userHeartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
         <router-link to="/daily-exercise" class="nav-link">Daily Exercise</router-link>
         <div class="profile-menu">
-        <img 
-          :src="profilePictureUrl"
-          alt="Profile" 
-          class="profile-icon"
-          @click="toggleDropdown" 
-        />
-        <div v-if="dropdownVisible" class="dropdown-content">
-          <router-link to="/user/userprofile" class="dropdown-item">View Profile</router-link>
-          <button @click="confirmLogout" class="dropdown-item">Logout</button>
-      </div>
+          <img 
+            :src="profilePictureUrl"
+            alt="Profile" 
+            class="profile-icon"
+            @click="toggleDropdown" 
+          />
+          <div v-if="dropdownVisible" class="dropdown-content">
+            <router-link to="/user/userprofile" class="dropdown-item">View Profile</router-link>
+            <button @click="confirmLogout" class="dropdown-item">Logout</button>
+          </div>
         </div>
       </template>
       <template v-else>
-        <router-link to="/admin-home" class="nav-link">Admin</router-link>
         <router-link to="/login" class="nav-link">Login</router-link>
         <router-link to="/register" class="nav-link">Register</router-link>
       </template>

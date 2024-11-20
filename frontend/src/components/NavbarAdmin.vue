@@ -1,34 +1,50 @@
 <template>
-    <nav class="navbar">
-      <div class="logo-title">
-        <img src="../assets/MINSU LOGO.png" alt="Logo" class="logo" />
-        <h1 class="navbar-brand">MINDCONNECT</h1>
-      </div>
-      <div class="navbar-links">
-        <router-link to="/admin/users" class="nav-link">Users</router-link>
-        <router-link to="/admin/adminFeed" class="nav-link">Feed</router-link>
-        <router-link to="/admin/adminEmpathyC" class="nav-link">Empathy Challenge</router-link>
-        <router-link to="/admin/moodReport" class="nav-link">Students' Mood</router-link>
-        <router-link to="/admin/adminMessages" class="nav-link">Message</router-link>
-        <router-link to="/admin/adminDashboard" class="nav-link">Dashboard</router-link>
-        <router-link to="/admin/heartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
-        <div class="dropdown">
-          <router-link to="#" class="nav-link dropdown-toggle">Posts Request</router-link>
-          <div class="dropdown-content">
-            <router-link to="/posts-request/light" class="dropdown-item">Light</router-link>
-            <router-link to="/posts-request/slightly-heavy" class="dropdown-item">Slightly Heavy</router-link>
-            <router-link to="/posts-request/heavy" class="dropdown-item">Heavy</router-link>
-          </div>
+  <nav class="navbar">
+    <div class="logo-title">
+      <img src="../assets/MINSU LOGO.png" alt="Logo" class="logo" />
+      <h1 class="navbar-brand">MINDCONNECT</h1>
+    </div>
+    <div class="navbar-links">
+      <router-link to="/admin/users" class="nav-link">Users</router-link>
+      <router-link to="/admin/adminFeed" class="nav-link">Feed</router-link>
+      <router-link to="/admin/adminEmpathyC" class="nav-link">Empathy Challenge</router-link>
+      <router-link to="/admin/moodReport" class="nav-link">Students' Mood</router-link>
+      <router-link to="/admin/adminMessages" class="nav-link">Message</router-link>
+      <router-link to="/admin/adminDashboard" class="nav-link">Dashboard</router-link>
+      <router-link to="/admin/heartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
+      <div class="dropdown">
+        <router-link to="#" class="nav-link dropdown-toggle">Posts Request</router-link>
+        <div class="dropdown-content">
+          <router-link to="/posts-request/light" class="dropdown-item">Light</router-link>
+          <router-link to="/posts-request/slightly-heavy" class="dropdown-item">Slightly Heavy</router-link>
+          <router-link to="/posts-request/heavy" class="dropdown-item">Heavy</router-link>
         </div>
       </div>
-    </nav>
-  </template>
-  
-  <script>
-  export default {
-    name: 'Navbar',
-  };
-  </script>
+      <button @click="logout" class="nav-link logout-button">Logout</button>
+    </div>
+  </nav>
+</template>
+
+<script>
+import { useRouter } from 'vue-router';
+
+export default {
+  name: 'NavbarAdmin',
+  setup() {
+    const router = useRouter();
+
+    const logout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('username');
+      localStorage.removeItem('role');
+      router.push('/login');
+    };
+
+    return { logout };
+  }
+};
+</script>
   
   <style scoped>
   .logo-title {
@@ -94,5 +110,18 @@
   .dropdown-item:hover {
     background-color: rgba(9, 117, 76, 0.2);
   }
+  .logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #ffffff;
+  padding: 8px 15px;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: rgba(9, 117, 76, 0.3);
+}
   </style>
   

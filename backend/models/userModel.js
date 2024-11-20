@@ -1,8 +1,23 @@
 const db = require('../config/db');
 
-const createUser  = (userData, callback) => {
-  const sql = `INSERT INTO users (student_id, username, email, password, firstname, middlename, lastname, gender, birthdate, program, otp, otpExpires) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  db.query(sql, [userData.student_id, userData.username, userData.email, userData.password, userData.firstname, userData.middlename, userData.lastname, userData.gender, userData.birthdate, userData.program, userData.otp, userData.otpExpires], callback);
+// Add a new field 'role' to createUser function
+const createUser = (userData, callback) => {
+  const sql = `INSERT INTO users (student_id, username, email, password, firstname, middlename, lastname, gender, birthdate, program, otp, otpExpires, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  db.query(sql, [
+    userData.student_id, 
+    userData.username, 
+    userData.email, 
+    userData.password, 
+    userData.firstname, 
+    userData.middlename, 
+    userData.lastname, 
+    userData.gender, 
+    userData.birthdate, 
+    userData.program, 
+    userData.otp, 
+    userData.otpExpires,
+    userData.role || 'user' // Default role to 'user' if not specified
+  ], callback);
 };
 
 // Function to find a user by email

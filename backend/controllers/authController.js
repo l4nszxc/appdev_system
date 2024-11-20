@@ -136,7 +136,9 @@ exports.login = (req, res) => {
     if (results.length === 0) return res.status(400).json({ message: 'User not found!' });
 
     const user = results[0];
-    if (!user.isVerified) {
+    
+    // Check if user is verified (except for admin)
+    if (!user.isVerified && user.role !== 'admin') {
       return res.status(403).json({ message: 'Please verify your email before logging in.' });
     }
 
@@ -144,11 +146,17 @@ exports.login = (req, res) => {
       if (err) return res.status(500).json({ error: err.message });
       if (!isMatch) return res.status(400).json({ message: 'Incorrect password!' });
 
-      const token = jwt.sign({ student_id: user.student_id, username: user.username }, 'your_jwt_secret', { expiresIn: '1h' });
+      const token = jwt.sign({ 
+        student_id: user.student_id, 
+        username: user.username,
+        role: user.role 
+      }, 'your_jwt_secret', { expiresIn: '1h' });
+      
       res.status(200).json({
         message: 'Login successful!',
         token,
         username: user.username,
+        role: user.role
       });
     });
   });

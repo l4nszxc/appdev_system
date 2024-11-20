@@ -7,6 +7,7 @@ const authController = require('./controllers/authController');
 const userController = require('./controllers/userController');
 const exerciseController = require('./controllers/exerciseController');
 const userFeedbackController = require('./controllers/userFeedbackController');
+const heartToHeartController = require('./controllers/heartToHeartController');
 const postController = require('./controllers/postController');
 const authMiddleware = require('./middleware/authMiddleware');
 
@@ -57,5 +58,10 @@ app.post('/posts/:postId/reactions', authMiddleware, postController.toggleReacti
 app.post('/posts/:postId/comments', authMiddleware, postController.addComment);
 app.get('/posts/:postId/comments', authMiddleware, postController.getComments);
 
+// Appointment routes
+app.post('/api/appointments', authMiddleware, heartToHeartController.createAppointment);
+app.get('/api/appointments', authMiddleware, heartToHeartController.getAppointmentsByDate);
+app.get('/api/appointments/current', authMiddleware, heartToHeartController.getCurrentAppointment);
+app.delete('/api/appointments/:id', authMiddleware, heartToHeartController.cancelAppointment);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

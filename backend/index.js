@@ -6,6 +6,7 @@ const userController = require('./controllers/userController');
 const exerciseController = require('./controllers/exerciseController');
 const userFeedbackController = require('./controllers/userFeedbackController');
 const authMiddleware = require('./middleware/authMiddleware');
+const chatRoutes = require('./routes/chatRoutes');
 
 const app = express();
 app.use(cors());
@@ -18,6 +19,9 @@ app.post('/verify-otp', authController.verifyOTP);
 app.post('/forgot-password', authController.forgotPassword);
 app.post('/verify-reset-otp', authController.verifyResetOTP);
 app.post('/reset-password', authController.resetPassword);
+
+//Chat routes
+app.use('/chat', chatRoutes);
 
 // User routes
 app.get('/user', authMiddleware, userController.getUserProfile);

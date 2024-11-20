@@ -110,6 +110,37 @@ class HeartToHeart {
       throw error;
     }
   }
+  static async getTodaysAppointments() {
+    try {
+      const query = `
+        SELECT a.*, u.firstname, u.lastname 
+        FROM appointments a
+        JOIN users u ON a.student_id = u.student_id
+        WHERE a.date = CURDATE() AND a.status = 'scheduled'
+      `;
+      const [rows] = await pool.execute(query);
+      return rows || []; // Return empty array if no appointments found
+    } catch (error) {
+      console.error('Database error while getting today\'s appointments:', error);
+      throw error;
+    }
+  }
+  static async getAllAppointments() {
+    try {
+      const query = `
+        SELECT a.*, u.firstname, u.lastname 
+        FROM appointments a
+        JOIN users u ON a.student_id = u.student_id
+        WHERE a.status = 'scheduled'
+        ORDER BY a.date, a.start_time
+      `;
+      const [rows] = await pool.execute(query);
+      return rows || []; // Return empty array if no appointments found
+    } catch (error) {
+      console.error('Database error while getting all appointments:', error);
+      throw error;
+    }
+  }
 }
 
 module.exports = HeartToHeart;

@@ -100,3 +100,21 @@ exports.cancelAppointment = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+exports.getTodaysAppointments = async (req, res) => {
+  try {
+    const appointments = await HeartToHeart.getTodaysAppointments();
+    res.json(appointments || []);
+  } catch (error) {
+    console.error('Error getting today\'s appointments:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+exports.getAllAppointments = async (req, res) => {
+  try {
+    const appointments = await HeartToHeart.getAllAppointments();
+    res.json(appointments || []);
+  } catch (error) {
+    console.error('Error getting all appointments:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

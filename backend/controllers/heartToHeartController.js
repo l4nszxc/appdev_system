@@ -118,3 +118,19 @@ exports.getAllAppointments = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+exports.updateMeetingLink = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { meetingLink } = req.body;
+
+    if (!meetingLink) {
+      return res.status(400).json({ message: 'Meeting link is required' });
+    }
+
+    await HeartToHeart.updateMeetingLink(id, meetingLink);
+    res.json({ message: 'Meeting link updated successfully' });
+  } catch (error) {
+    console.error('Error updating meeting link:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

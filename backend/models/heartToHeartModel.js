@@ -78,7 +78,7 @@ class HeartToHeart {
         LIMIT 1
       `;
       const [rows] = await pool.execute(query, [studentId]);
-      return rows[0] || null; // Return appointment or null if not found
+      return rows[0] || null;
     } catch (error) {
       console.error('Database error while getting current appointment:', error);
       throw error;
@@ -113,13 +113,13 @@ class HeartToHeart {
   static async getTodaysAppointments() {
     try {
       const query = `
-        SELECT a.*, u.firstname, u.lastname 
+        SELECT a.*, u.firstname, u.lastname, a.meeting_link
         FROM appointments a
         JOIN users u ON a.student_id = u.student_id
         WHERE a.date = CURDATE() AND a.status = 'scheduled'
       `;
       const [rows] = await pool.execute(query);
-      return rows || []; // Return empty array if no appointments found
+      return rows || [];
     } catch (error) {
       console.error('Database error while getting today\'s appointments:', error);
       throw error;
@@ -138,6 +138,20 @@ class HeartToHeart {
       return rows || []; // Return empty array if no appointments found
     } catch (error) {
       console.error('Database error while getting all appointments:', error);
+      throw error;
+    }
+  }
+  static async updateMeetingLink(id, meetingLink) {
+    try {
+      const query = `
+        UPDATE appointments 
+        SET meeting_link = ?
+        WHERE id = ?
+      `;
+      const [result] = await pool.execute(query, [meetingLink, id]);
+      return result;
+    } catch (error) {
+      console.error('Database error while updating meeting link:', error);
       throw error;
     }
   }

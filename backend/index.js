@@ -67,5 +67,9 @@ app.delete('/api/appointments/:id', authMiddleware, heartToHeartController.cance
 app.get('/api/appointments/today', authMiddleware, heartToHeartController.getTodaysAppointments);
 app.get('/api/appointments/all', authMiddleware, heartToHeartController.getAllAppointments);
 
+app.post('/api/appointments/:id/meeting-link', authMiddleware, heartToHeartController.updateMeetingLink);
+
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

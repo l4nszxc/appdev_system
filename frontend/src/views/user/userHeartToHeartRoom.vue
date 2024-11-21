@@ -48,16 +48,22 @@
         </div>
 
         <!-- Current Appointment Display -->
-        <div v-else class="mt-4">
+        <div v-if="currentAppointment" class="mt-4">
           <h3 class="text-lg font-semibold mb-2 text-green-700">Your Current Appointment</h3>
           <div class="bg-green-50 p-4 rounded-lg">
             <p class="mb-2">
               <span class="font-medium">Date:</span> 
               {{ formatDate(currentAppointment.date) }}
             </p>
-            <p class="mb-4">
+            <p class="mb-2">
               <span class="font-medium">Time:</span>
               {{ formatTime(currentAppointment.start_time) }} - {{ formatTime(currentAppointment.end_time) }}
+            </p>
+            <p v-if="currentAppointment.meeting_link" class="mb-4">
+              <span class="font-medium">Meeting Link:</span>
+              <a :href="currentAppointment.meeting_link" target="_blank" class="text-blue-600 hover:underline">
+                {{ currentAppointment.meeting_link }}
+              </a>
             </p>
             <button
               @click="cancelAppointment"

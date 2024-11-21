@@ -71,7 +71,7 @@ onMounted(() => {
 
 const initiateChat = async () => {
   try {
-    const response = await fetch('http://localhost:3000/api/chat/initiate', {
+    const response = await fetch('http://localhost:5000/api/chat/initiate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ const sendMessage = async () => {
   if (!newMessage.value.trim()) return;
 
   try {
-    await fetch(`http://localhost:3000/api/chat/${chatId.value}/message`, {
+    await fetch(`http://localhost:5000/api/chat/${chatId.value}/message`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ const formatDate = (timestamp) => {
 let pollingInterval;
 
 const startPolling = () => {
-  pollingInterval = setInterval(fetchMessages, 3000);
+  pollingInterval = setInterval(fetchMessages, 5000);
 };
 
 onUnmounted(() => {
@@ -138,5 +138,45 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Add any additional styles you want here */
+/* General container styles */
+.bg-white {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+/* Chat box and message styling */
+.chat-messages {
+  scrollbar-width: thin;
+  scrollbar-color: #38a169 #e5e7eb;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: #38a169;
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+.message-box {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Input styling */
+input:focus {
+  border-color: #38a169;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.5);
+}
+
+/* Button hover transitions */
+button:hover {
+  transform: scale(1.02);
+  transition: all 0.2s ease-in-out;
+}
 </style>

@@ -14,6 +14,7 @@
         <router-link to="/user/userChat" class="nav-link">Chat Support</router-link>
         <router-link to="/user/userHeartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
         <router-link to="/daily-exercise" class="nav-link">Daily Exercise</router-link>
+        <router-link to="/mood-tracker" class="nav-link">Mood Tracker</router-link>
         <div class="profile-menu">
           <img 
             :src="profilePictureUrl"

@@ -8,6 +8,7 @@ const userController = require('./controllers/userController');
 const exerciseController = require('./controllers/exerciseController');
 const userFeedbackController = require('./controllers/userFeedbackController');
 const heartToHeartController = require('./controllers/heartToHeartController');
+const moodController = require('./controllers/moodController');
 const postController = require('./controllers/postController');
 const authMiddleware = require('./middleware/authMiddleware');
 
@@ -71,6 +72,12 @@ app.get('/api/appointments/today', authMiddleware, heartToHeartController.getTod
 app.get('/api/appointments/all', authMiddleware, heartToHeartController.getAllAppointments);
 
 app.post('/api/appointments/:id/meeting-link', authMiddleware, heartToHeartController.updateMeetingLink);
+
+app.post('/mood', authMiddleware, moodController.saveMood);
+app.get('/mood/weekly', authMiddleware, moodController.getWeeklyMoods);
+app.get('/mood/monthly', authMiddleware, moodController.getMonthlyMoods);
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

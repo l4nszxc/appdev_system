@@ -47,18 +47,19 @@ app.post('/exercises', authMiddleware, exerciseController.saveExercise);
 // Feedback routes
 app.post('/api/feedback', authMiddleware, userFeedbackController.submitFeedback);
 app.get('/api/feedback', authMiddleware, userFeedbackController.getUserFeedback);
+app.get('/api/feedback/all', authMiddleware, userFeedbackController.getAllFeedback); // New route for fetching all feedback
+
 
 app.get('/user', authMiddleware, userController.getUserProfile);
 app.put('/user', authMiddleware, userController.updateUserProfile);
 app.post('/user/profile-picture', authMiddleware, upload.single('profilePicture'), userController.uploadProfilePicture);
 
-// Post routes]
 // Post routes
-app.post('/posts', authMiddleware, postController.createPost);
 app.get('/posts', authMiddleware, postController.getPosts);
+app.post('/posts', authMiddleware, postController.createPost);
 app.post('/posts/reactions', authMiddleware, postController.addReaction);
 app.post('/posts/comments', authMiddleware, postController.addComment);
-
+app.delete('/posts/:id', authMiddleware, postController.deletePost);
 
 // Appointment routes
 app.post('/api/appointments', authMiddleware, heartToHeartController.createAppointment);

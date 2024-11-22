@@ -82,10 +82,47 @@ const addComment = (commentData, callback) => {
   const sql = 'INSERT INTO posts_comments (post_id, student_id, content) VALUES (?, ?, ?)';
   db.query(sql, [commentData.postId, commentData.studentId, commentData.content], callback);
 };
+const deleteReactionsByPostId = (postId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM posts_reactions WHERE post_id = ?';
+    db.query(sql, [postId], (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(result);
+    });
+  });
+};
 
+const deleteCommentsByPostId = (postId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM posts_comments WHERE post_id = ?';
+    db.query(sql, [postId], (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(result);
+    });
+  });
+};
+
+const deletePost = (postId) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM posts WHERE id = ?';
+    db.query(sql, [postId], (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(result);
+    });
+  });
+};
 module.exports = {
   createPost,
   getPosts,
   addReaction,
-  addComment
+  addComment,
+  deleteCommentsByPostId,
+  deleteReactionsByPostId,
+  deletePost, // Add this line
 };

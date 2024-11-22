@@ -44,3 +44,22 @@ exports.addComment = (req, res) => {
     res.status(201).json({ message: 'Comment added successfully' });
   });
 };
+exports.deletePost = async (req, res) => {
+  const postId = req.params.id;
+
+  try {
+    // Delete related reactions first
+    await postModel.deleteReactionsByPostId(postId);
+
+    // Delete related comments next
+    await postModel.deleteCommentsByPostId(postId);
+
+    // Then delete the post
+    await postModel.deletePost(postId);
+
+    res.status(200).json({ message: 'Post and related reactions and comments deleted successfully' });
+  } catch (err) {
+    console.error('Failed to delete post and related reactions and comments:', err);
+    res.status(500).json({ message: 'Failed to delete post and related reactions and comments', error: err });
+  }
+};

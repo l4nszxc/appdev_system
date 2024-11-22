@@ -1,103 +1,132 @@
 <template>
-    <div>
-      <Navbar />
-      <div class="container mt-5">
-        <div class="card shadow-lg p-4 bg-light">
-          <h2 class="text-center text-success mb-4">Admin Dashboard</h2>
-          <p class="text-center text-muted mb-4">
-            View feedback and issues sent by users to improve their experience.
-          </p>
-  
-          <div v-if="feedbacks.length === 0" class="text-center text-muted">
-            <p>No feedbacks received yet.</p>
-          </div>
-  
-          <div v-else>
-            <div v-for="feedback in feedbacks" :key="feedback.feedback_id" class="feedback-card mb-3">
-              <div class="card border-0 shadow-sm p-3">
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <h5 class="fw-bold text-success">{{ feedback.feedback_type }}</h5>
-                    <p class="text-muted mb-1">Submitted by: {{ feedback.student_id }}</p>
-                  </div>
-                  <small class="text-muted">{{ formatDate(feedback.created_at) }}</small>
-                </div>
-                <p class="mt-2">{{ feedback.feedback_content }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+  <div>
+    <Navbar />
+    <div class="container mt-5">
+      <h2 class="text-center mb-4">User Feedback</h2>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th>Feedback ID</th>
+              <th>Student ID</th>
+              <th>Feedback Type</th>
+              <th>Feedback Content</th>
+              <th>Created At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="feedback in feedbacks" :key="feedback.feedback_id">
+              <td>{{ feedback.feedback_id }}</td>
+              <td>{{ feedback.student_id }}</td>
+              <td>{{ feedback.feedback_type }}</td>
+              <td>{{ feedback.feedback_content }}</td>
+              <td>{{ new Date(feedback.created_at).toLocaleString() }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </template>
-  
-  <script>
-  import Navbar from '../../components/NavbarAdmin.vue';
-  
-  export default {
-    name: 'AdminDashboard',
-    components: { Navbar },
-    data() {
-      return {
-        feedbacks: [], // Array to hold feedbacks
-      };
-    },
-    methods: {
-      async fetchFeedbacks() {
-        try {
-          const response = await fetch('http://localhost:5000/api/feedback'); // Adjust the API endpoint as needed
-          if (!response.ok) throw new Error('Failed to fetch feedback data.');
-          this.feedbacks = await response.json();
-        } catch (error) {
-          console.error('Error fetching feedbacks:', error);
-        }
-      },
-      formatDate(date) {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(date).toLocaleDateString(undefined, options);
-      },
-    },
-    mounted() {
-      this.fetchFeedbacks();
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .container {
-    max-width: 800px;
-    margin: auto;
-  }
-  
-  .card {
-    border-radius: 15px;
-    background: linear-gradient(135deg, #f8fff4, #e6f7e9);
-  }
-  
-  .feedback-card .card {
-    transition: transform 0.2s ease;
-  }
-  
-  .feedback-card .card:hover {
-    transform: scale(1.02);
-  }
-  
-  h2 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: bold;
-    letter-spacing: 1px;
-  }
-  
-  .text-success {
-    color: #28a745 !important;
-  }
-  
-  .text-muted {
-    color: #6c757d !important;
-  }
-  
-  .shadow-lg {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-  }
-  </style>
-  
+  </div>
+</template>
+
+<script>
+import Navbar from '../../components/NavbarAdmin.vue';
+import axios from 'axios';
+import { ref, onMounted } from 'vue';
+
+export default {
+  name: 'AdminDashboard',
+  components: { Navbar },
+  setup() {
+    const feedbacks = ref([]);
+
+    const fetchFeedbacks = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:5000/api/feedback/all', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('Fetched feedbacks:', response.data);
+        feedbacks.value = response.data;
+      } catch (error) {
+        console.error('Error fetching feedbacks:', error);
+      }
+    };
+
+    onMounted(() => {
+      fetchFeedbacks();
+    });
+
+    return {
+      feedbacks,
+    };
+  },
+};
+</script>
+
+<style scoped>
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: #343a40;
+}
+
+.table {
+  margin-top: 20px;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.table thead {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.table th,
+.table td {
+  padding: 12px 15px;
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table th:first-child,
+.table td:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.table th:last-child,
+.table td:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+</style>

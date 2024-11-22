@@ -9,10 +9,7 @@
         v-for="emotion in emotions"
         :key="emotion"
         @click="selectedEmotion = emotion"
-        :class="[
-          'px-4 py-2 rounded-full transition-colors',
-          selectedEmotion === emotion ? 'bg-green-500 text-white' : 'bg-green-100 text-green-800 hover:bg-green-200',
-        ]"
+        :class="[selectedEmotion === emotion ? 'bg-green-500 text-white' : 'bg-green-100 text-green-800 hover:bg-green-200', 'px-4 py-2 rounded-full transition-colors']"
       >
         {{ emotion }}
       </button>
@@ -53,65 +50,19 @@
           </span>
         </div>
         <p class="post-content">{{ post.content }}</p>
-        <div class="post-actions">
-          <button 
-            @click="toggleReaction(post.id)" 
-            class="action-button flex items-center"
-          >
-            <span>❤️</span>
-            <span class="ml-1">{{ post.reactions }}</span>
-          </button>
-          <button 
-            @click="toggleComments(post)" 
-            class="action-button flex items-center"
-          >
-            <span>💬</span>
-            <span class="ml-1">{{ post.comments_count }}</span>
-          </button>
-        </div>
-        
-        <div v-if="post.showComments" class="comments-section">
-          <div v-for="comment in post.comments" :key="comment.id" class="comment flex items-center mb-2">
-            <img 
-              :src="getProfilePicture(comment.profile_picture)" 
-              :alt="comment.username" 
-              class="w-8 h-8 rounded-full mr-2"
-            />
-            <div>
-              <span class="font-bold mr-2">{{ comment.username }}</span>
-              <span>{{ comment.content }}</span>
-            </div>
-          </div>
-          <div class="comment-form flex mt-2">
-            <input 
-              v-model="newComments[post.id]" 
-              placeholder="Add a comment..." 
-              class="flex-grow mr-2 p-2 border rounded"
-              @keyup.enter="addComment(post.id)"
-            />
-            <button 
-              @click="addComment(post.id)" 
-              class="bg-green-500 text-white px-4 py-2 rounded"
-              :disabled="!newComments[post.id]"
-            >
-              Send
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
 
 // State variables
 const posts = ref([]);
 const newPostContent = ref('');
-const newComments = reactive({});
 const selectedEmotion = ref(null);
 const emotions = ['Happy', 'Sad', 'Anxious', 'Calm', 'Stressed'];
 const isLoggedIn = ref(false);
@@ -139,36 +90,14 @@ const fetchUserDetails = async () => {
   }
 };
 
-// Fetch posts with comments
+// Fetch posts
 const fetchPosts = async () => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get('http://localhost:5000/posts', {
       headers: { Authorization: `Bearer ${token}` },
     });
-    
-    // Fetch comments for each post
-    const postsWithComments = await Promise.all(response.data.map(async (post) => {
-      try {
-        const commentsResponse = await axios.get(`http://localhost:5000/posts/${post.id}/comments`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        return {
-          ...post,
-          comments: commentsResponse.data,
-          showComments: false
-        };
-      } catch (error) {
-        console.error(`Failed to fetch comments for post ${post.id}:`, error);
-        return {
-          ...post,
-          comments: [],
-          showComments: false
-        };
-      }
-    }));
-
-    posts.value = postsWithComments;
+    posts.value = response.data;
   } catch (error) {
     console.error('Failed to fetch posts:', error);
   }
@@ -200,49 +129,6 @@ const createPost = async () => {
   }
 };
 
-// Toggle post reaction
-const toggleReaction = async (postId) => {
-  try {
-    const token = localStorage.getItem('token');
-    await axios.post(
-      `http://localhost:5000/posts/${postId}/reactions`,
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    await fetchPosts();
-  } catch (error) {
-    console.error('Failed to toggle reaction:', error);
-  }
-};
-
-// Toggle comments visibility
-const toggleComments = (post) => {
-  post.showComments = !post.showComments;
-};
-
-// Add a comment
-const addComment = async (postId) => {
-  const commentContent = newComments[postId]?.trim();
-  if (!commentContent) return;
-
-  try {
-    const token = localStorage.getItem('token');
-    await axios.post(
-      `http://localhost:5000/posts/${postId}/comments`,
-      { content: commentContent },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    
-    // Clear comment input
-    newComments[postId] = '';
-    
-    // Refresh posts to get updated comments
-    await fetchPosts();
-  } catch (error) {
-    console.error('Failed to add comment:', error);
-  }
-};
-
 // Date formatting utility
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -261,7 +147,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Existing styles from the previous component */
 .feed-container {
   max-width: 600px;
   margin: 0 auto;
@@ -335,17 +220,5 @@ onMounted(async () => {
 
 .post-content {
   margin-bottom: 10px;
-}
-
-.post-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.action-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
 }
 </style>

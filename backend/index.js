@@ -52,11 +52,9 @@ app.get('/user', authMiddleware, userController.getUserProfile);
 app.put('/user', authMiddleware, userController.updateUserProfile);
 app.post('/user/profile-picture', authMiddleware, upload.single('profilePicture'), userController.uploadProfilePicture);
 
+// Post routes]
 app.post('/posts', authMiddleware, postController.createPost);
 app.get('/posts', authMiddleware, postController.getPosts);
-app.post('/posts/:postId/reactions', authMiddleware, postController.toggleReaction);
-app.post('/posts/:postId/comments', authMiddleware, postController.addComment);
-app.get('/posts/:postId/comments', authMiddleware, postController.getComments);
 
 // Appointment routes
 app.post('/api/appointments', authMiddleware, heartToHeartController.createAppointment);
@@ -68,8 +66,6 @@ app.get('/api/appointments/today', authMiddleware, heartToHeartController.getTod
 app.get('/api/appointments/all', authMiddleware, heartToHeartController.getAllAppointments);
 
 app.post('/api/appointments/:id/meeting-link', authMiddleware, heartToHeartController.updateMeetingLink);
-
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -20,3 +20,27 @@ exports.getPosts = (req, res) => {
     res.status(200).json(results);
   });
 };
+
+exports.addReaction = (req, res) => {
+  const { postId, reactionType } = req.body;
+  const studentId = req.user.student_id;
+
+  postModel.addReaction({ postId, studentId, reactionType }, (err, result) => {
+    if (err) {
+      return res.status(500).json({ message: 'Failed to add reaction', error: err });
+    }
+    res.status(201).json({ message: 'Reaction added successfully' });
+  });
+};
+
+exports.addComment = (req, res) => {
+  const { postId, content } = req.body;
+  const studentId = req.user.student_id;
+
+  postModel.addComment({ postId, studentId, content }, (err, result) => {
+    if (err) {
+      return res.status(500).json({ message: 'Failed to add comment', error: err });
+    }
+    res.status(201).json({ message: 'Comment added successfully' });
+  });
+};

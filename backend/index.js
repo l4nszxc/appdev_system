@@ -53,8 +53,12 @@ app.put('/user', authMiddleware, userController.updateUserProfile);
 app.post('/user/profile-picture', authMiddleware, upload.single('profilePicture'), userController.uploadProfilePicture);
 
 // Post routes]
+// Post routes
 app.post('/posts', authMiddleware, postController.createPost);
 app.get('/posts', authMiddleware, postController.getPosts);
+app.post('/posts/reactions', authMiddleware, postController.addReaction);
+app.post('/posts/comments', authMiddleware, postController.addComment);
+
 
 // Appointment routes
 app.post('/api/appointments', authMiddleware, heartToHeartController.createAppointment);

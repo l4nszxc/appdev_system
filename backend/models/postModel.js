@@ -16,15 +16,76 @@ const getPosts = (callback) => {
       p.created_at, 
       u.username, 
       u.profile_picture,
-      u.student_id
+      u.student_id,
+      (SELECT COUNT(*) FROM posts_reactions WHERE post_id = p.id) AS reactions_count,
+      (SELECT COUNT(*) FROM posts_comments WHERE post_id = p.id) AS comments_count
     FROM posts p
     JOIN users u ON p.student_id = u.student_id
     ORDER BY p.created_at DESC
   `;
-  db.query(sql, callback);
+  db.query(sql, (err, posts) => {
+    if (err) return callback(err);
+
+    const postIds = posts.map(post => post.id);
+    if (postIds.length === 0) return callback(null, posts);
+
+    const commentsSql = `
+      SELECT 
+        c.id, 
+        c.post_id, 
+        c.content, 
+        c.created_at, 
+        u.username, 
+        u.profile_picture 
+      FROM posts_comments c
+      JOIN users u ON c.student_id = u.student_id
+      WHERE c.post_id IN (?)
+    `;
+    db.query(commentsSql, [postIds], (err, comments) => {
+      if (err) return callback(err);
+
+      const reactionsSql = `
+        SELECT 
+          r.id,
+          r.post_id, 
+          r.reaction_type,
+          u.username, 
+          u.profile_picture 
+        FROM posts_reactions r
+        JOIN users u ON r.student_id = u.student_id
+        WHERE r.post_id IN (?)
+      `;
+      db.query(reactionsSql, [postIds], (err, reactions) => {
+        if (err) return callback(err);
+
+        posts.forEach(post => {
+          post.comments = comments.filter(comment => comment.post_id === post.id);
+          post.reactions = reactions.filter(reaction => reaction.post_id === post.id);
+        });
+
+        callback(null, posts);
+      });
+    });
+  });
+};
+
+const addReaction = (reactionData, callback) => {
+  const sql = `
+    INSERT INTO posts_reactions (post_id, student_id, reaction_type) 
+    VALUES (?, ?, ?) 
+    ON DUPLICATE KEY UPDATE reaction_type = VALUES(reaction_type)
+  `;
+  db.query(sql, [reactionData.postId, reactionData.studentId, reactionData.reactionType], callback);
+};
+
+const addComment = (commentData, callback) => {
+  const sql = 'INSERT INTO posts_comments (post_id, student_id, content) VALUES (?, ?, ?)';
+  db.query(sql, [commentData.postId, commentData.studentId, commentData.content], callback);
 };
 
 module.exports = {
   createPost,
-  getPosts
+  getPosts,
+  addReaction,
+  addComment
 };

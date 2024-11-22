@@ -54,6 +54,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import Navbar from '@/components/Navbar.vue'; // Import the Navbar component
+import axios from 'axios';
 
 const chatId = ref(null);
 const userId = ref(null);
@@ -69,23 +70,29 @@ onMounted(() => {
   username.value = localStorage.getItem('username') || '';
 });
 
+
 const initiateChat = async () => {
   try {
-    const response = await fetch('http://localhost:5000/api/chat/initiate', {
-      method: 'POST',
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authorization token is missing');
+    }
+    const response = await axios.post('http://localhost:5000/api/chat/initiate', {
+      isAnonymous: isAnonymous.value,
+    }, {
       headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ isAnonymous: isAnonymous.value }),
-    });
-    if (response.ok) {
-      const data = await response.json();
+        'Authorization': `Bearer ${token}`
+      }
+      });
+
+    if (response.status === 201) {
+      const data = response.data;
       chatId.value = data.chatId;
-      userId.value = data.userId;
+      userId.value = data.studentId; // Ensure this matches your backend response key
       startPolling();
     }
   } catch (error) {
-    console.error('Error initiating chat:', error);
+    console.error('Error initiating chat:', error.response?.data || error.message);
   }
 };
 
@@ -93,30 +100,25 @@ const sendMessage = async () => {
   if (!newMessage.value.trim()) return;
 
   try {
-    await fetch(`http://localhost:5000/api/chat/${chatId.value}/message`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        content: newMessage.value,
-        senderId: userId.value
-      }),
+    await axios.post(`http://localhost:5000/api/chat/${chatId.value}/message`, {
+      content: newMessage.value,
     });
+
     newMessage.value = '';
   } catch (error) {
-    console.error('Error sending message:', error);
+    console.error('Error sending message:', error.response?.data || error.message);
   }
 };
 
 const fetchMessages = async () => {
   try {
-    const response = await fetch(`http://localhost:5000/api/chat/${chatId.value}/messages`);
-    if (response.ok) {
-      messages.value = await response.json();
+    const response = await axios.get(`http://localhost:5000/api/chat/${chatId.value}/messages`);
+
+    if (response.status === 200) {
+      messages.value = response.data;
     }
   } catch (error) {
-    console.error('Error fetching messages:', error);
+    console.error('Error fetching messages:', error.response?.data || error.message);
   }
 };
 

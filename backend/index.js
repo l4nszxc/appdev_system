@@ -11,6 +11,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.json());
 
 // Auth routes
 app.post('/register', authController.register);
@@ -21,7 +22,7 @@ app.post('/verify-reset-otp', authController.verifyResetOTP);
 app.post('/reset-password', authController.resetPassword);
 
 //Chat routes
-app.use('/chat', chatRoutes);
+app.use('/api/chat', chatRoutes);
 
 // User routes
 app.get('/user', authMiddleware, userController.getUserProfile);

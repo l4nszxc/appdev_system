@@ -97,12 +97,20 @@ const initiateChat = async () => {
 };
 
 const sendMessage = async () => {
+  const token = localStorage.getItem('token');
+   console.log('Token:', token);
   if (!newMessage.value.trim()) return;
 
   try {
-    await axios.post(`http://localhost:5000/api/chat/${chatId.value}/message`, {
-      content: newMessage.value,
-    });
+    await axios.post(
+      `http://localhost:5000/api/chat/${chatId.value}/message`,
+      { content: newMessage.value },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
 
     newMessage.value = '';
   } catch (error) {
@@ -110,17 +118,23 @@ const sendMessage = async () => {
   }
 };
 
+
 const fetchMessages = async () => {
   try {
-    const response = await axios.get(`http://localhost:5000/api/chat/${chatId.value}/messages`);
-
-    if (response.status === 200) {
-      messages.value = response.data;
-    }
+    const response = await axios.get(
+      `http://localhost:5000/api/chat/${chatId.value}/messages`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
+    console.log(response.data);
   } catch (error) {
     console.error('Error fetching messages:', error.response?.data || error.message);
   }
 };
+
 
 const formatDate = (timestamp) => {
   return new Date(timestamp).toLocaleString();

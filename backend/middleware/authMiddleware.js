@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 module.exports = (req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1];
 
+  console.log('Token received in middleware:', token)
+
   if (!token) {
     return res.status(401).json({ message: 'No token, authorization denied' });
   }

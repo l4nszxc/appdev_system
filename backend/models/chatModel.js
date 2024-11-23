@@ -16,7 +16,7 @@ const ChatModel = {
     
     addMessage: (chatId, senderId, content) => {
         return new Promise((resolve, reject) => {
-            const sql = 'INSERT INTO messages (chat_id, sender_id, content) VALUES (?, ?, ?)';
+            const sql = 'INSERT INTO messages (chat_id, student_id, content) VALUES (?, ?, ?)';
             db.query(sql, [chatId, senderId, content], (error, results) => {
                 if (error) {
                     reject(error);

@@ -1,20 +1,43 @@
 <template>
   <nav class="navbar">
     <div class="logo-title">
-      <img src="../assets/MINSU LOGO.png" alt="Logo" class="logo" />
-      <h1 class="navbar-brand">MINDCONNECT</h1>
+      <!-- Make the logo clickable without underline -->
+      <router-link to="/user-home" class="no-underline">
+        <img src="../assets/MINSU LOGO.png" alt="Logo" class="logo" />
+      </router-link>
+      <!-- Make the navbar-brand clickable without underline -->
+      <router-link to="/user-home" class="navbar-brand no-underline">
+        MINDCONNECT
+      </router-link>
       <span v-if="isLoggedIn" class="username-display">Logged in as: {{ username }}</span>
     </div>
     <div class="navbar-links" :class="{ 'show-links': menuVisible }">
       <template v-if="isLoggedIn">
         <div class="vertical-line"></div>
-        <router-link to="/feed" class="nav-link">Feed</router-link>
-        <router-link to="/feedback" class="nav-link">Feedback</router-link>
-        <router-link to="/help-center" class="nav-link">Help Center</router-link>
-        <router-link to="/user/userChat" class="nav-link">Chat Support</router-link>
-        <router-link to="/user/userHeartToHeartRoom" class="nav-link">Heart-to-Heart Room</router-link>
-        <router-link to="/daily-exercise" class="nav-link">Daily Exercise</router-link>
-        <router-link to="/mood-tracker" class="nav-link">Mood Tracker</router-link>
+        <router-link to="/feed" class="nav-link">
+          <i class="fas fa-home"></i>
+          <span class="link-text">Feed</span>
+        </router-link>
+        <router-link to="/user/userChat" class="nav-link">
+          <i class="fas fa-comments"></i>
+          <span class="link-text">Chat Support</span>
+        </router-link>
+        <router-link to="/user/userHeartToHeartRoom" class="nav-link">
+          <i class="fas fa-heart"></i>
+          <span class="link-text">Heart-to-Heart Room</span>
+        </router-link>
+        <router-link to="/daily-exercise" class="nav-link">
+          <i class="fas fa-running"></i>
+          <span class="link-text">Daily Exercise</span>
+        </router-link>
+        <router-link to="/feedback" class="nav-link">
+          <i class="fas fa-comment"></i>
+          <span class="link-text">Feedback</span>
+        </router-link>
+         <router-link to="/mood-tracker" class="nav-link">
+          <i class="fas fa-smile-o"></i>
+          <span class="link-text">Mood Tracker</span>
+        </router-link>
         <div class="profile-menu">
           <img 
             :src="profilePictureUrl"
@@ -29,8 +52,14 @@
         </div>
       </template>
       <template v-else>
-        <router-link to="/login" class="nav-link">Login</router-link>
-        <router-link to="/register" class="nav-link">Register</router-link>
+        <router-link to="/login" class="nav-link">
+          <i class="fas fa-sign-in-alt"></i>
+          <span class="link-text">Login</span>
+        </router-link>
+        <router-link to="/register" class="nav-link">
+          <i class="fas fa-user-plus"></i>
+          <span class="link-text">Register</span>
+        </router-link>
       </template>
     </div>
     <div class="hamburger-menu" @click="toggleMenu">
@@ -40,6 +69,8 @@
     </div>
   </nav>
 </template>
+
+
 
 <script>
 import { ref, computed } from 'vue';
@@ -104,6 +135,88 @@ export default {
 </script>
 
 <style scoped>
+.no-underline {
+  text-decoration: none;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #0f6016;
+  color: #ffffff;
+  position: relative;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.5rem;
+  padding: 8px 15px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-link:hover {
+  background-color: rgba(9, 117, 76, 0.3);
+}
+
+.link-text {
+  display: none;
+  position: absolute;
+  bottom: -20px;
+  background-color: #ffffff;
+  color: #0f6016;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.nav-link:hover .link-text {
+  display: block;
+  z-index: 1;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .navbar-links.show-links {
+    display: flex;
+  }
+
+  .hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+  }
+
+  .hamburger-menu .bar {
+    width: 30px;
+    height: 4px;
+    background-color: #ffffff;
+    border-radius: 5px;
+  }
+}
 /* Logo and title container */
 .logo-title {
   display: flex;

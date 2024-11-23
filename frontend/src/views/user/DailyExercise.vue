@@ -34,12 +34,14 @@
       </div>
     </div>
   </div>
+  <Footer />
 </template>
   
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
+import Footer from "@/components/Footer.vue";
 
 const isLoggedIn = ref(false);
 const username = ref('');

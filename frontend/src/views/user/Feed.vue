@@ -101,12 +101,14 @@
       </div>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
+import Footer from "@/components/Footer.vue";
 
 // State variables
 const posts = ref([]);
@@ -348,4 +350,5 @@ onMounted(async () => {
   cursor: pointer;
   font-size: 16px;
 }
+
 </style>

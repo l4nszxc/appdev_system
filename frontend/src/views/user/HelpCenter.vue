@@ -50,17 +50,20 @@
       </div>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script>
 import { ref, onMounted, computed } from 'vue';
 import Navbar from '../../components/Navbar.vue';
 import axios from 'axios';
+import Footer from "@/components/Footer.vue";
 
 export default {
   name: 'HelpCenter',
   components: {
     Navbar,
+    Footer
   },
   setup() {
     const faqs = ref([

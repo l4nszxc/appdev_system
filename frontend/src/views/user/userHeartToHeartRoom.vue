@@ -77,17 +77,20 @@
       </div>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
 import Navbar from '@/components/Navbar.vue';
 import axios from 'axios';
+import Footer from "@/components/Footer.vue";
 
 export default {
   name: 'UserHeartToHeartRoom',
   components: {
-    Navbar
+    Navbar,
+    Footer
   },
   setup() {
     const isLoggedIn = ref(false);

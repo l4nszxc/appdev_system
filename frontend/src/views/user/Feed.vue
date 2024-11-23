@@ -109,13 +109,15 @@
       </div>
     </Modal>
   </div>
+  <Footer />
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
-import Modal from '@/components/Modal.vue';
+import Footer from "@/components/Footer.vue";
+
 
 // State variables
 const posts = ref([]);
@@ -502,4 +504,5 @@ onMounted(async () => {
 .reaction-type {
   margin-left: 5px;
 }
+
 </style>

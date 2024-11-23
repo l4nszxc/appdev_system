@@ -18,6 +18,7 @@
       <button @click="goToEditProfile" class="edit-profile-btn">EDIT PROFILE</button>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script>
@@ -25,6 +26,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import Navbar from '../../components/Navbar.vue';
 import axios from 'axios';
+import Footer from "@/components/Footer.vue";
 
 export default {
   name: 'UserProfile',

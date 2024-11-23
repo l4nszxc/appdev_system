@@ -49,12 +49,14 @@
       </div>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import Navbar from '@/components/Navbar.vue';
 import axios from 'axios';
+import Footer from "@/components/Footer.vue";
 
 const chatId = ref(null);
 const userId = ref(null);

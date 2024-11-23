@@ -26,6 +26,7 @@
     "mysql2": "^3.11.3",
     "nodemailer": "^6.9.16",
     "npm": "^10.9.0",
-    "otp-generator": "^4.0.1"
+    "otp-generator": "^4.0.1",
+    "sentiment": "^5.0.2"
   }
 }

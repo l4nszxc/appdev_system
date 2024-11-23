@@ -8,6 +8,7 @@ const userController = require('./controllers/userController');
 const exerciseController = require('./controllers/exerciseController');
 const userFeedbackController = require('./controllers/userFeedbackController');
 const heartToHeartController = require('./controllers/heartToHeartController');
+const moodController = require('./controllers/moodController');
 const postController = require('./controllers/postController');
 const authMiddleware = require('./middleware/authMiddleware');
 
@@ -47,16 +48,19 @@ app.post('/exercises', authMiddleware, exerciseController.saveExercise);
 // Feedback routes
 app.post('/api/feedback', authMiddleware, userFeedbackController.submitFeedback);
 app.get('/api/feedback', authMiddleware, userFeedbackController.getUserFeedback);
+app.get('/api/feedback/all', authMiddleware, userFeedbackController.getAllFeedback); // New route for fetching all feedback
+
 
 app.get('/user', authMiddleware, userController.getUserProfile);
 app.put('/user', authMiddleware, userController.updateUserProfile);
 app.post('/user/profile-picture', authMiddleware, upload.single('profilePicture'), userController.uploadProfilePicture);
 
-app.post('/posts', authMiddleware, postController.createPost);
+// Post routes
 app.get('/posts', authMiddleware, postController.getPosts);
-app.post('/posts/:postId/reactions', authMiddleware, postController.toggleReaction);
-app.post('/posts/:postId/comments', authMiddleware, postController.addComment);
-app.get('/posts/:postId/comments', authMiddleware, postController.getComments);
+app.post('/posts', authMiddleware, postController.createPost);
+app.post('/posts/reactions', authMiddleware, postController.addReaction);
+app.post('/posts/comments', authMiddleware, postController.addComment);
+app.delete('/posts/:id', authMiddleware, postController.deletePost);
 
 // Appointment routes
 app.post('/api/appointments', authMiddleware, heartToHeartController.createAppointment);
@@ -68,6 +72,10 @@ app.get('/api/appointments/today', authMiddleware, heartToHeartController.getTod
 app.get('/api/appointments/all', authMiddleware, heartToHeartController.getAllAppointments);
 
 app.post('/api/appointments/:id/meeting-link', authMiddleware, heartToHeartController.updateMeetingLink);
+
+app.post('/mood', authMiddleware, moodController.saveMood);
+app.get('/mood/weekly', authMiddleware, moodController.getWeeklyMoods);
+app.get('/mood/monthly', authMiddleware, moodController.getMonthlyMoods);
 
 
 

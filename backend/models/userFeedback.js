@@ -33,6 +33,18 @@ const UserFeedback = {
         }
       );
     });
+  },
+  getAll() {
+    return new Promise((resolve, reject) => {
+      db.query('SELECT * FROM feedback ORDER BY created_at DESC', (error, results) => {
+        if (error) {
+          console.error('Error fetching all feedback:', error);
+          reject(error);
+        } else {
+          resolve(results);
+        }
+      });
+    });
   }
 };
 

@@ -34,7 +34,10 @@
           <i class="fas fa-comment"></i>
           <span class="link-text">Feedback</span>
         </router-link>
-
+         <router-link to="/mood-tracker" class="nav-link">
+          <i class="fas fa-smile-o"></i>
+          <span class="link-text">Mood Tracker</span>
+        </router-link>
         <div class="profile-menu">
           <img 
             :src="profilePictureUrl"

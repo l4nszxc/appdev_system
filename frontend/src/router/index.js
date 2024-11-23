@@ -14,6 +14,8 @@ import ForgotPassword from '../views/ForgotPassword.vue';
 import FeedbackForm from '../views/user/FeedbackForm.vue';
 import HelpCenter from '@/views/user/HelpCenter.vue';
 import DailyExercise from '@/views/user/DailyExercise.vue'
+import MoodTracker from '@/views/user/MoodTracker.vue';
+
 
 // Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
@@ -117,6 +119,12 @@ const routes = [
     path: '/feed',
     name: 'feed',
     component: () => import('../views/user/Feed.vue'),
+    meta: { requiresAuth: true, requiresUser: true },
+  },
+  {
+    path: '/mood-tracker',
+    name: 'moodTracker',
+    component: MoodTracker,
     meta: { requiresAuth: true, requiresUser: true },
   },
   // ADMIN ROUTES

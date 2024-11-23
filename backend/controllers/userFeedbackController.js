@@ -30,7 +30,18 @@ const userFeedbackController = {
       console.error('Error fetching user feedback:', error);
       res.status(500).json({ message: 'An error occurred while fetching feedback' });
     }
+  },
+  async getAllFeedback(req, res) {
+    try {
+      const feedback = await UserFeedback.getAll();
+      res.status(200).json(feedback);
+    } catch (error) {
+      console.error('Error fetching all feedback:', error);
+      res.status(500).json({ message: 'An error occurred while fetching feedback' });
+    }
   }
+
+  
 };
 
 module.exports = userFeedbackController;

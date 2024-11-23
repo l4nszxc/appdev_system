@@ -7,7 +7,7 @@ const userModel = require('../models/userModel');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'lanslorence@gmail.com',
+    user: 'kusakalaniosa28@gmail.com',
     pass: 'dwha kvpo ogpk txmg',
   },
 });
@@ -57,7 +57,7 @@ exports.register = (req, res) => {
           if (err) return res.status(500).json({ error: err.message });
 
           const mailOptions = {
-            from: 'lanslorence@gmail.com',
+            from: 'kusakalaniosa28@gmail.com',
             to: email,
             subject: 'Your OTP for Email Verification',
             text: `Your OTP is: ${otp}. It is valid for 5 minutes.`,
@@ -183,7 +183,7 @@ exports.forgotPassword = async (req, res) => {
 
     // Send email with reset token
     const mailOptions = {
-      from: 'lanslorence@gmail.com',
+      from: 'kusakalaniosa28@gmail.com',
       to: email,
       subject: 'Password Reset OTP',
       text: `Your OTP for password reset is: ${resetToken}. It is valid for 5 minutes.`,

@@ -129,6 +129,7 @@ const fetchMessages = async () => {
         },
       }
     );
+    messages.value = response.data;
     console.log(response.data);
   } catch (error) {
     console.error('Error fetching messages:', error.response?.data || error.message);
@@ -143,7 +144,11 @@ const formatDate = (timestamp) => {
 let pollingInterval;
 
 const startPolling = () => {
-  pollingInterval = setInterval(fetchMessages, 5000);
+  console.log('Polling started...');
+  pollingInterval = setInterval(async () => {
+    console.log('Fetching messages...');
+    await fetchMessages();
+  }, 5000);
 };
 
 onUnmounted(() => {
@@ -154,45 +159,44 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* General container styles */
-.bg-white {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+.bg-white{
+  background-color: #ffffff;
+  border: 1px solid e5e7eb;
 }
-
-/* Chat box and message styling */
-.chat-messages {
-  scrollbar-width: thin;
-  scrollbar-color: #38a169 #e5e7eb;
-}
-
-.chat-messages::-webkit-scrollbar {
-  width: 8px;
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  background-color: #38a169;
-  border-radius: 4px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  background: #f7fafc;
-}
-
-.message-box {
+.chat-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-/* Input styling */
-input:focus {
+.chat-bubble {
+  padding: 10px;
+  background-color: #e5e7eb;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.chat-bubble p {
+  margin: 0;
+}
+.chat-bubble .timestamp {
+  font-size: 12px;
+  color: #888;
+}
+.chat-input {
+  display: flex;
+  margin-top: 20px;
+}
+.chat-input input {
+  flex-grow: 1;
+  padding: 8px;}
+.input:focus {
   border-color: #38a169;
   outline: none;
   box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.5);
 }
-
-/* Button hover transitions */
 button:hover {
   transform: scale(1.02);
-  transition: all 0.2s ease-in-out;
-}
+  transition: all 0.2s ease-in-out; }
 </style>

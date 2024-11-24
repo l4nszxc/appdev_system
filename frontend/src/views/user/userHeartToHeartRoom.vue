@@ -2,82 +2,88 @@
   <div>
     <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
     <div class="container mx-auto p-4">
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-2xl font-semibold mb-4 text-green-800">Heart-to-Heart Room</h2>
+      <div class="flex flex-col space-y-6">
 
-        <!-- Appointment Scheduling Section -->
-        <div v-if="!currentAppointment">
-          <h3 class="text-lg font-semibold mb-4 text-green-700">Schedule an Appointment</h3>
-          
-          <!-- Date Selection -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
-            <input
-              type="date"
-              v-model="selectedDate"
-              class="w-full p-2 border rounded focus:ring-green-500 focus:border-green-500"
-              :min="today"
-              @change="loadTimeSlots"
-            />
-          </div>
+        <!-- Heart-to-Heart Section -->
+        <div class="card bg-white shadow-md rounded-lg p-6">
+          <h2 class="text-2xl font-semibold mb-4 text-green-800">Heart-to-Heart Room</h2>
 
-          <!-- Time Slots -->
-          <div v-if="selectedDate" class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Available Time Slots</label>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <button
-                v-for="slot in timeSlots"
-                :key="slot.time"
-                @click="selectTimeSlot(slot)"
-                :disabled="!slot.available"
-                :class="[
-                  'p-3 rounded-lg text-center transition-colors',
-                  slot.available 
-                    ? 'bg-green-100 hover:bg-green-200 text-green-800' 
-                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                ]"
-              >
-                {{ formatTime(slot.time) }}
-              </button>
+          <!-- Appointment Scheduling Section -->
+          <div v-if="!currentAppointment">
+            <h3 class="text-lg font-semibold mb-4 text-green-700">Schedule an Appointment</h3>
+
+            <!-- Date Selection -->
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
+              <input
+                type="date"
+                v-model="selectedDate"
+                class="w-full p-3 border rounded-lg focus:ring-green-500 focus:border-green-500"
+                :min="today"
+                @change="loadTimeSlots"
+              />
+            </div>
+
+            <!-- Time Slots -->
+            <div v-if="selectedDate" class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Available Time Slots</label>
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <div
+                  v-for="slot in timeSlots"
+                  :key="slot.time"
+                  @click="selectTimeSlot(slot)"
+                  :class="[
+                    'card p-3 rounded-lg text-center cursor-pointer transition-all',
+                    slot.available
+                      ? 'bg-green-100 hover:bg-green-200 text-green-800'
+                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  ]"
+                >
+                  {{ formatTime(slot.time) }}
+                </div>
+              </div>
+            </div>
+
+            <div v-if="error" class="text-red-600 mb-4">
+              {{ error }}
             </div>
           </div>
 
-          <div v-if="error" class="text-red-600 mb-4">
-            {{ error }}
+          <!-- Current Appointment Display -->
+          <div v-if="currentAppointment" class="mt-4">
+            <h3 class="text-lg font-semibold mb-2 text-green-700">Your Current Appointment</h3>
+            <div class="card bg-green-50 p-6 rounded-lg">
+              <p class="mb-2">
+                <span class="font-medium">Date:</span>
+                {{ formatDate(currentAppointment.date) }}
+              </p>
+              <p class="mb-2">
+                <span class="font-medium">Time:</span>
+                {{ formatTime(currentAppointment.start_time) }} - {{ formatTime(currentAppointment.end_time) }}
+              </p>
+              <p v-if="currentAppointment.meeting_link" class="mb-4">
+                <span class="font-medium">Meeting Link:</span>
+                <a
+                  :href="currentAppointment.meeting_link"
+                  target="_blank"
+                  class="text-blue-600 hover:underline"
+                >
+                  {{ currentAppointment.meeting_link }}
+                </a>
+              </p>
+              <button
+                @click="cancelAppointment"
+                class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
+              >
+                Cancel Appointment
+              </button>
+            </div>
           </div>
         </div>
-
-        <!-- Current Appointment Display -->
-        <div v-if="currentAppointment" class="mt-4">
-          <h3 class="text-lg font-semibold mb-2 text-green-700">Your Current Appointment</h3>
-          <div class="bg-green-50 p-4 rounded-lg">
-            <p class="mb-2">
-              <span class="font-medium">Date:</span> 
-              {{ formatDate(currentAppointment.date) }}
-            </p>
-            <p class="mb-2">
-              <span class="font-medium">Time:</span>
-              {{ formatTime(currentAppointment.start_time) }} - {{ formatTime(currentAppointment.end_time) }}
-            </p>
-            <p v-if="currentAppointment.meeting_link" class="mb-4">
-              <span class="font-medium">Meeting Link:</span>
-              <a :href="currentAppointment.meeting_link" target="_blank" class="text-blue-600 hover:underline">
-                {{ currentAppointment.meeting_link }}
-              </a>
-            </p>
-            <button
-              @click="cancelAppointment"
-              class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-            >
-              Cancel Appointment
-            </button>
-          </div>
-        </div>
-
       </div>
     </div>
+    <Footer />
   </div>
-  <Footer />
 </template>
 
 <script>
@@ -252,5 +258,12 @@ export default {
 </script>
 
 <style scoped>
-/* Add any additional styles you want here */
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 </style>

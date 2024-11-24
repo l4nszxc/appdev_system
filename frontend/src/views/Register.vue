@@ -5,168 +5,181 @@
       <div class="register-content">
         <h2 class="register-title">CREATE AN ACCOUNT</h2>
         <form @submit.prevent="register" class="register-form">
-          <!-- Student ID Field -->
-          <div class="form-group">
-            <label for="student_id" class="form-label">Student ID</label>
-            <div class="input-wrapper">
-              <input
-                id="student_id"
-                v-model="student_id"
-                placeholder="Student ID (e.g., MCC2022-0811)"
-                required
-                class="form-input"
-              />
+          <!-- Left Column Fields -->
+          <div class="form-column-left">
+            <!-- Student ID Field -->
+            <div class="form-group">
+              <label for="student_id" class="form-label">Student ID</label>
+              <div class="input-wrapper">
+                <input
+                  id="student_id"
+                  v-model="student_id"
+                  placeholder="Student ID (e.g., MCC2022-0123)"
+                  required
+                  class="form-input"
+                />
+              </div>
+            </div>
+
+            <!-- First Name Field -->
+            <div class="form-group">
+              <label for="firstname" class="form-label">First Name</label>
+              <div class="input-wrapper">
+                <input
+                  id="firstname"
+                  v-model="firstname"
+                  placeholder="First Name"
+                  required
+                  class="form-input"
+                />
+              </div>
+            </div>
+
+            <!-- Middle Name Field -->
+            <div class="form-group">
+              <label for="middlename" class="form-label">Middle Name</label>
+              <div class="input-wrapper">
+                <input
+                  id="middlename"
+                  v-model="middlename"
+                  placeholder="Middle Name"
+                  class="form-input"
+                />
+              </div>
+            </div>
+
+            <!-- Last Name Field -->
+            <div class="form-group">
+              <label for="lastname" class="form-label">Last Name</label>
+              <div class="input-wrapper">
+                <input
+                  id="lastname"
+                  v-model="lastname"
+                  placeholder="Last Name"
+                  required
+                  class="form-input"
+                />
+              </div>
+            </div>
+
+            <!-- Gender Field -->
+            <div class="form-group">
+              <label for="gender" class="form-label">Gender</label>
+              <div class="input-wrapper">
+                <select id="gender" v-model="gender" required class="form-input">
+                  <option value="" disabled selected>Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">LGBTQIA+</option>
+                  <option value="Other">Prefer not to say</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Birthdate Field -->
+            <div class="form-group">
+              <label for="birthdate" class="form-label">Birthdate</label>
+              <div class="input-wrapper">
+                <input
+                  id="birthdate"
+                  v-model="birthdate"
+                  type="date"
+                  required
+                  class="form-input"
+                />
+              </div>
             </div>
           </div>
 
-          <!-- First Name Field -->
-          <div class="form-group">
-            <label for="firstname" class="form-label">First Name</label>
-            <div class="input-wrapper">
-              <input
-                id="firstname"
-                v-model="firstname"
-                placeholder="First Name"
-                required
-                class="form-input"
-              />
+          <!-- Right Column Fields -->
+          <div class="form-column-right">
+            <!-- Program Field -->
+            <div class="form-group">
+    <label for="program" class="form-label">Program</label>
+    <div class="input-wrapper">
+      <select
+        id="program"
+        v-model="program"
+        required
+        class="form-input"
+      >
+        <option value="" disabled selected>Select Program</option>
+        <option value="BSED">BSED</option>
+        <option value="BSHM">BSHM</option>
+        <option value="BSTM">BSTM</option>
+        <option value="BTVTED//BTLED">BTVTED/BTLED</option>
+        <option value="BSCrim">BSCrim</option>
+        <option value="BSIT">BSIT</option>
+        <!-- Add more options as necessary -->
+      </select>
+    </div>
+  </div>
+            <!-- Username Field -->
+            <div class="form-group">
+              <label for="username" class="form-label">Username</label>
+              <div class="input-wrapper">
+                <User class="input-icon" :size="20" />
+                <input
+                  id="username"
+                  v-model="username"
+                  placeholder="Username"
+                  required
+                  class="form-input"
+                />
+              </div>
             </div>
-          </div>
 
-          <!-- Middle Name Field -->
-          <div class="form-group">
-            <label for="middlename" class="form-label">Middle Name</label>
-            <div class="input-wrapper">
-              <input
-                id="middlename"
-                v-model="middlename"
-                placeholder="Middle Name"
-                class="form-input"
-              />
+            <!-- Email Field -->
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <div class="input-wrapper">
+                <Mail class="input-icon" :size="20" />
+                <input
+                  id="email"
+                  v-model="email"
+                  type="email"
+                  placeholder="Email"
+                  required
+                  class="form-input"
+                />
+              </div>
             </div>
-          </div>
 
-          <!-- Last Name Field -->
-          <div class="form-group">
-            <label for="lastname" class="form-label">Last Name</label>
-            <div class="input-wrapper">
-              <input
-                id="lastname"
-                v-model="lastname"
-                placeholder="Last Name"
-                required
-                class="form-input"
-              />
+            <!-- Password Field -->
+            <div class="form-group">
+              <label for="password" class="form-label">Password</label>
+              <div class="input-wrapper">
+                <Lock class="input-icon" :size="20" />
+                <input
+                  id="password"
+                  v-model="password"
+                  type="password"
+                  placeholder="Password"
+                  required
+                  class="form-input"
+                />
+              </div>
             </div>
-          </div>
 
-          <!-- Gender Field -->
-          <div class="form-group">
-            <label for="gender" class="form-label">Gender</label>
-            <div class="input-wrapper">
-              <select id="gender" v-model="gender" required class="form-input">
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
+            <!-- Confirm Password Field -->
+            <div class="form-group">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <div class="input-wrapper">
+                <Lock class="input-icon" :size="20" />
+                <input
+                  id="confirmPassword"
+                  v-model="confirmPassword"
+                  type="password"
+                  placeholder="Confirm Password"
+                  required
+                  class="form-input"
+                />
+              </div>
             </div>
-          </div>
-
-          <!-- Birthdate Field -->
+             <!-- Agreement Checkbox -->
           <div class="form-group">
-            <label for="birthdate" class="form-label">Birthdate</label>
-            <div class="input-wrapper">
-              <input
-                id="birthdate"
-                v-model="birthdate"
-                type="date"
-                required
-                class="form-input"
-              />
-            </div>
-          </div>
-
-          <!-- Program Field -->
-          <div class="form-group">
-            <label for="program" class="form-label">Program</label>
-            <div class="input-wrapper">
-              <input
-                id="program"
-                v-model="program"
-                placeholder="Program"
-                required
-                class="form-input"
-              />
-            </div>
-          </div>
-
-          <!-- Username Field -->
-          <div class="form-group">
-            <label for="username" class="form-label">Username</label>
-            <div class="input-wrapper">
-              <User class="input-icon" :size="20" />
-              <input
-                id="username"
-                v-model="username"
-                placeholder="Username"
-                required
-                class="form-input"
-              />
-            </div>
-          </div>
-
-          <!-- Email Field -->
-          <div class="form-group">
-            <label for="email" class="form-label">Email</label>
-            <div class="input-wrapper">
-              <Mail class="input-icon" :size="20" />
-              <input
-                id="email"
-                v-model="email"
-                type="email"
-                placeholder="Email"
-                required
-                class="form-input"
-              />
-            </div>
-          </div>
-
-          <!-- Password Field -->
-          <div class="form-group">
-            <label for="password" class="form-label">Password</label>
-            <div class="input-wrapper">
-              <Lock class="input-icon" :size="20" />
-              <input
-                id="password"
-                v-model="password"
-                type="password"
-                placeholder="Password"
-                required
-                class="form-input"
-              />
-            </div>
-          </div>
-
-          <!-- Confirm Password Field -->
-          <div class="form-group">
-            <label for="confirmPassword" class="form-label">Confirm Password</label>
-            <div class="input-wrapper">
-              <Lock class="input-icon" :size="20" />
-              <input
-                id="confirmPassword"
-                v-model="confirmPassword"
-                type="password"
-                placeholder="Confirm Password"
-                required
-                class="form-input"
-              />
-            </div>
-          </div>
-
-          <!-- Agreement Checkbox -->
-          <div class="form-group">
-            <label>
-              <input
+            <label class="agreement">
+              <input 
                 type="checkbox"
                 v-model="agreementAccepted"
                 required
@@ -177,8 +190,10 @@
               <router-link to="/privacy-policy" class="link">Privacy Policy</router-link>.
             </label>
           </div>
-
-          <!-- Register Button -->
+          </div>
+         
+         
+          <!-- Submit Button -->
           <button type="submit" class="submit-button">
             Register
             <UserPlus class="button-icon" :size="20" />
@@ -188,7 +203,7 @@
       <div class="register-footer">
         <p class="login-text">
           Already have an account?
-          <router-link to="/login" class="link">Sign in</router-link>
+          <router-link to="/login" class="link">Login</router-link>
         </p>
       </div>
     </div>
@@ -280,10 +295,13 @@ const register = async () => {
   padding-top: 80px;
 }
 
+.agreement{
+  padding-top: 2rem;
+}
 /* Card for registration form */
 .register-card {
   width: 100%;
-  max-width: 32rem;
+  max-width: 75rem;
   background-color: #128535; /* Soft green background */
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
@@ -311,8 +329,8 @@ const register = async () => {
 
 /* Form layout */
 .register-form {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
 }
 
@@ -323,7 +341,12 @@ const register = async () => {
   flex: 1;
   min-width: 0;
 }
-
+.form-column-left,
+.form-column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 /* Label and icon colors */
 .form-label {
   font-size: 0. 875rem;
@@ -358,7 +381,9 @@ const register = async () => {
 .form-input::placeholder {
   color: #747c7c;
 }
-
+.form-group{
+  width: 30rem;
+}
 .form-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px #2a9d8f;
@@ -367,10 +392,9 @@ const register = async () => {
 
 /* Submit button styling */
 .submit-button {
-  display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 200%;
   padding: 0.5rem 1rem;
   background-color: #2464c4;
   color: #ffffff;

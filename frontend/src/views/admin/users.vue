@@ -1,7 +1,7 @@
 <template>
   <NavbarAdmin/>
     <div class="college-container">
-      <h1 class="text-2xl font-bold mb-4 text-green-800">Manage Students by College</h1>
+      <h1 class="text-2xl font-bold mb-4 text-green-800">Manage Students by Program</h1>
   
       <!-- Buttons to switch between colleges -->
       <div class="button-group mb-6">
@@ -53,7 +53,7 @@
     },
     data() {
       return {
-        colleges: ['CCS', 'CBM', 'CCJE', 'BTVTED', 'CTE'],
+        colleges: ['BSED', 'BSHM', 'BSTM', 'BTVTED/BTLED', 'BSCrim', 'BSIT'],
         selectedCollege: null,
         students: [],
         studentForm: {

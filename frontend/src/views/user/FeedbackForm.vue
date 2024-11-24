@@ -6,7 +6,7 @@
       
       <form @submit.prevent="submitFeedback">
         <!-- Feedback Type -->
-        <div class="mb-3">
+        <div class="mb-4">
           <label for="feedbackType" class="form-label">Feedback Type</label>
           <select v-model="feedback.type" id="feedbackType" class="form-select" required>
             <option value="suggestion">Suggestion</option>
@@ -15,18 +15,28 @@
         </div>
         
         <!-- Feedback Content -->
-        <div class="mb-3">
+        <div class="mb-4">
           <label for="feedbackContent" class="form-label">Feedback Content</label>
-          <textarea v-model="feedback.content" id="feedbackContent" class="form-control" rows="5" placeholder="Enter your feedback here..." required></textarea>
+          <textarea 
+            v-model="feedback.content" 
+            id="feedbackContent" 
+            class="form-control" 
+            rows="5" 
+            placeholder="Enter your feedback here..." 
+            required
+          ></textarea>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary w-100 py-2">Submit Feedback</button>
+        <button type="submit" class="btn btn-success w-100 py-2">Submit Feedback</button>
       </form>
 
       <!-- Message -->
       <div v-if="message" class="mt-4">
-        <div :class="messageType === 'success' ? 'alert alert-success' : 'alert alert-danger'" role="alert">
+        <div 
+          :class="messageType === 'success' ? 'alert alert-success' : 'alert alert-danger'" 
+          role="alert"
+        >
           {{ message }}
         </div>
       </div>
@@ -123,45 +133,68 @@ export default {
 .container {
   max-width: 600px;
   margin: 0 auto;
+  background: #f9f9f9;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: bold;
+  color: #333;
 }
 
 .form-label {
-  font-weight: normal;
+  font-weight: 500;
+  color: #555;
 }
 
 .form-select, .form-control {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.85rem;
   margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
 }
 
-.btn-primary {
+.form-select:focus, 
+.form-control:focus {
+  border-color: #28a745;
+  outline: none;
+}
+
+.btn-success {
   width: 100%;
   padding: 0.75rem;
-  background-color: #007bff;
+  background-color: #28a745;
   border: none;
   color: white;
   font-size: 1rem;
   font-weight: bold;
-  border-radius: 4px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+  background-color: #218838;
 }
 
 .alert {
   margin-top: 1rem;
+  border-radius: 8px;
 }
 
 .alert-success {
-  background-color: #d4edda;
+  background-color: #e9f7ef;
   color: #155724;
+  border: 1px solid #c3e6cb;
 }
 
 .alert-danger {
-  background-color: #f8d7da;
+  background-color: #fce4e4;
   color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 </style>

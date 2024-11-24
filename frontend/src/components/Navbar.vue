@@ -35,7 +35,7 @@
           <span class="link-text">Feedback</span>
         </router-link>
          <router-link to="/mood-tracker" class="nav-link">
-          <i class="fas fa-smile-o"></i>
+          <i class="fas fa-grin"></i>
           <span class="link-text">Mood Tracker</span>
         </router-link>
         <div class="profile-menu">

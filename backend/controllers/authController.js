@@ -94,7 +94,9 @@ exports.verifyOTP = (req, res) => {
     if (results.length === 0) {
       console.log(`No user found for email: ${email}`);
       return res.status(400).json({ message: 'User not found!' });
-    }
+    }      
+
+        
 
     const user = results[0];
     console.log('User found:', user);

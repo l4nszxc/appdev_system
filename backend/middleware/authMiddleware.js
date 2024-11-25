@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
+// Authentication middleware
+const authMiddleware = (req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1];
-
-  // console.log('Token received in middleware:', token)
 
   if (!token) {
     return res.status(401).json({ message: 'No token, authorization denied' });
@@ -16,4 +15,17 @@ module.exports = (req, res, next) => {
   } catch (err) {
     res.status(401).json({ message: 'Token is not valid' });
   }
+};
+
+// Admin middleware
+const adminMiddleware = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Access denied. Admin only.' });
+  }
+  next();
+};
+
+module.exports = {
+  authMiddleware,
+  adminMiddleware
 };

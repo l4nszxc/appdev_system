@@ -1,15 +1,16 @@
-    const express = require('express');
-    const router = express.Router();
-    const chatController = require('../controllers/chatController');
-    const authMiddleware = require('../middleware/authMiddleware');
+const express = require('express');
+const router = express.Router();
+const chatController = require('../controllers/chatController');
+const { authMiddleware, adminMiddleware } = require('../middleware/authMiddleware');
 
-    // Initiate a chat
-    router.post('/initiate', authMiddleware, chatController.initiateChat);
+// User Routes
+router.post('/initiate', authMiddleware, chatController.initiateChat);
+router.post('/:chatId/message', authMiddleware, chatController.sendMessage);
+router.get('/:chatId/messages', authMiddleware, chatController.fetchMessages);
+router.get('/:chatId/info', authMiddleware, chatController.getChatInfo);
 
-    // Send a message
-    router.post('/:chatId/message', authMiddleware, chatController.sendMessage);
+// Admin Routes (protected by both auth and admin middleware)
+router.get('/active', authMiddleware, adminMiddleware, chatController.getActiveChats);
+router.patch('/:chatId/status', authMiddleware, adminMiddleware, chatController.updateChatStatus);
 
-    // Fetch messages
-    router.get('/:chatId/messages', authMiddleware, chatController.fetchMessages);
-
-    module.exports = router;
+module.exports = router;

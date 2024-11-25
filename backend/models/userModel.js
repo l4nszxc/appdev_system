@@ -1,8 +1,22 @@
 const db = require('../config/db');
 
 const createUser  = (userData, callback) => {
-  const sql = `INSERT INTO users (student_id, username, email, password, firstname, middlename, lastname, gender, birthdate, program, otp, otpExpires) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  db.query(sql, [userData.student_id, userData.username, userData.email, userData.password, userData.firstname, userData.middlename, userData.lastname, userData.gender, userData.birthdate, userData.program, userData.otp, userData.otpExpires], callback);
+  const sql = `INSERT INTO users (student_id, username, email, password, firstname, middlename, lastname, gender, birthdate, program, otp, otpExpires, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  db.query(sql, [
+    userData.student_id, 
+    userData.username, 
+    userData.email, 
+    userData.password, 
+    userData.firstname, 
+    userData.middlename, 
+    userData.lastname, 
+    userData.gender, 
+    userData.birthdate, 
+    userData.program, 
+    userData.otp, 
+    userData.otpExpires,
+    userData.role || 'user'  // Default to 'user' if not specified
+  ], callback);
 };
 
 // Function to find a user by email
@@ -59,11 +73,24 @@ const findUserByUsername = (username, callback) => {
   });
 };
 
+const updateUserRole = (student_id, role, callback) => {
+  const sql = `UPDATE users SET role = ? WHERE student_id = ?`;
+  db.query(sql, [role, student_id], (err, result) => {
+    if (err) {
+      console.error('Error in updateUserRole:', err);
+      return callback(err);
+    }
+    console.log('Role update result:', result);
+    callback(null, result);
+  });
+};
+
 module.exports = {
   createUser,
   findUserByEmail,
   findUserByStudentId,
   findUserByUsername,
   updateUser,
-  updateUserProfile
+  updateUserProfile,
+  updateUserRole
 };

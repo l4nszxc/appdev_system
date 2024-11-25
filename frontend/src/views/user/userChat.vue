@@ -1,13 +1,13 @@
 <template>
   <div>
     <Navbar :isLoggedIn="isLoggedIn" :username="username" />
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-2xl font-semibold mb-4 text-green-800">Chat Support</h2>
+<div class="chat-container bg-white rounded-lg shadow-md p-6 chat-content">
+<h2 class="text-2xl font-semibold mb-4 text-green-800">Chat Support</h2>
       <div v-if="!chatId">
         <div class="mb-4">
           <label class="flex items-center">
-            <input type="checkbox" v-model="isAnonymous" class="form-checkbox h-5 w-5 text-green-600">
-            <span class="ml-2 text-gray-700">Stay anonymous</span>
+<input type="checkbox" v-model="isAnonymous" class="form-checkbox h-5 w-5 text-green-600">
+            <span class="ml-2 text-green-800">Stay anonymous</span>
           </label>
         </div>
         <button
@@ -18,33 +18,41 @@
         </button>
       </div>
       <div v-else>
-        <div class="h-96 overflow-y-auto mb-4 p-4 bg-green-50 rounded-md">
-          <div v-for="message in messages" :key="message.id" class="mb-2">
+<div class="messages-container h-96 overflow-y-auto mb-4 p-4 bg-green-900 rounded-t-lg shadow-lg">
+          <div v-for="message in messages" :key="message.message_id" class="mb-2">
             <div
               :class="[
-                'p-2 rounded-lg max-w-3/4',
-                message.sender_id === userId ? 'bg-green-200 ml-auto' : 'bg-white'
+                'p-3 rounded-lg max-w-[70%] shadow-md',
+                message.sender_type === 'admin' ? 'bg-green-100' : 'bg-white ml-auto text-right'
               ]"
             >
+              <p class="text-sm font-semibold">
+                {{ message.sender_type === 'admin' ? 'Admin' : 
+                   (message.is_anonymous ? 'Anonymous User' : message.sender_name) }}
+              </p>
               <p>{{ message.content }}</p>
               <p class="text-xs text-gray-500 mt-1">{{ formatDate(message.timestamp) }}</p>
             </div>
           </div>
         </div>
-        <div class="flex">
-          <input
-            v-model="newMessage"
-            @keyup.enter="sendMessage"
-            type="text"
-            placeholder="Type your message..."
-            class="flex-grow p-2 border border-green-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-          <button
-            @click="sendMessage"
-            class="px-4 py-2 bg-green-600 text-white rounded-r-md hover:bg-green-700 transition-colors"
-          >
-            Send
-          </button>
+<div class="bg-green-950 p-4 rounded-b-lg">
+          <div class="flex items-center">
+            <input
+              v-model="newMessage"
+              @keyup.enter="sendMessage"
+              type="text"
+              placeholder="Type your message..."
+              class="flex-grow p-2 bg-green-900 text-white border-none rounded-l-md focus:outline-none focus:ring-1 focus:ring-green-400"
+            />
+            <button
+              @click="sendMessage"
+              class="px-4 py-2 bg-green-600 text-white rounded-r-md hover:bg-green-700 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -53,7 +61,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import Navbar from '@/components/Navbar.vue'; // Import the Navbar component
+import Navbar from '../../components/Navbar.vue';
 import axios from 'axios';
 
 const chatId = ref(null);
@@ -68,8 +76,8 @@ const username = ref('');
 onMounted(() => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
   username.value = localStorage.getItem('username') || '';
+  console.log('Username:', username.value);
 });
-
 
 const initiateChat = async () => {
   try {
@@ -83,12 +91,12 @@ const initiateChat = async () => {
       headers: {
         'Authorization': `Bearer ${token}`
       }
-      });
+    });
 
     if (response.status === 201) {
       const data = response.data;
       chatId.value = data.chatId;
-      userId.value = data.studentId; // Ensure this matches your backend response key
+      userId.value = data.studentId;
       startPolling();
     }
   } catch (error) {
@@ -98,26 +106,27 @@ const initiateChat = async () => {
 
 const sendMessage = async () => {
   const token = localStorage.getItem('token');
-   console.log('Token:', token);
   if (!newMessage.value.trim()) return;
 
   try {
     await axios.post(
       `http://localhost:5000/api/chat/${chatId.value}/message`,
-      { content: newMessage.value },
+      { 
+        content: newMessage.value,
+        senderType: 'user'  // Explicitly set sender type
+      },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
-
     newMessage.value = '';
+    await fetchMessages(); // Fetch messages immediately after sending
   } catch (error) {
     console.error('Error sending message:', error.response?.data || error.message);
   }
 };
-
 
 const fetchMessages = async () => {
   try {
@@ -130,12 +139,10 @@ const fetchMessages = async () => {
       }
     );
     messages.value = response.data;
-    console.log(response.data);
   } catch (error) {
     console.error('Error fetching messages:', error.response?.data || error.message);
   }
 };
-
 
 const formatDate = (timestamp) => {
   return new Date(timestamp).toLocaleString();
@@ -144,9 +151,7 @@ const formatDate = (timestamp) => {
 let pollingInterval;
 
 const startPolling = () => {
-  console.log('Polling started...');
   pollingInterval = setInterval(async () => {
-    console.log('Fetching messages...');
     await fetchMessages();
   }, 5000);
 };
@@ -158,45 +163,23 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped>
-.bg-white{
-  background-color: #ffffff;
-  border: 1px solid e5e7eb;
-}
-.chat-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f5f5f5;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.chat-bubble {
-  padding: 10px;
-  background-color: #e5e7eb;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-.chat-bubble p {
-  margin: 0;
-}
-.chat-bubble .timestamp {
-  font-size: 12px;
-  color: #888;
-}
-.chat-input {
+<style>
+.messages-container {
   display: flex;
-  margin-top: 20px;
+  flex-direction: column;
+  max-width: 800px;
+  margin: auto;
 }
-.chat-input input {
-  flex-grow: 1;
-  padding: 8px;}
-.input:focus {
-  border-color: #38a169;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.5);
+
+.message-bubble {
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 0.5rem 0;
 }
-button:hover {
-  transform: scale(1.02);
-  transition: all 0.2s ease-in-out; }
+
+.chat-container {
+  max-width: 800px;
+  margin: 2rem auto;
+}
 </style>

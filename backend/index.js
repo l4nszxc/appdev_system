@@ -5,7 +5,7 @@ const authController = require('./controllers/authController');
 const userController = require('./controllers/userController');
 const exerciseController = require('./controllers/exerciseController');
 const userFeedbackController = require('./controllers/userFeedbackController');
-const authMiddleware = require('./middleware/authMiddleware');
+const { authMiddleware } = require('./middleware/authMiddleware');
 const chatRoutes = require('./routes/chatRoutes');
 
 const app = express();

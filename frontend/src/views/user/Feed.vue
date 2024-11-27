@@ -72,46 +72,46 @@
       </div>
     </div>
 
-    <Modal v-if="showCommentsModal" @close="closeCommentsModal">
-    <div class="modal-content">
-      <h2>Comments</h2>
-      <div v-for="comment in currentPost.comments" :key="comment.id" class="comment">
-        <img 
-          :src="getProfilePicture(comment.profile_picture)" 
-          :alt="comment.username" 
-          class="comment-author-avatar" 
-        />
-        <span class="comment-author">{{ comment.username }}</span>
-        <p class="comment-content">{{ comment.content }}</p>
+    <Modal :show="showCommentsModal" @close="closeCommentsModal">
+      <div class="modal-content">
+        <h2>Comments</h2>
+        <div v-for="comment in currentPost.comments" :key="comment.id" class="comment">
+          <img 
+            :src="getProfilePicture(comment.profile_picture)" 
+            :alt="comment.username" 
+            class="comment-author-avatar" 
+          />
+          <span class="comment-author">{{ comment.username }}</span>
+          <p class="comment-content">{{ comment.content }}</p>
+        </div>
+        <textarea v-model="currentPost.newComment" placeholder="Write a comment..." class="comment-input"></textarea>
+        <button @click="addComment(currentPost.id, currentPost.newComment)" class="add-comment-button">Add Comment</button>
       </div>
-      <textarea v-model="currentPost.newComment" placeholder="Write a comment..." class="comment-input"></textarea>
-      <button @click="addComment(currentPost.id, currentPost.newComment)" class="add-comment-button">Add Comment</button>
-    </div>
-  </Modal>
+    </Modal>
 
-  <Modal v-if="showReactionsModal" @close="closeReactionsModal">
-    <div class="modal-content">
-      <h2>Reactions</h2>
-      <div class="reaction-tabs">
-        <button 
-          v-for="type in reactionTypes" 
-          :key="type" 
-          @click="selectedReactionType = type"
-          :class="[selectedReactionType === type ? 'active-tab' : '', 'reaction-tab']"
-        >
-          {{ type }}
-        </button>
+    <Modal :show="showReactionsModal" @close="closeReactionsModal">
+      <div class="modal-content">
+        <h2>Reactions</h2>
+        <div class="reaction-tabs">
+          <button 
+            v-for="type in reactionTypes" 
+            :key="type" 
+            @click="selectedReactionType = type"
+            :class="[selectedReactionType === type ? 'active-tab' : '', 'reaction-tab']"
+          >
+            {{ type }}
+          </button>
+        </div>
+        <div v-for="reaction in filteredReactions" :key="reaction.id" class="reaction">
+          <img 
+            :src="getProfilePicture(reaction.profile_picture)" 
+            :alt="reaction.username" 
+            class="reaction-author-avatar" 
+          />
+          <span class="reaction-author">{{ reaction.username }}</span>
+        </div>
       </div>
-      <div v-for="reaction in filteredReactions" :key="reaction.id" class="reaction">
-        <img 
-          :src="getProfilePicture(reaction.profile_picture)" 
-          :alt="reaction.username" 
-          class="reaction-author-avatar" 
-        />
-        <span class="reaction-author">{{ reaction.username }}</span>
-      </div>
-    </div>
-  </Modal>
+    </Modal>
   </div>
   <Footer />
 </template>
@@ -122,7 +122,6 @@ import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
 import Footer from "@/components/Footer.vue";
 import Modal from '@/components/Modal.vue';
-
 
 // State variables
 const posts = ref([]);
@@ -509,9 +508,9 @@ onMounted(async () => {
 .reaction-type {
   margin-left: 5px;
 }
-.modal-content {
-    max-height: 400px; /* Adjust the height as needed */
-    overflow-y: auto;
-  }
 
+.modal-content {
+  max-height: 400px; /* Adjust the height as needed */
+  overflow-y: auto;
+}
 </style>

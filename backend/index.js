@@ -11,6 +11,7 @@ const heartToHeartController = require('./controllers/heartToHeartController');
 const moodController = require('./controllers/moodController');
 const postController = require('./controllers/postController');
 const authMiddleware = require('./middleware/authMiddleware');
+const adminManageUsersController = require('./controllers/adminManageUsersController');
 
 const app = express();
 app.use(cors());
@@ -41,6 +42,9 @@ app.post('/reset-password', authController.resetPassword);
 app.get('/user', authMiddleware, userController.getUserProfile);
 app.put('/user', authMiddleware, userController.updateUserProfile);
 
+// Admin manage users routes
+app.get('/api/students/program/:program', authMiddleware, adminManageUsersController.getUsersByProgram);
+
 // Exercise routes
 app.get('/exercises', authMiddleware, exerciseController.getWeeklyExercises);
 app.post('/exercises', authMiddleware, exerciseController.saveExercise);
@@ -49,7 +53,6 @@ app.post('/exercises', authMiddleware, exerciseController.saveExercise);
 app.post('/api/feedback', authMiddleware, userFeedbackController.submitFeedback);
 app.get('/api/feedback', authMiddleware, userFeedbackController.getUserFeedback);
 app.get('/api/feedback/all', authMiddleware, userFeedbackController.getAllFeedback); // New route for fetching all feedback
-
 
 app.get('/user', authMiddleware, userController.getUserProfile);
 app.put('/user', authMiddleware, userController.updateUserProfile);

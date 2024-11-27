@@ -69,12 +69,15 @@
         </div>
         <div>
           <label for="program">Program:</label>
-          <input
-            type="text"
-            id="program"
-            v-model="userInfo.program"
-            required
-          />
+          <select id="program" v-model="userInfo.program" required>
+            <option value="BSED">BSED</option>
+            <option value="BSHM">BSHM</option>
+            <option value="BSTM">BSTM</option>
+            <option value="BTVTED">BTVTED</option>
+            <option value="BTLED">BTLED</option>
+            <option value="BSCrim">BSCrim</option>
+            <option value="BSIT">BSIT</option>
+          </select>
         </div>
         <button type="submit" class="update-btn" :disabled="isUpdating">
           {{ isUpdating ? 'Updating...' : 'UPDATE' }}
@@ -99,6 +102,7 @@ export default {
   name: 'UpdateUserProfile',
   components: {
     Navbar,
+    Footer
   },
   setup() {
     const isLoggedIn = ref(false);
@@ -304,4 +308,4 @@ input, select {
   background-color: #e8f5e9;
   color: #2e7d32;
 }
-</style>
+</style><nav></nav>

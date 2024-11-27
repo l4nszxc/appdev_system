@@ -73,6 +73,7 @@
     </div>
 
     <Modal v-if="showCommentsModal" @close="closeCommentsModal">
+    <div class="modal-content">
       <h2>Comments</h2>
       <div v-for="comment in currentPost.comments" :key="comment.id" class="comment">
         <img 
@@ -85,9 +86,11 @@
       </div>
       <textarea v-model="currentPost.newComment" placeholder="Write a comment..." class="comment-input"></textarea>
       <button @click="addComment(currentPost.id, currentPost.newComment)" class="add-comment-button">Add Comment</button>
-    </Modal>
+    </div>
+  </Modal>
 
-    <Modal v-if="showReactionsModal" @close="closeReactionsModal">
+  <Modal v-if="showReactionsModal" @close="closeReactionsModal">
+    <div class="modal-content">
       <h2>Reactions</h2>
       <div class="reaction-tabs">
         <button 
@@ -107,7 +110,8 @@
         />
         <span class="reaction-author">{{ reaction.username }}</span>
       </div>
-    </Modal>
+    </div>
+  </Modal>
   </div>
   <Footer />
 </template>
@@ -117,6 +121,7 @@ import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
 import Footer from "@/components/Footer.vue";
+import Modal from '@/components/Modal.vue';
 
 
 // State variables
@@ -504,5 +509,9 @@ onMounted(async () => {
 .reaction-type {
   margin-left: 5px;
 }
+.modal-content {
+    max-height: 400px; /* Adjust the height as needed */
+    overflow-y: auto;
+  }
 
 </style>

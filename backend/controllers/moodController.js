@@ -22,7 +22,7 @@ exports.saveMood = async (req, res) => {
 };
 
 exports.getWeeklyMoods = async (req, res) => {
-  const studentId = req.user.student_id;
+  const studentId = req.query.studentId || req.user.student_id;
   try {
     const moods = await moodModel.getMoodsByPeriod(studentId, 'WEEK');
     res.status(200).json(moods);
@@ -33,7 +33,7 @@ exports.getWeeklyMoods = async (req, res) => {
 };
 
 exports.getMonthlyMoods = async (req, res) => {
-  const studentId = req.user.student_id;
+  const studentId = req.query.studentId || req.user.student_id;
   try {
     const moods = await moodModel.getMoodsByPeriod(studentId, 'MONTH');
     res.status(200).json(moods);
@@ -42,4 +42,22 @@ exports.getMonthlyMoods = async (req, res) => {
     res.status(500).json({ message: 'An error occurred while fetching monthly moods' });
   }
 };
+exports.getAllMoods = async (req, res) => {
+  try {
+    const moods = await moodModel.getAllMoods();
+    const summary = {
+      Positive: 0,
+      Neutral: 0,
+      Negative: 0
+    };
 
+    moods.forEach(mood => {
+      summary[mood.sentiment]++;
+    });
+
+    res.status(200).json({ moods, summary });
+  } catch (error) {
+    console.error('Error fetching all moods:', error);
+    res.status(500).json({ message: 'An error occurred while fetching all moods' });
+  }
+};

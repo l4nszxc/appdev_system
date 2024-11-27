@@ -116,6 +116,7 @@
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
+import Modal from '@/components/Modal.vue';
 import Footer from "@/components/Footer.vue";
 
 

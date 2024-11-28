@@ -38,6 +38,9 @@
       <p v-if="message" class="mt-2 text-center text-sm" :class="{'text-green-600': isSuccess, 'text-red-600': !isSuccess}">
         {{ message }}
       </p>
+      <p v-if="timeLeft > 0" class="mt-2 text-center text-sm text-gray-600">
+        OTP expires in {{ formattedTimeLeft }}
+      </p>
     </div>
   </div>
 </template>
@@ -53,6 +56,7 @@ const store = useStore()
 const otp = ref('')
 const message = ref('')
 const isSuccess = ref(false)
+const timeLeft = ref(300) // 5 minutes in seconds
 
 const email = computed(() => store.state.auth.email)
 
@@ -62,8 +66,26 @@ onMounted(() => {
     console.error('Email not found in store');
     message.value = 'Email not found. Please try registering again.';
     isSuccess.value = false;
+  } else {
+    startCountdown();
   }
 })
+
+const startCountdown = () => {
+  const countdown = setInterval(() => {
+    if (timeLeft.value > 0) {
+      timeLeft.value--;
+    } else {
+      clearInterval(countdown);
+    }
+  }, 1000);
+};
+
+const formattedTimeLeft = computed(() => {
+  const minutes = Math.floor(timeLeft.value / 60);
+  const seconds = timeLeft.value % 60;
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+});
 
 const verifyOTP = async () => {
   try {

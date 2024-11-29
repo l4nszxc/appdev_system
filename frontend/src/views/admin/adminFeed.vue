@@ -33,25 +33,34 @@
             <button class="comment-count-button">
               {{ post.comments_count }} Comments
             </button>
+            <button @click="showSentimentModal(post)" class="sentiment-button">Analyze Sentiment</button>
           </div>
         </div>
       </div>
     </div>
+    <Modal :show="showModal" @close="showModal = false">
+      <h2>Sentiment Analysis</h2>
+      <p>Sentiment: {{ sentiment }}</p>
+    </Modal>
   </div>
 </template>
 
 <script>
 import NavbarAdmin from '@/components/NavbarAdmin.vue';
+import Modal from '@/components/Modal.vue';
 import axios from 'axios';
 
 export default {
   components: {
     NavbarAdmin,
+    Modal,
   },
   data() {
     return {
       posts: [],
-      successMessage: '', // Add successMessage to the state
+      successMessage: '',
+      showModal: false,
+      sentiment: '',
     };
   },
   methods: {
@@ -61,10 +70,9 @@ export default {
         const response = await axios.get('http://localhost:5000/posts', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log('Fetched posts:', response.data); // Debugging line
         this.posts = response.data.map(post => ({
           ...post,
-          reactions_count: post.reactions.length, // Count reactions
+          reactions_count: post.reactions.length,
         }));
       } catch (error) {
         console.error('Failed to fetch posts:', error);
@@ -78,19 +86,31 @@ export default {
     async deletePost(postId) {
       try {
         const token = localStorage.getItem('token');
-        console.log(`Deleting post with ID: ${postId}`); // Debugging line
         const response = await axios.delete(`http://localhost:5000/posts/${postId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(`Post with ID: ${postId} deleted`, response.data); // Debugging line
-        this.successMessage = 'Post deleted successfully'; // Set success message
-        this.fetchPosts(); // Refresh posts after deletion
+        this.successMessage = 'Post deleted successfully';
+        this.fetchPosts();
         setTimeout(() => {
-          this.successMessage = ''; // Clear success message after 3 seconds
+          this.successMessage = '';
         }, 3000);
       } catch (error) {
         console.error('Failed to delete post:', error);
-        console.error('Error details:', error.response.data); // Additional debugging line
+      }
+    },
+    async showSentimentModal(post) {
+      try {
+        console.log('Analyzing sentiment for post:', post);
+        const response = await axios.post('http://localhost:5001/analyze-sentiment', {
+          content: post.content,
+        });
+        console.log('Sentiment analysis response:', response.data);
+        this.sentiment = response.data.sentiment;
+        console.log('Sentiment:', this.sentiment);
+        this.showModal = true;
+        console.log('Show Modal:', this.showModal);
+      } catch (error) {
+        console.error('Failed to analyze sentiment:', error);
       }
     },
     getProfilePicture(profilePath) {

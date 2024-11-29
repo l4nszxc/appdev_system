@@ -63,3 +63,25 @@ exports.deletePost = async (req, res) => {
     res.status(500).json({ message: 'Failed to delete post and related reactions and comments', error: err });
   }
 };
+exports.getPostsByUser = (req, res) => {
+  const studentId = req.user.student_id;
+
+  postModel.getPostsByUser(studentId, (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Failed to fetch user posts', error: err });
+    }
+    res.status(200).json(results);
+  });
+};
+exports.updatePost = (req, res) => {
+  const postId = req.params.id;
+  const { content, emotion } = req.body;
+  const studentId = req.user.student_id;
+
+  postModel.updatePost({ postId, studentId, content, emotion }, (err, result) => {
+    if (err) {
+      return res.status(500).json({ message: 'Failed to update post', error: err });
+    }
+    res.status(200).json({ message: 'Post updated successfully' });
+  });
+};

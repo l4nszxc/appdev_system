@@ -60,10 +60,12 @@ app.post('/user/profile-picture', authMiddleware, upload.single('profilePicture'
 
 // Post routes
 app.get('/posts', authMiddleware, postController.getPosts);
+app.get('/posts/user', authMiddleware, postController.getPostsByUser); // Add this line
 app.post('/posts', authMiddleware, postController.createPost);
 app.post('/posts/reactions', authMiddleware, postController.addReaction);
 app.post('/posts/comments', authMiddleware, postController.addComment);
 app.delete('/posts/:id', authMiddleware, postController.deletePost);
+app.put('/posts/:id', authMiddleware, postController.updatePost); // Add this line
 
 // Appointment routes
 app.post('/api/appointments', authMiddleware, heartToHeartController.createAppointment);

@@ -41,6 +41,7 @@
     <Modal :show="showModal" @close="showModal = false">
       <h2>Sentiment Analysis</h2>
       <p>Sentiment: {{ sentiment }}</p>
+      <p>Translated Content: {{ translatedContent }}</p>
     </Modal>
   </div>
 </template>
@@ -61,6 +62,7 @@ export default {
       successMessage: '',
       showModal: false,
       sentiment: '',
+      translatedContent: '',
     };
   },
   methods: {
@@ -106,7 +108,9 @@ export default {
         });
         console.log('Sentiment analysis response:', response.data);
         this.sentiment = response.data.sentiment;
+        this.translatedContent = response.data.translated_content;
         console.log('Sentiment:', this.sentiment);
+        console.log('Translated Content:', this.translatedContent);
         this.showModal = true;
         console.log('Show Modal:', this.showModal);
       } catch (error) {

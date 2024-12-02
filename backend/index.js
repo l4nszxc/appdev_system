@@ -12,6 +12,8 @@ const moodController = require('./controllers/moodController');
 const postController = require('./controllers/postController');
 const authMiddleware = require('./middleware/authMiddleware');
 const adminManageUsersController = require('./controllers/adminManageUsersController');
+const empathyChallengeController = require('./controllers/empathyChallengeController');
+
 
 const app = express();
 app.use(cors());
@@ -83,6 +85,10 @@ app.get('/mood/weekly', authMiddleware, moodController.getWeeklyMoods);
 app.get('/mood/monthly', authMiddleware, moodController.getMonthlyMoods);
 
 app.get('/moods', authMiddleware, moodController.getAllMoods);
+
+app.get('/empathy-challenge', authMiddleware, empathyChallengeController.getUserChallenge);
+app.post('/empathy-challenge/progress', authMiddleware, empathyChallengeController.updateChallengeProgress);
+app.post('/admin/reset-empathy-challenges', authMiddleware, empathyChallengeController.resetChallenges);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

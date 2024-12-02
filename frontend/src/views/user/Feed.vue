@@ -234,6 +234,13 @@ const addComment = async (postId, content) => {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
+    // Update empathy challenge progress
+    await axios.post(
+      'http://localhost:5000/empathy-challenge/progress',
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
     // Refresh posts
     await fetchPosts();
   } catch (error) {

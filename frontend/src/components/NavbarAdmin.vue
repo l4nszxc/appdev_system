@@ -4,6 +4,7 @@
       <div class="logo-title">
         <img src="../assets/MINSU LOGO.png" alt="Logo" class="logo" />
         <h1 class="navbar-brand">MINDCONNECT</h1>
+        <span v-if="isLoggedIn" class="username-display">Logged in as: {{ username }}</span>
       </div>
     </div>
 
@@ -69,7 +70,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -77,6 +78,8 @@ export default {
   setup() {
     const router = useRouter();
     const dropdownVisible = ref(false);
+    const isLoggedIn = ref(false);
+    const username = ref('');
 
     const toggleDropdown = () => {
       dropdownVisible.value = !dropdownVisible.value;
@@ -95,7 +98,12 @@ export default {
       }
     };
 
-    return { logout, toggleDropdown, dropdownVisible };
+    onMounted(() => {
+      isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+      username.value = localStorage.getItem('username');
+    });
+
+    return { logout, toggleDropdown, dropdownVisible, isLoggedIn, username };
   }
 };
 </script>
@@ -130,6 +138,12 @@ export default {
   font-size: 1.8rem;
   font-weight: bold;
   color: #ffffff;
+}
+
+.username-display {
+  font-size: 1.3rem;
+  color: #ffffff;
+  margin-left: 20px;
 }
 
 .navbar-links {

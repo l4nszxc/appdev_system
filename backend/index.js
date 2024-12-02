@@ -86,8 +86,10 @@ app.get('/mood/monthly', authMiddleware, moodController.getMonthlyMoods);
 
 app.get('/moods', authMiddleware, moodController.getAllMoods);
 
+// Empathy Challenge routes
 app.get('/empathy-challenge', authMiddleware, empathyChallengeController.getUserChallenge);
-app.post('/empathy-challenge/progress', authMiddleware, empathyChallengeController.updateChallengeProgress);
+app.post('/empathy-challenge/comment-progress', authMiddleware, empathyChallengeController.updateCommentChallengeProgress);
+app.post('/empathy-challenge/reaction-progress', authMiddleware, empathyChallengeController.updateReactionChallengeProgress);
 app.post('/admin/reset-empathy-challenges', authMiddleware, empathyChallengeController.resetChallenges);
 
 const PORT = process.env.PORT || 5000;

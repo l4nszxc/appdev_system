@@ -14,7 +14,12 @@ import axios from 'axios';
 
 const resetChallenges = async () => {
   try {
-    await axios.post('http://localhost:5000/admin/reset-empathy-challenges');
+    const token = localStorage.getItem('token');
+    await axios.post('http://localhost:5000/admin/reset-empathy-challenges', {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     alert('Challenges have been reset.');
   } catch (error) {
     console.error('Failed to reset challenges:', error);

@@ -1,48 +1,80 @@
-const db = require('../config/db');
+const empathyChallengeModel = require('../models/empathyChallengeModel');
 
 exports.getUserChallenge = (req, res) => {
   const studentId = req.user.student_id;
-  db.query('SELECT * FROM empathy_challenges WHERE student_id = ?', [studentId], (err, results) => {
+  empathyChallengeModel.getUserChallenge(studentId, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     if (results.length === 0) {
-      db.query('INSERT INTO empathy_challenges (student_id) VALUES (?)', [studentId], (err, result) => {
+      empathyChallengeModel.createUserChallenge(studentId, (err) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json({ level: 1, comments_count: 0 });
+        res.json({ comment_level: 1, comments_count: 0, reaction_level: 1, reactions_count: 0 });
       });
     } else {
-      res.json(results[0]);
+      const challenge = results[0];
+      const today = new Date().toISOString().split('T')[0];
+      const lastResetDate = new Date(challenge.last_reset_date).toISOString().split('T')[0];
+      if (lastResetDate !== today) {
+        empathyChallengeModel.resetDailyChallenges(studentId, (err) => {
+          if (err) return res.status(500).json({ error: err.message });
+          res.json({ ...challenge, comments_count: 0, reactions_count: 0, last_reset_date: today });
+        });
+      } else {
+        res.json(challenge);
+      }
     }
   });
 };
 
-exports.updateChallengeProgress = (req, res) => {
-    const studentId = req.user.student_id;
-    db.query('SELECT * FROM empathy_challenges WHERE student_id = ?', [studentId], (err, results) => {
-      if (err) return res.status(500).json({ error: err.message });
-      if (results.length === 0) return res.status(404).json({ message: 'Challenge not found' });
-  
-      const challenge = results[0];
-      const newCommentsCount = challenge.comments_count + 1;
-      const level = challenge.level;
-      const requiredComments = level * 5;
-  
-      if (newCommentsCount >= requiredComments) {
-        const newLevel = level + 1;
-        db.query('UPDATE empathy_challenges SET level = ?, comments_count = 0 WHERE student_id = ?', [newLevel, studentId], (err) => {
-          if (err) return res.status(500).json({ error: err.message });
-          res.json({ level: newLevel, comments_count: 0 });
-        });
-      } else {
-        db.query('UPDATE empathy_challenges SET comments_count = ? WHERE student_id = ?', [newCommentsCount, studentId], (err) => {
-          if (err) return res.status(500).json({ error: err.message });
-          res.json({ level, comments_count: newCommentsCount });
-        });
-      }
-    });
-  };
+exports.updateCommentChallengeProgress = (req, res) => {
+  const studentId = req.user.student_id;
+  empathyChallengeModel.getUserChallenge(studentId, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) return res.status(404).json({ message: 'Challenge not found' });
+
+    const challenge = results[0];
+    const newCommentsCount = challenge.comments_count + 1;
+    const requiredComments = challenge.comment_level * 5;
+
+    if (newCommentsCount >= requiredComments) {
+      empathyChallengeModel.updateCommentChallenge(studentId, challenge.comment_level, requiredComments, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ ...challenge, comments_count: requiredComments, message: "You've done a level challenge for today, please come back tomorrow." });
+      });
+    } else {
+      empathyChallengeModel.updateCommentChallenge(studentId, challenge.comment_level, newCommentsCount, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ ...challenge, comments_count: newCommentsCount });
+      });
+    }
+  });
+};
+
+exports.updateReactionChallengeProgress = (req, res) => {
+  const studentId = req.user.student_id;
+  empathyChallengeModel.getUserChallenge(studentId, (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0) return res.status(404).json({ message: 'Challenge not found' });
+
+    const challenge = results[0];
+    const newReactionsCount = challenge.reactions_count + 1;
+    const requiredReactions = challenge.reaction_level * 5;
+
+    if (newReactionsCount >= requiredReactions) {
+      empathyChallengeModel.updateReactionChallenge(studentId, challenge.reaction_level, requiredReactions, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ ...challenge, reactions_count: requiredReactions, message: "You've done a level challenge for today, please come back tomorrow." });
+      });
+    } else {
+      empathyChallengeModel.updateReactionChallenge(studentId, challenge.reaction_level, newReactionsCount, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ ...challenge, reactions_count: newReactionsCount });
+      });
+    }
+  });
+};
 
 exports.resetChallenges = (req, res) => {
-  db.query('DELETE FROM empathy_challenges', (err) => {
+  empathyChallengeModel.resetChallenges((err) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'Challenges reset' });
   });

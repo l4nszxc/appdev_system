@@ -59,7 +59,6 @@
               <button @click="addReaction(post.id, 'Haha')" class="reaction-option">😂 Haha</button>
               <button @click="addReaction(post.id, 'Care')" class="reaction-option">🤗 Care</button>
               <button @click="addReaction(post.id, 'Sad')" class="reaction-option">😢 Sad</button>
-              <button @click="addReaction(post.id, 'Angry')" class="reaction-option">😡 Angry</button>
             </div>
           </div>
           <button @click="openReactionsModal(post)" class="reaction-count-button">
@@ -136,7 +135,7 @@ const showReactionsModal = ref(false);
 const currentPost = ref({});
 const showReactions = ref(null);
 const selectedReactionType = ref('Like');
-const reactionTypes = ['Like', 'Heart', 'Haha', 'Care', 'Sad', 'Angry'];
+const reactionTypes = ['Like', 'Heart', 'Haha', 'Care', 'Sad'];
 
 // Profile picture helper
 const getProfilePicture = (profilePath) => {
@@ -215,6 +214,13 @@ const addReaction = async (postId, reactionType) => {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
+    // Update empathy challenge progress
+    await axios.post(
+      'http://localhost:5000/empathy-challenge/reaction-progress',
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
     // Refresh posts
     await fetchPosts();
   } catch (error) {
@@ -236,7 +242,7 @@ const addComment = async (postId, content) => {
 
     // Update empathy challenge progress
     await axios.post(
-      'http://localhost:5000/empathy-challenge/progress',
+      'http://localhost:5000/empathy-challenge/comment-progress',
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );

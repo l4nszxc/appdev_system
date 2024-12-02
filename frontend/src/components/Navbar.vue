@@ -1,11 +1,9 @@
 <template>
   <nav class="navbar">
     <div class="logo-title">
-      <!-- Make the logo clickable without underline -->
       <router-link to="/user-home" class="no-underline">
         <img src="../assets/MINSU LOGO.png" alt="Logo" class="logo" />
       </router-link>
-      <!-- Make the navbar-brand clickable without underline -->
       <router-link to="/user-home" class="navbar-brand no-underline">
         MINDCONNECT
       </router-link>
@@ -34,9 +32,13 @@
           <i class="fas fa-comment"></i>
           <span class="link-text">Feedback</span>
         </router-link>
-         <router-link to="/mood-tracker" class="nav-link">
+        <router-link to="/mood-tracker" class="nav-link">
           <i class="fas fa-grin"></i>
           <span class="link-text">Mood Tracker</span>
+        </router-link>
+        <router-link to="/user/userEmpathyC" class="nav-link">
+          <i class="fas fa-hand-holding-heart"></i>
+          <span class="link-text">Empathy Challenge</span>
         </router-link>
         <div class="profile-menu">
           <img 

@@ -15,6 +15,7 @@ import FeedbackForm from '../views/user/FeedbackForm.vue';
 import HelpCenter from '@/views/user/HelpCenter.vue';
 import DailyExercise from '@/views/user/DailyExercise.vue'
 import MoodTracker from '@/views/user/MoodTracker.vue';
+import UserEmpathyC from '@/views/user/userEmpathyC.vue';
 
 // Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
@@ -126,6 +127,12 @@ const routes = [
     path: '/mood-tracker',
     name: 'moodTracker',
     component: MoodTracker,
+    meta: { requiresAuth: true, requiresUser: true },
+  },
+  {
+    path: '/user/userEmpathyC',
+    name: 'userEmpathyC',
+    component: UserEmpathyC,
     meta: { requiresAuth: true, requiresUser: true },
   },
   // ADMIN ROUTES

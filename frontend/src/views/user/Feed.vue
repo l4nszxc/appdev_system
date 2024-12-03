@@ -43,6 +43,7 @@
         </div>
         <p class="post-content">{{ post.content }}</p>
         <div class="post-actions">
+<<<<<<< HEAD
           <button @click="reactToPost(post.id)" class="action-button">
             {{ post.reacted ? '❤️' : '🤍' }} {{ post.reactions }}
           </button>
@@ -58,10 +59,65 @@
           <div class="comment-form">
             <input v-model="newComments[post.id]" placeholder="Add a comment..." class="comment-input" />
             <button @click="addComment(post.id)" class="comment-button">Send</button>
+=======
+          <div class="reaction-button-container" @mouseover="showReactions = post.id" @mouseleave="showReactions = null">
+            <button class="reaction-button">React</button>
+            <div v-if="showReactions === post.id" class="reaction-options">
+              <button @click="addReaction(post.id, 'Like')" class="reaction-option">👍 Like</button>
+              <button @click="addReaction(post.id, 'Heart')" class="reaction-option">❤️ Heart</button>
+              <button @click="addReaction(post.id, 'Haha')" class="reaction-option">😂 Haha</button>
+              <button @click="addReaction(post.id, 'Care')" class="reaction-option">🤗 Care</button>
+              <button @click="addReaction(post.id, 'Sad')" class="reaction-option">😢 Sad</button>
+            </div>
+>>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
           </div>
         </div>
       </div>
     </div>
+<<<<<<< HEAD
+=======
+
+    <Modal :show="showCommentsModal" @close="closeCommentsModal">
+      <div class="modal-content">
+        <h2>Comments</h2>
+        <div v-for="comment in currentPost.comments" :key="comment.id" class="comment">
+          <img 
+            :src="getProfilePicture(comment.profile_picture)" 
+            :alt="comment.username" 
+            class="comment-author-avatar" 
+          />
+          <span class="comment-author">{{ comment.username }}</span>
+          <p class="comment-content">{{ comment.content }}</p>
+        </div>
+        <textarea v-model="currentPost.newComment" placeholder="Write a comment..." class="comment-input"></textarea>
+        <button @click="addComment(currentPost.id, currentPost.newComment)" class="add-comment-button">Add Comment</button>
+      </div>
+    </Modal>
+
+    <Modal :show="showReactionsModal" @close="closeReactionsModal">
+      <div class="modal-content">
+        <h2>Reactions</h2>
+        <div class="reaction-tabs">
+          <button 
+            v-for="type in reactionTypes" 
+            :key="type" 
+            @click="selectedReactionType = type"
+            :class="[selectedReactionType === type ? 'active-tab' : '', 'reaction-tab']"
+          >
+            {{ type }}
+          </button>
+        </div>
+        <div v-for="reaction in filteredReactions" :key="reaction.id" class="reaction">
+          <img 
+            :src="getProfilePicture(reaction.profile_picture)" 
+            :alt="reaction.username" 
+            class="reaction-author-avatar" 
+          />
+          <span class="reaction-author">{{ reaction.username }}</span>
+        </div>
+      </div>
+    </Modal>
+>>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
   </div>
 </template>
 
@@ -69,6 +125,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import Navbar from '../../components/Navbar.vue';
 import axios from 'axios';
+<<<<<<< HEAD
 import Modal from '../../components/Modal.vue';
 
 export default {
@@ -90,6 +147,26 @@ export default {
     const selectEmotion = (emotion) => {
       selectedEmotion.value = emotion;
     };
+=======
+import Navbar from '@/components/Navbar.vue';
+import Footer from "@/components/Footer.vue";
+import Modal from '@/components/Modal.vue';
+
+// State variables
+const posts = ref([]);
+const newPostContent = ref('');
+const selectedEmotion = ref(null);
+const emotions = ['Happy', 'Sad', 'Anxious', 'Calm', 'Stressed'];
+const isLoggedIn = ref(false);
+const username = ref('');
+const userInfo = ref({});
+const showCommentsModal = ref(false);
+const showReactionsModal = ref(false);
+const currentPost = ref({});
+const showReactions = ref(null);
+const selectedReactionType = ref('Like');
+const reactionTypes = ['Like', 'Heart', 'Haha', 'Care', 'Sad'];
+>>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
 
     const fetchPosts = async () => {
       try {
@@ -204,6 +281,104 @@ export default {
     };
   }
 };
+<<<<<<< HEAD
+=======
+
+// Add a reaction to a post
+const addReaction = async (postId, reactionType) => {
+  try {
+    const token = localStorage.getItem('token');
+    await axios.post(
+      'http://localhost:5000/posts/reactions',
+      { postId, reactionType },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Update empathy challenge progress
+    await axios.post(
+      'http://localhost:5000/empathy-challenge/reaction-progress',
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Refresh posts
+    await fetchPosts();
+  } catch (error) {
+    console.error('Failed to add reaction:', error);
+  }
+};
+
+// Add a comment to a post
+const addComment = async (postId, content) => {
+  if (!content.trim()) return;
+
+  try {
+    const token = localStorage.getItem('token');
+    await axios.post(
+      'http://localhost:5000/posts/comments',
+      { postId, content },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Update empathy challenge progress
+    await axios.post(
+      'http://localhost:5000/empathy-challenge/comment-progress',
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Refresh posts
+    await fetchPosts();
+  } catch (error) {
+    console.error('Failed to add comment:', error);
+  }
+};
+
+// Open comments modal
+const openCommentsModal = (post) => {
+  currentPost.value = post;
+  showCommentsModal.value = true;
+};
+
+// Close comments modal
+const closeCommentsModal = () => {
+  showCommentsModal.value = false;
+};
+
+// Open reactions modal
+const openReactionsModal = (post) => {
+  currentPost.value = post;
+  showReactionsModal.value = true;
+  selectedReactionType.value = 'Like';
+};
+
+// Close reactions modal
+const closeReactionsModal = () => {
+  showReactionsModal.value = false;
+};
+
+// Filter reactions by selected type
+const filteredReactions = computed(() => {
+  if (!currentPost.value.reactions) return [];
+  return currentPost.value.reactions.filter(reaction => reaction.reaction_type === selectedReactionType.value);
+});
+
+// Date formatting utility
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString();
+};
+
+// Lifecycle hook
+onMounted(async () => {
+  isLoggedIn.value = !!localStorage.getItem('token');
+  
+  if (isLoggedIn.value) {
+    await fetchUserDetails();
+    await fetchPosts();
+  }
+});
+>>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
 </script>
 
 <style scoped>
@@ -326,10 +501,16 @@ export default {
   cursor: pointer;
 }
 
+<<<<<<< HEAD
 .announcements-section {
   background-color: #e9f5f3;
   border-radius: 5px;
   padding: 15px;
   margin-bottom: 20px;
+=======
+.modal-content {
+  max-height: 400px; /* Adjust the height as needed */
+  overflow-y: auto;
+>>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
 }
 </style>

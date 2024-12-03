@@ -94,7 +94,9 @@ exports.verifyOTP = (req, res) => {
     if (results.length === 0) {
       console.log(`No user found for email: ${email}`);
       return res.status(400).json({ message: 'User not found!' });
-    }
+    }      
+
+        
 
     const user = results[0];
     console.log('User found:', user);
@@ -145,12 +147,12 @@ exports.login = (req, res) => {
     bcrypt.compare(password, user.password, (err, isMatch) => {
       if (err) return res.status(500).json({ error: err.message });
       if (!isMatch) return res.status(400).json({ message: 'Incorrect password!' });
-
+ 
       const token = jwt.sign({ 
         student_id: user.student_id, 
         username: user.username,
         role: user.role 
-      }, 'your_jwt_secret', { expiresIn: '1h' });
+      }, 'your_jwt_secret', { expiresIn: '24h' });
       
       res.status(200).json({
         message: 'Login successful!',

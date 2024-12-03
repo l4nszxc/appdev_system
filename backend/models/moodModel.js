@@ -33,3 +33,16 @@ exports.getMoodsByPeriod = (studentId, period) => {
     });
   });
 };
+exports.getAllMoods = () => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT * FROM moods ORDER BY created_at DESC';
+    db.query(sql, (error, results) => {
+      if (error) {
+        console.error('Error fetching all moods:', error);
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+};

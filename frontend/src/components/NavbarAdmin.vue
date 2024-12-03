@@ -4,15 +4,21 @@
       <div class="logo-title">
         <img src="../assets/MINSU LOGO.png" alt="Logo" class="logo" />
         <h1 class="navbar-brand">MINDCONNECT</h1>
+        <span v-if="isLoggedIn" class="username-display">Logged in as: {{ username }}</span>
       </div>
     </div>
 
     <div class="navbar-links">
-      <div class="nav-item">
-        <router-link to="/admin/users" class="nav-link">
+      <div class="nav-item dropdown">
+        <button class="nav-link dropdown-toggle" @click="toggleDropdown">
           <i class="fas fa-users"></i>
           <span class="nav-text">Users</span>
-        </router-link>
+        </button>
+        <div v-if="dropdownVisible" class="dropdown-menu">
+          <router-link to="/admin/users" class="dropdown-item">Manage Users</router-link>
+          <router-link to="/admin/suspended-users" class="dropdown-item">Suspended Users</router-link>
+          <router-link to="/admin/add-user" class="dropdown-item">Add User</router-link>
+        </div>
       </div>
       <div class="nav-item">
         <router-link to="/admin/adminFeed" class="nav-link">
@@ -64,12 +70,20 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
   name: 'NavbarAdmin',
   setup() {
     const router = useRouter();
+    const dropdownVisible = ref(false);
+    const isLoggedIn = ref(false);
+    const username = ref('');
+
+    const toggleDropdown = () => {
+      dropdownVisible.value = !dropdownVisible.value;
+    };
 
     const logout = () => {
       const confirmed = window.confirm("Are you sure you want to log out?");
@@ -84,7 +98,12 @@ export default {
       }
     };
 
-    return { logout };
+    onMounted(() => {
+      isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
+      username.value = localStorage.getItem('username');
+    });
+
+    return { logout, toggleDropdown, dropdownVisible, isLoggedIn, username };
   }
 };
 </script>
@@ -119,6 +138,12 @@ export default {
   font-size: 1.8rem;
   font-weight: bold;
   color: #ffffff;
+}
+
+.username-display {
+  font-size: 1.3rem;
+  color: #ffffff;
+  margin-left: 20px;
 }
 
 .navbar-links {
@@ -191,5 +216,43 @@ export default {
 .logout-button:hover .nav-text {
   opacity: 1;
   transform: translateX(-50%) translateY(-5px);
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #ffffff;
+  padding: 8px 15px;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 10px 15px;
+  color: #000000;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 </style>

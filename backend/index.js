@@ -11,6 +11,9 @@ const heartToHeartController = require('./controllers/heartToHeartController');
 const moodController = require('./controllers/moodController');
 const postController = require('./controllers/postController');
 const authMiddleware = require('./middleware/authMiddleware');
+const adminManageUsersController = require('./controllers/adminManageUsersController');
+const empathyChallengeController = require('./controllers/empathyChallengeController');
+
 
 const app = express();
 app.use(cors());
@@ -41,6 +44,9 @@ app.post('/reset-password', authController.resetPassword);
 app.get('/user', authMiddleware, userController.getUserProfile);
 app.put('/user', authMiddleware, userController.updateUserProfile);
 
+// Admin manage users routes
+app.get('/api/students/program/:program', authMiddleware, adminManageUsersController.getUsersByProgram);
+
 // Exercise routes
 app.get('/exercises', authMiddleware, exerciseController.getWeeklyExercises);
 app.post('/exercises', authMiddleware, exerciseController.saveExercise);
@@ -50,17 +56,18 @@ app.post('/api/feedback', authMiddleware, userFeedbackController.submitFeedback)
 app.get('/api/feedback', authMiddleware, userFeedbackController.getUserFeedback);
 app.get('/api/feedback/all', authMiddleware, userFeedbackController.getAllFeedback); // New route for fetching all feedback
 
-
 app.get('/user', authMiddleware, userController.getUserProfile);
 app.put('/user', authMiddleware, userController.updateUserProfile);
 app.post('/user/profile-picture', authMiddleware, upload.single('profilePicture'), userController.uploadProfilePicture);
 
 // Post routes
 app.get('/posts', authMiddleware, postController.getPosts);
+app.get('/posts/user', authMiddleware, postController.getPostsByUser); // Add this line
 app.post('/posts', authMiddleware, postController.createPost);
 app.post('/posts/reactions', authMiddleware, postController.addReaction);
 app.post('/posts/comments', authMiddleware, postController.addComment);
 app.delete('/posts/:id', authMiddleware, postController.deletePost);
+app.put('/posts/:id', authMiddleware, postController.updatePost); // Add this line
 
 // Appointment routes
 app.post('/api/appointments', authMiddleware, heartToHeartController.createAppointment);
@@ -77,7 +84,13 @@ app.post('/mood', authMiddleware, moodController.saveMood);
 app.get('/mood/weekly', authMiddleware, moodController.getWeeklyMoods);
 app.get('/mood/monthly', authMiddleware, moodController.getMonthlyMoods);
 
+app.get('/moods', authMiddleware, moodController.getAllMoods);
 
+// Empathy Challenge routes
+app.get('/empathy-challenge', authMiddleware, empathyChallengeController.getUserChallenge);
+app.post('/empathy-challenge/comment-progress', authMiddleware, empathyChallengeController.updateCommentChallengeProgress);
+app.post('/empathy-challenge/reaction-progress', authMiddleware, empathyChallengeController.updateReactionChallengeProgress);
+app.post('/admin/reset-empathy-challenges', authMiddleware, empathyChallengeController.resetChallenges);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

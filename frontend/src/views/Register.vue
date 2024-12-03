@@ -95,25 +95,26 @@
           <div class="form-column-right">
             <!-- Program Field -->
             <div class="form-group">
-    <label for="program" class="form-label">Program</label>
-    <div class="input-wrapper">
-      <select
-        id="program"
-        v-model="program"
-        required
-        class="form-input"
-      >
-        <option value="" disabled selected>Select Program</option>
-        <option value="BSED">BSED</option>
-        <option value="BSHM">BSHM</option>
-        <option value="BSTM">BSTM</option>
-        <option value="BTVTED//BTLED">BTVTED/BTLED</option>
-        <option value="BSCrim">BSCrim</option>
-        <option value="BSIT">BSIT</option>
-        <!-- Add more options as necessary -->
-      </select>
-    </div>
-  </div>
+              <label for="program" class="form-label">Program</label>
+              <div class="input-wrapper">
+                <select
+                  id="program"
+                  v-model="program"
+                  required
+                  class="form-input"
+                >
+                  <option value="" disabled selected>Select Program</option>
+                  <option value="BSED">BSED</option>
+                  <option value="BSHM">BSHM</option>
+                  <option value="BSTM">BSTM</option>
+                  <option value="BTVTED">BTVTED</option>
+                  <option value="BTLED">BTLED</option>
+                  <option value="BSCrim">BSCrim</option>
+                  <option value="BSIT">BSIT</option>
+                </select>
+              </div>
+            </div>
+
             <!-- Username Field -->
             <div class="form-group">
               <label for="username" class="form-label">Username</label>
@@ -176,23 +177,23 @@
                 />
               </div>
             </div>
-             <!-- Agreement Checkbox -->
-          <div class="form-group">
-            <label class="agreement">
-              <input 
-                type="checkbox"
-                v-model="agreementAccepted"
-                required
-              />
-              I agree to the 
-              <router-link to="/terms-and-conditions" class="link">Terms of Service</router-link> 
-              and 
-              <router-link to="/privacy-policy" class="link">Privacy Policy</router-link>.
-            </label>
+
+            <!-- Agreement Checkbox -->
+            <div class="form-group">
+              <label class="agreement">
+                <input 
+                  type="checkbox"
+                  v-model="agreementAccepted"
+                  required
+                />
+                I agree to the 
+                <router-link to="/terms-and-conditions" class="link">Terms of Service</router-link> 
+                and 
+                <router-link to="/privacy-policy" class="link">Privacy Policy</router-link>.
+              </label>
+            </div>
           </div>
-          </div>
-         
-         
+
           <!-- Submit Button -->
           <button type="submit" class="submit-button">
             Register
@@ -278,7 +279,6 @@ const register = async () => {
   }
 };
 </script>
-
 
 <style scoped>
 /* Main container with gradient background */

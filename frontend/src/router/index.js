@@ -15,7 +15,7 @@ import FeedbackForm from '../views/user/FeedbackForm.vue';
 import HelpCenter from '@/views/user/HelpCenter.vue';
 import DailyExercise from '@/views/user/DailyExercise.vue'
 import MoodTracker from '@/views/user/MoodTracker.vue';
-
+import UserEmpathyC from '@/views/user/userEmpathyC.vue';
 
 // Admin imports
 import AdminHome from '@/views/admin/adminHome.vue';
@@ -26,6 +26,8 @@ import HeartToHeartRoom from '@/views/admin/heartToHeartRoom.vue';
 import MoodReport from '@/views/admin/moodReport.vue';
 import Users from '@/views/admin/users.vue';
 import AdminDashboard from '@/views/admin/adminDashboard.vue';
+import SuspendedUsers from '@/views/admin/SuspendedUsers.vue';
+import AddUser from '@/views/admin/AddUser.vue';
 
 const routes = [
   {
@@ -127,6 +129,12 @@ const routes = [
     component: MoodTracker,
     meta: { requiresAuth: true, requiresUser: true },
   },
+  {
+    path: '/user/userEmpathyC',
+    name: 'userEmpathyC',
+    component: UserEmpathyC,
+    meta: { requiresAuth: true, requiresUser: true },
+  },
   // ADMIN ROUTES
   {
     path: '/admin-home',
@@ -168,6 +176,18 @@ const routes = [
     path: '/admin/users',
     name: 'users',
     component: Users,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/admin/suspended-users',
+    name: 'suspendedUsers',
+    component: SuspendedUsers,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/admin/add-user',
+    name: 'addUser',
+    component: AddUser,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
   {

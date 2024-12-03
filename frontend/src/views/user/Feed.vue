@@ -1,119 +1,195 @@
 <template>
   <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
-  <div class="feed-container">
-    <h1 class="feed-title">Mental Health Support Network</h1>
-
-    <h2 class="text-xl font-semibold mb-4 text-green-800">How are you feeling today?</h2>
-    <div class="flex justify-between mb-4 bg-white rounded-lg shadow-md p-6">
-      <button
-        v-for="emotion in emotions"
-        :key="emotion"
-        @click="selectedEmotion = emotion"
-        :class="[selectedEmotion === emotion ? 'bg-green-500 text-white' : 'bg-green-100 text-green-800 hover:bg-green-200', 'px-4 py-2 rounded-full transition-colors']"
-      >
-        {{ emotion }}
-      </button>
-    </div>
-
-    <div class="post-form">
-      <textarea 
-        v-model="newPostContent" 
-        placeholder="Share your thoughts..." 
-        class="post-input"
-      ></textarea>
-      <button 
-        @click="createPost" 
-        class="post-button" 
-        :disabled="!newPostContent.trim() || !selectedEmotion"
-      >
-        Post
-      </button>
-    </div>
-
-    <div class="posts-list">
-      <div v-for="post in posts" :key="post.id" class="post">
-        <div class="post-header">
-          <img 
-            :src="getProfilePicture(post.profile_picture)" 
-            :alt="post.username" 
-            class="author-avatar" 
-          />
-          <span class="author-name">{{ post.username }}</span>
-          <span class="text-gray-500 ml-2 text-sm">
-            {{ formatDate(post.created_at) }}
-          </span>
-          <span 
-            v-if="post.emotion" 
-            class="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs"
-          >
-            {{ post.emotion }}
-          </span>
+  
+  <div class="content-wrapper">
+    <!-- Left Section -->
+    <div class="left-section">
+      <h2 class="text-xl font-semibold mb-4 text-green-800">How are you feeling today?</h2>
+      <div class="post-form">
+        <textarea 
+          v-model="newPostContent" 
+          placeholder="Share your thoughts..." 
+          class="post-input"
+        ></textarea>
+        <button 
+          @click="createPost" 
+          class="post-button" 
+          :disabled="!newPostContent.trim()"
+        >
+          Post
+        </button>
+      </div>
+      <div class="posts-list">
+        <div v-for="post in posts" :key="post.id" class="post">
+          <div class="post-header">
+            <img 
+              :src="getProfilePicture(post.profile_picture)" 
+              :alt="post.username" 
+              class="author-avatar" 
+            />
+            <span class="author-name">{{ post.username }}</span>
+            <span class="text-gray-500 ml-2 text-sm">
+              {{ formatDate(post.created_at) }}
+            </span>
+          </div>
+          <p class="post-content">{{ post.content }}</p>
+          <div class="post-actions">
+            <div class="reaction-button-container" @mouseover="showReactions = post.id" @mouseleave="showReactions = null">
+              <button class="reaction-button">React</button>
+              <div v-if="showReactions === post.id" class="reaction-options">
+                <button @click="addReaction(post.id, 'Like')" class="reaction-option">👍 Like</button>
+                <button @click="addReaction(post.id, 'Heart')" class="reaction-option">❤️ Heart</button>
+                <button @click="addReaction(post.id, 'Haha')" class="reaction-option">😂 Haha</button>
+                <button @click="addReaction(post.id, 'Care')" class="reaction-option">🤗 Care</button>
+                <button @click="addReaction(post.id, 'Sad')" class="reaction-option">😢 Sad</button>
+              </div>
+            </div>
+            <button @click="openReactionsModal(post)" class="reaction-count-button">
+              {{ post.reactions_count }} Reactions
+            </button>
+            <button @click="openCommentsModal(post)" class="comment-count-button">
+              {{ post.comments_count }} Comments
+            </button>
+          </div>
         </div>
-        <p class="post-content">{{ post.content }}</p>
-        <div class="post-actions">
-          <div class="reaction-button-container" @mouseover="showReactions = post.id" @mouseleave="showReactions = null">
-            <button class="reaction-button">React</button>
-            <div v-if="showReactions === post.id" class="reaction-options">
-              <button @click="addReaction(post.id, 'Like')" class="reaction-option">👍 Like</button>
-              <button @click="addReaction(post.id, 'Heart')" class="reaction-option">❤️ Heart</button>
-              <button @click="addReaction(post.id, 'Haha')" class="reaction-option">😂 Haha</button>
-              <button @click="addReaction(post.id, 'Care')" class="reaction-option">🤗 Care</button>
-              <button @click="addReaction(post.id, 'Sad')" class="reaction-option">😢 Sad</button>
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="right-section">
+      
+      
+      <div class="card bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4 text-green-800">Heart-to-Heart Room</h2>
+
+        
+        <!-- Appointment Scheduling Section -->
+        <div v-if="!currentAppointment">
+          <h3 class="text-lg font-semibold mb-4 text-green-700">Schedule an Appointment</h3>
+
+          <!-- Date Selection -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
+            <input
+              type="date"
+              v-model="selectedDate"
+              class="w-full p-3 border rounded-lg focus:ring-green-500 focus:border-green-500"
+              :min="today"
+              @change="loadTimeSlots"
+            />
+          </div>
+
+          <!-- Time Slots -->
+          <div v-if="selectedDate" class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Available Time Slots</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <div
+                v-for="slot in timeSlots"
+                :key="slot.time"
+                @click="selectTimeSlot(slot)"
+                :class="[ 'card p-3 rounded-lg text-center cursor-pointer transition-all',
+                          slot.available ? 'bg-green-100 hover:bg-green-200 text-green-800' : 'bg-gray-100 text-gray-400 cursor-not-allowed' ]"
+              >
+                {{ formatTime(slot.time) }}
+              </div>
             </div>
           </div>
-          <button @click="openReactionsModal(post)" class="reaction-count-button">
-            {{ post.reactions_count }} Reactions
-          </button>
-          <button @click="openCommentsModal(post)" class="comment-count-button">
-            {{ post.comments_count }} Comments
-          </button>
+
+          <div v-if="error" class="text-red-600 mb-4">
+            {{ error }}
+          </div>
+        </div>
+
+        <!-- Current Appointment Display -->
+        <div v-if="currentAppointment" class="mt-4">
+          <h3 class="text-lg font-semibold mb-2 text-green-700">Your Current Appointment</h3>
+          <div class="card bg-green-50 p-6 rounded-lg">
+            <p class="mb-2">
+              <span class="font-medium">Date:</span>
+              {{ formatDate(currentAppointment.date) }}
+            </p>
+            <p class="mb-2">
+              <span class="font-medium">Time:</span>
+              {{ formatTime(currentAppointment.start_time) }} - {{ formatTime(currentAppointment.end_time) }}
+            </p>
+            <p v-if="currentAppointment.meeting_link" class="mb-4">
+              <span class="font-medium">Meeting Link:</span>
+              <a
+                :href="currentAppointment.meeting_link"
+                target="_blank"
+                class="text-blue-600 hover:underline"
+              >
+                {{ currentAppointment.meeting_link }}
+              </a>
+            </p>
+            <button
+              @click="cancelAppointment"
+              class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
+            >
+              Cancel Appointment
+            </button>
+          </div>
         </div>
       </div>
     </div>
-
-    <Modal :show="showCommentsModal" @close="closeCommentsModal">
-      <div class="modal-content">
-        <h2>Comments</h2>
-        <div v-for="comment in currentPost.comments" :key="comment.id" class="comment">
-          <img 
-            :src="getProfilePicture(comment.profile_picture)" 
-            :alt="comment.username" 
-            class="comment-author-avatar" 
-          />
-          <span class="comment-author">{{ comment.username }}</span>
-          <p class="comment-content">{{ comment.content }}</p>
-        </div>
-        <textarea v-model="currentPost.newComment" placeholder="Write a comment..." class="comment-input"></textarea>
-        <button @click="addComment(currentPost.id, currentPost.newComment)" class="add-comment-button">Add Comment</button>
-      </div>
-    </Modal>
-
-    <Modal :show="showReactionsModal" @close="closeReactionsModal">
-      <div class="modal-content">
-        <h2>Reactions</h2>
-        <div class="reaction-tabs">
-          <button 
-            v-for="type in reactionTypes" 
-            :key="type" 
-            @click="selectedReactionType = type"
-            :class="[selectedReactionType === type ? 'active-tab' : '', 'reaction-tab']"
-          >
-            {{ type }}
-          </button>
-        </div>
-        <div v-for="reaction in filteredReactions" :key="reaction.id" class="reaction">
-          <img 
-            :src="getProfilePicture(reaction.profile_picture)" 
-            :alt="reaction.username" 
-            class="reaction-author-avatar" 
-          />
-          <span class="reaction-author">{{ reaction.username }}</span>
-        </div>
-      </div>
-    </Modal>
   </div>
+
+  <!-- Comments Modal -->
+  <Modal :show="showCommentsModal" @close="closeCommentsModal">
+    <div class="modal-content">
+      <h2>Comments</h2>
+      <textarea 
+        v-model="currentPost.newComment" 
+        placeholder="Write a comment..." 
+        class="comment-input">
+      </textarea>
+      <button 
+        @click="addComment(currentPost.id, currentPost.newComment)" 
+        class="add-comment-button">
+        Add Comment
+      </button>
+
+      <div v-for="comment in currentPost.comments" :key="comment.id" class="comment">
+        <img 
+          :src="getProfilePicture(comment.profile_picture)" 
+          :alt="comment.username" 
+          class="comment-author-avatar" 
+        />
+        <span class="comment-author">{{ comment.username }}</span>
+        <p class="comment-content">{{ comment.content }}</p>
+      </div>
+    </div>
+  </Modal>
+
+  <!-- Reactions Modal -->
+  <Modal :show="showReactionsModal" @close="closeReactionsModal">
+    <div class="modal-content">
+      <h2>Reactions</h2>
+      <div class="reaction-tabs">
+        <button 
+          v-for="type in reactionTypes" 
+          :key="type" 
+          @click="selectedReactionType = type"
+          :class="[selectedReactionType === type ? 'active-tab' : '', 'reaction-tab']"
+        >
+          {{ type }}
+        </button>
+      </div>
+      <div v-for="reaction in filteredReactions" :key="reaction.id" class="reaction">
+        <img 
+          :src="getProfilePicture(reaction.profile_picture)" 
+          :alt="reaction.username" 
+          class="reaction-author-avatar" 
+        />
+        <span class="reaction-author">{{ reaction.username }}</span>
+      </div>
+    </div>
+  </Modal>
+
   <Footer />
 </template>
+
+
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
@@ -122,11 +198,25 @@ import Navbar from '@/components/Navbar.vue';
 import Footer from "@/components/Footer.vue";
 import Modal from '@/components/Modal.vue';
 
-// State variables
+// Appointment Scheduling State Variables
+const selectedDate = ref('');
+const timeSlots = ref([
+  { time: '08:00:00', available: true },
+  { time: '09:00:00', available: true },
+  { time: '10:00:00', available: true },
+  { time: '11:00:00', available: true },
+  { time: '13:00:00', available: true },
+  { time: '14:00:00', available: true },
+  { time: '15:00:00', available: true },
+  { time: '16:00:00', available: true },
+]);
+const currentAppointment = ref(null);
+const error = ref('');
+const today = new Date().toISOString().split('T')[0];
+
+// User Details and Posts State Variables
 const posts = ref([]);
 const newPostContent = ref('');
-const selectedEmotion = ref(null);
-const emotions = ['Happy', 'Sad', 'Anxious', 'Calm', 'Stressed'];
 const isLoggedIn = ref(false);
 const username = ref('');
 const userInfo = ref({});
@@ -171,7 +261,7 @@ const fetchPosts = async () => {
       showReactions: false,
       newComment: '',
       comments: post.comments || [],
-      reactions: post.reactions || []
+      reactions: post.reactions || [],
     }));
   } catch (error) {
     console.error('Failed to fetch posts:', error);
@@ -180,24 +270,15 @@ const fetchPosts = async () => {
 
 // Create a new post
 const createPost = async () => {
-  if (!newPostContent.value.trim() || !selectedEmotion.value) return;
-
+  if (!newPostContent.value.trim()) return;
   try {
     const token = localStorage.getItem('token');
     await axios.post(
       'http://localhost:5000/posts',
-      {
-        content: newPostContent.value,
-        emotion: selectedEmotion.value,
-      },
+      { content: newPostContent.value },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-
-    // Reset form
     newPostContent.value = '';
-    selectedEmotion.value = null;
-    
-    // Refresh posts
     await fetchPosts();
   } catch (error) {
     console.error('Failed to create post:', error);
@@ -213,15 +294,11 @@ const addReaction = async (postId, reactionType) => {
       { postId, reactionType },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-
-    // Update empathy challenge progress
     await axios.post(
       'http://localhost:5000/empathy-challenge/reaction-progress',
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
-
-    // Refresh posts
     await fetchPosts();
   } catch (error) {
     console.error('Failed to add reaction:', error);
@@ -231,7 +308,6 @@ const addReaction = async (postId, reactionType) => {
 // Add a comment to a post
 const addComment = async (postId, content) => {
   if (!content.trim()) return;
-
   try {
     const token = localStorage.getItem('token');
     await axios.post(
@@ -239,40 +315,109 @@ const addComment = async (postId, content) => {
       { postId, content },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-
-    // Update empathy challenge progress
     await axios.post(
       'http://localhost:5000/empathy-challenge/comment-progress',
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
-
-    // Refresh posts
     await fetchPosts();
   } catch (error) {
     console.error('Failed to add comment:', error);
   }
 };
 
-// Open comments modal
+// Appointment Scheduling Functions
+const loadTimeSlots = async () => {
+  if (!selectedDate.value) return;
+  try {
+    error.value = '';
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`http://localhost:5000/api/appointments`, {
+      params: { date: selectedDate.value },
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    timeSlots.value = timeSlots.value.map(slot => ({ ...slot, available: true }));
+    response.data.forEach(appointment => {
+      const slot = timeSlots.value.find(s => s.time === appointment.start_time);
+      if (slot) slot.available = false;
+    });
+    if (response.data.length >= 2) {
+      timeSlots.value = timeSlots.value.map(slot => ({ ...slot, available: false }));
+    }
+  } catch (err) {
+    console.error('Error loading time slots:', err);
+    error.value = err.response?.data?.message || 'Failed to load available time slots';
+  }
+};
+
+const selectTimeSlot = async (slot) => {
+  if (!slot.available) return;
+  try {
+    error.value = '';
+    const token = localStorage.getItem('token');
+    const response = await axios.post('http://localhost:5000/api/appointments', {
+      date: selectedDate.value,
+      start_time: slot.time
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    currentAppointment.value = response.data;
+    await loadTimeSlots();
+  } catch (err) {
+    console.error('Error scheduling appointment:', err);
+    error.value = err.response?.data?.message || 'Failed to schedule appointment';
+  }
+};
+
+const cancelAppointment = async () => {
+  if (!currentAppointment.value) return;
+  try {
+    error.value = '';
+    const token = localStorage.getItem('token');
+    await axios.delete(`http://localhost:5000/api/appointments/${currentAppointment.value.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    currentAppointment.value = null;
+    await loadTimeSlots();
+  } catch (err) {
+    console.error('Error canceling appointment:', err);
+    error.value = err.response?.data?.message || 'Failed to cancel appointment';
+  }
+};
+
+const loadCurrentAppointment = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get('http://localhost:5000/api/appointments/current', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    currentAppointment.value = response.data;
+  } catch (err) {
+    console.error('Error loading current appointment:', err);
+    error.value = err.response?.data?.message || 'Failed to load current appointment';
+  }
+};
+
+// Date formatting utility
+const formatTime = (time) => new Date(`2000-01-01T${time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+// Modal Management Functions
 const openCommentsModal = (post) => {
   currentPost.value = post;
   showCommentsModal.value = true;
 };
 
-// Close comments modal
 const closeCommentsModal = () => {
   showCommentsModal.value = false;
 };
 
-// Open reactions modal
 const openReactionsModal = (post) => {
   currentPost.value = post;
   showReactionsModal.value = true;
   selectedReactionType.value = 'Like';
 };
 
-// Close reactions modal
 const closeReactionsModal = () => {
   showReactionsModal.value = false;
 };
@@ -283,30 +428,167 @@ const filteredReactions = computed(() => {
   return currentPost.value.reactions.filter(reaction => reaction.reaction_type === selectedReactionType.value);
 });
 
-// Date formatting utility
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleString();
-};
-
 // Lifecycle hook
 onMounted(async () => {
   isLoggedIn.value = !!localStorage.getItem('token');
-  
   if (isLoggedIn.value) {
     await fetchUserDetails();
     await fetchPosts();
+    await loadCurrentAppointment();
   }
 });
 </script>
 
+
+
 <style scoped>
-.feed-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+.content-wrapper {
+  display: flex;
+  gap: 16px;
+}
+
+.left-section, .right-section {
+  width: 48%;
+}
+
+.left-section {
+  flex: 3; /* Left section is wider */
+  padding: 16px;
+}
+
+.right-section {
+  flex: 2; /* Right section is smaller */
+  padding: 16px;
+}
+
+
+.feed-container {
+  max-width: 100%;
+}
+
+.post-form {
+  margin-bottom: 20px;
+}
+
+.post-input {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: none;
+}
+
+.post-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #2a9d8f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.post-button:disabled {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.posts-list {
+  margin-top: 20px;
+}
+
+.post {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.author-name {
+  font-weight: bold;
+}
+
+.post-content {
+  margin-bottom: 10px;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reaction-button-container {
+  position: relative;
+}
+
+.reaction-button {
+  background-color: #2a9d8f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.reaction-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.reaction-option {
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: white;
+  border: none;
+  text-align: left;
+}
+
+.reaction-option:hover {
+  background-color: #f0f0f0;
+}
+
+.comment-button, .reaction-count-button, .comment-count-button {
+  background-color: #2a9d8f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
 
 .feed-title {
   text-align: center;
@@ -431,14 +713,6 @@ onMounted(async () => {
 
 .comments-section {
   margin-top: 10px;
-}
-
-.comment {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
 }
 
 .comment-author-avatar {

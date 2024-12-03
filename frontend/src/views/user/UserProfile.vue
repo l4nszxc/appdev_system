@@ -42,10 +42,6 @@ UserProf
         
       </div>
     </div>
-<<<<<<< HEAD
-    
-    <Footer />
-=======
     <div class="user-posts">
       <h2>Your Posts</h2>
       <div v-for="post in userPosts" :key="post.id" class="post">
@@ -72,7 +68,6 @@ UserProf
       </select>
       <button @click="saveEditPost" class="save-edit-btn">Save</button>
     </Modal>
->>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
   </div>
 </template>
 
@@ -82,30 +77,19 @@ import { useRouter } from 'vue-router';
 import Navbar from '../../components/Navbar.vue';
 import axios from 'axios';
 import Footer from "@/components/Footer.vue";
-<<<<<<< HEAD
-=======
 import Modal from "@/components/Modal.vue";
 
->>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
 export default {
   name: 'UserProfile',
   components: {
     Navbar,
-<<<<<<< HEAD
-    Footer,
-=======
     Modal,
->>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
   },
   setup() {
     const isLoggedIn = ref(false);
     const username = ref('');
     const userInfo = ref({});
-<<<<<<< HEAD
-    const posts = ref([]);  // To store user posts
-=======
     const userPosts = ref([]);
->>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
     const router = useRouter();
     const showEditModal = ref(false);
     const editPostContent = ref('');
@@ -131,26 +115,14 @@ export default {
               Authorization: `Bearer ${token}`,
             },
           });
-<<<<<<< HEAD
-          userInfo.value = userResponse.data;
-
-          // Fetch posts for the user
-          const postsResponse = await axios.get('http://localhost:5000/user/posts', {
-=======
           userInfo.value = response.data;
 
           const postsResponse = await axios.get('http://localhost:5000/posts/user', {
->>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
-<<<<<<< HEAD
-          posts.value = postsResponse.data;
-
-=======
           userPosts.value = postsResponse.data;
->>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
         } catch (error) {
           console.error('Failed to fetch user details or posts:', error);
           alert('Failed to fetch user details or posts. Please try again later.');
@@ -205,11 +177,7 @@ export default {
       isLoggedIn,
       username,
       userInfo,
-<<<<<<< HEAD
-      posts,  // Bind the posts data to template
-=======
       userPosts,
->>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00
       goToEditProfile,
       profilePictureUrl,
       formatDate,
@@ -267,73 +235,6 @@ export default {
   object-fit: cover;
 }
 
-<<<<<<< HEAD
-.profile-details {
-  font-size: 1.1em;
-  color: #555;
-}
-
-.profile-details p {
-  margin-bottom: 10px;
-}
-
-.profile-details strong {
-  color: #333;
-}
-
-.edit-profile-btn {
-  background-color: #0f6016;
-  color: white;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  font-size: 1.2em;
-  margin-top: 25px;
-  width: 100%;
-  transition: background-color 0.3s;
-}
-
-.edit-profile-btn:hover {
-  background-color: #0d4f12;
-}
-
-.user-posts {
-  margin-top: 30px;
-}
-
-.post {
-  background-color: #f9f9f9;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.post p {
-  margin: 5px 0;
-}
-
-.no-posts {
-  color: #888;
-  font-style: italic;
-}
-
-@media (max-width: 768px) {
-  .profile-container {
-    padding: 20px;
-  }
-
-  .profile-title {
-    font-size: 2em;
-  }
-
-  .edit-profile-btn {
-    font-size: 1.1em;
-  }
-}
-</style>
-=======
 .user-posts {
   padding: 20px;
   background-color: #f9f9f9;
@@ -416,4 +317,3 @@ export default {
   background-color: #0d4f12;
 }
 </style>
->>>>>>> 4e0e48535a0b14eb93120c5982fd022e0ae7ae00

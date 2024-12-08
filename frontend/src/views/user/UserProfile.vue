@@ -1,50 +1,63 @@
 <template>
   <div>
     <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
+    
+    <!-- Profile Section -->
     <div class="user-profile">
-      <h2>User Profile</h2>
-      <div class="profile-picture">
-        <img :src="profilePictureUrl" alt="Profile Picture" class="profile-image" />
+      <div class="profile-header">
+        <div class="profile-picture-container">
+          <img :src="profilePictureUrl" alt="Profile Picture" class="profile-image" />
+        </div>
+        <div class="profile-info">
+          <h2>{{ userInfo.username }}</h2>
+          <p class="profile-bio">{{ userInfo.program }} | {{ userInfo.gender }}</p>
+          <button @click="goToEditProfile" class="edit-profile-btn">Edit Profile</button>
+        </div>
       </div>
+      
+     <!-- User Information Section -->
+    <div class="user-details">
       <p><strong>Student ID:</strong> {{ userInfo.student_id }}</p>
-      <p><strong>Username:</strong> {{ userInfo.username }}</p>
+      <p><strong>Full Name:</strong> {{ fullName }}</p>
       <p><strong>Email:</strong> {{ userInfo.email }}</p>
-      <p><strong>First Name:</strong> {{ userInfo.firstname }}</p>
-      <p><strong>Middle Name:</strong> {{ userInfo.middlename }}</p>
-      <p><strong>Last Name:</strong> {{ userInfo.lastname }}</p>
-      <p><strong>Gender:</strong> {{ userInfo.gender }}</p>
       <p><strong>Birthdate:</strong> {{ userInfo.birthdate }}</p>
-      <p><strong>Program:</strong> {{ userInfo.program }}</p>
-      <button @click="goToEditProfile" class="edit-profile-btn">EDIT PROFILE</button>
     </div>
+
+      <!-- QR Code Section -->
+      <div class="qr-section">
+        <button @click="generateQRCode" class="generate-qr-btn">Generate Profile QR Code</button>
+        <div v-if="qrCodeData" class="qr-code-container">
+          <img :src="qrCodeData" alt="QR Code" class="qr-code" />
+        </div>
+      </div>
+    </div>
+
+    <!-- User Posts Section -->
     <div class="user-posts">
       <h2>Your Posts</h2>
       <div v-for="post in userPosts" :key="post.id" class="post">
         <div class="post-header">
-          <img :src="post.profile_picture ? `http://localhost:5000${post.profile_picture}` : require('@/assets/defaultProfile.png')" alt="Profile Picture" class="post-profile-image" />
+          <img :src="post.profile_picture ? `http://localhost:5000${post.profile_picture}` : require('@/assets/defaultProfile.png')" alt="Post Author" class="post-profile-image" />
           <span class="author-name">{{ post.username }}</span>
           <span class="text-gray-500 ml-2 text-sm">{{ formatDate(post.created_at) }}</span>
-          <span v-if="post.emotion" class="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">{{ post.emotion }}</span>
+          <span v-if="post.emotion" class="emotion-badge">{{ post.emotion }}</span>
           <button @click="openEditModal(post)" class="edit-post-btn">Edit</button>
         </div>
         <p class="post-content">{{ post.content }}</p>
       </div>
     </div>
     <Footer />
+
+    <!-- Edit Post Modal -->
     <Modal v-if="showEditModal" :show="showEditModal" @close="closeEditModal">
       <h3>Edit Post</h3>
       <textarea v-model="editPostContent" rows="5" class="edit-post-textarea"></textarea>
-      <select v-model="editPostEmotion" class="edit-post-select">
-        <option value="Happy">Happy</option>
-        <option value="Sad">Sad</option>
-        <option value="Anxious">Anxious</option>
-        <option value="Calm">Calm</option>
-        <option value="Stressed">Stressed</option>
-      </select>
+      
       <button @click="saveEditPost" class="save-edit-btn">Save</button>
     </Modal>
   </div>
 </template>
+
 
 <script>
 import { ref, onMounted, computed } from 'vue';
@@ -53,6 +66,7 @@ import Navbar from '../../components/Navbar.vue';
 import axios from 'axios';
 import Footer from "@/components/Footer.vue";
 import Modal from "@/components/Modal.vue";
+import QRCode from 'qrcode';  // Import QRCode library
 
 export default {
   name: 'UserProfile',
@@ -70,12 +84,18 @@ export default {
     const editPostContent = ref('');
     const editPostEmotion = ref('');
     const currentPostId = ref(null);
+    const qrCodeData = ref(null);  // Store QR Code data
 
     const profilePictureUrl = computed(() => {
       if (userInfo.value.profile_picture) {
         return `http://localhost:5000${userInfo.value.profile_picture}`;
       }
       return require('@/assets/defaultProfile.png');
+    });
+
+    // Computed property to concatenate first name, middle name, and last name
+    const fullName = computed(() => {
+      return `${userInfo.value.firstname} ${userInfo.value.middlename} ${userInfo.value.lastname}`.trim();
     });
 
     onMounted(async () => {
@@ -104,6 +124,16 @@ export default {
         }
       }
     });
+
+    const generateQRCode = async () => {
+      try {
+        const url = `http://localhost:5000/user/${userInfo.value.student_id}`;  // URL to user profile
+        const qrCodeUrl = await QRCode.toDataURL(url);  // Generate QR code
+        qrCodeData.value = qrCodeUrl;  // Store QR code data
+      } catch (error) {
+        console.error('Error generating QR code:', error);
+      }
+    };
 
     const goToEditProfile = () => {
       router.push('/update-profile');
@@ -155,6 +185,7 @@ export default {
       userPosts,
       goToEditProfile,
       profilePictureUrl,
+      fullName,  // Added the fullName to be returned
       formatDate,
       showEditModal,
       editPostContent,
@@ -162,38 +193,39 @@ export default {
       openEditModal,
       closeEditModal,
       saveEditPost,
+      generateQRCode,
+      qrCodeData,
     };
   },
 };
 </script>
 
 <style scoped>
+
+/* Main Profile Section */
 .user-profile {
-  padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #f4f4f9;
+  padding: 30px;
   border-radius: 10px;
-  max-width: 600px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
   margin: 20px auto;
 }
-.edit-profile-btn {
-  background-color: #0f6016;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 20px;
+
+
+/* Profile Header with Image and Info */
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
 }
-.edit-profile-btn:hover {
-  background-color: #0d4f12;
-}
-.profile-picture {
-  width: 150px;
-  height: 150px;
-  margin: 0 auto 20px;
+
+.profile-picture-container {
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   overflow: hidden;
+  margin-right: 20px;
 }
 
 .profile-image {
@@ -202,85 +234,170 @@ export default {
   object-fit: cover;
 }
 
+.profile-info {
+  flex: 1;
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 28px;
+  color: #333;
+}
+
+.profile-bio {
+  color: #777;
+  font-size: 14px;
+}
+
+.edit-profile-btn {
+  background-color: #0b7c51;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.edit-profile-btn:hover {
+  background-color: #5eb417;
+}
+
+/* User Details Section */
+.user-details p {
+  font-size: 1.5rem;
+  margin: 8px 0;
+}
+
+.user-details strong {
+  color: #555;
+}
+
+/* QR Code Section */
+.qr-section {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.generate-qr-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.generate-qr-btn:hover {
+  background-color: #218838;
+}
+
+.qr-code-container {
+  margin-top: 20px;
+}
+
+.qr-code {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Posts Section */
 .user-posts {
+  background-color: #fff;
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  max-width: 600px;
-  margin: 20px auto;
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .post {
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 20px;
   margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .post-header {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .post-profile-image {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  margin-right: 10px;
   object-fit: cover;
+  margin-right: 10px;
 }
 
 .author-name {
+  font-size: 18px;
   font-weight: bold;
+  color: #333;
 }
 
-.post-content {
-  margin-bottom: 10px;
+.text-gray-500 {
+  color: #777;
+}
+
+.emotion-badge {
+  background-color: #f0f9f0;
+  color: #3e8e41;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  margin-left: 10px;
 }
 
 .edit-post-btn {
-  margin-left: auto;
-  background-color: #0f6016;
+  background-color: #007bff;
   color: white;
-  padding: 5px 10px;
-  border: none;
+  padding: 6px 12px;
   border-radius: 5px;
+  border: none;
   cursor: pointer;
+  font-size: 14px;
+  margin-left: auto;
 }
 
 .edit-post-btn:hover {
-  background-color: #0d4f12;
+  background-color: #0056b3;
 }
 
-.edit-post-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  resize: none;
-  margin-bottom: 10px;
+.post-content {
+  font-size: 16px;
+  color: #333;
+  line-height: 1.6;
 }
 
+/* Edit Post Modal */
+.edit-post-textarea,
 .edit-post-select {
   width: 100%;
   padding: 10px;
+  margin: 10px 0;
   border: 1px solid #ddd;
   border-radius: 5px;
-  margin-bottom: 10px;
 }
 
 .save-edit-btn {
-  background-color: #0f6016;
+  background-color: #28a745;
   color: white;
   padding: 10px 20px;
-  border: none;
   border-radius: 5px;
+  border: none;
   cursor: pointer;
+  font-size: 16px;
 }
 
 .save-edit-btn:hover {
-  background-color: #0d4f12;
+  background-color: #218838;
 }
 </style>

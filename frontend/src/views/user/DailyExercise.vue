@@ -40,18 +40,9 @@
       <h2>Daily Exercise Survey</h2>
       <p>Tell us how helpful was today's exercise</p>
       <div class="rating-container">
-        <label v-for="(label, rating) in ratingLabels" :key="rating">
-          <input
-            type="radio"
-            :value="rating"
-            v-model="assessmentRating"
-          />
-          <span>{{ label }}</span>
-        </label>
-      </div>
-      <div class="modal-actions">
-        <button @click="submitAssessment" class="submit-btn">Submit</button>
-        <button @click="closeModal" class="cancel-btn">Skip</button>
+        <button v-for="(label, rating) in ratingLabels" :key="rating" @click="selectRating(rating)">
+          {{ label }}
+        </button>
       </div>
     </div>
   </div>
@@ -221,6 +212,10 @@ async function submitAssessment() {
   }
 }
 
+function selectRating(rating) {
+  assessmentRating.value = rating;
+  submitAssessment(); // Automatically submit after selecting a rating
+}
 onMounted(async () => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
   username.value = localStorage.getItem('username') || '';
@@ -235,22 +230,20 @@ onMounted(async () => {
         },
       });
       userInfo.value = response.data;
-      
-      // Fetch exercises data
-      await fetchWeeklyExercises();
-      if (!exerciseCompleted.value) {
-        todayExercise.value = getRandomExercise();
-      }
     } catch (error) {
-      console.error('Failed to fetch user details:', error);
+      console.error('Error fetching user information:', error.response ? error.response.data : error.message);
     }
   }
+
+  todayExercise.value = getRandomExercise();
+  await fetchWeeklyExercises();
 });
 </script>
 
 <style scoped>
 .daily-exercise {
-  max-width: 800px;
+  background-image: linear-gradient(to right, #528b64, #39b443);
+  border-radius: 8px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -366,12 +359,11 @@ li {
 }
 
 .modal-content {
-  background: white;
+  background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  text-align: center;
-  width: 90%;
-  max-width: 400px;
+  width: 80%; /* Wider modal (can adjust this value as needed) */
+  max-width: 600px; /* Ensures it doesn’t get too wide on large screens */
 }
 
 textarea {
@@ -388,53 +380,17 @@ textarea {
   margin-top: 20px;
 }
 
-.submit-btn {
-  background-color: #0f6016;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.cancel-btn {
-  background-color: #ccc;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.submit-btn:hover {
-  background-color: #0a4610;
-}
-
-.cancel-btn:hover {
-  background-color: #bbb;
-}
-
-.rating-container {
-  display: flex;
-  justify-content: space-around;
-  margin: 10px 0;
-}
-
-.rating-container label {
-  cursor: pointer;
-}
-
-.rating-container input[type="radio"] {
-  display: none;
-}
-
-.rating-container span {
-  background-color: #f0f0f0;
+.rating-container button {
+  margin: 5px;
   padding: 10px;
+  background-color: #f1f1f1;
+  border: none;
+  cursor: pointer;
   border-radius: 5px;
 }
 
-.rating-container input[type="radio"]:checked + span {
-  background-color: #0f6016;
-  color: white;
+.rating-container button:hover {
+  background-color: #dcdcdc;
 }
+
 </style>

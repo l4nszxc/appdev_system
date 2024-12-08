@@ -18,20 +18,17 @@
         </router-link>
         <router-link to="/user/userChat" class="nav-link">
           <i class="fas fa-comments"></i>
-          <span class="link-text">Chat Support</span>
+          <span class="link-text">Messages</span>
         </router-link>
         
         <router-link to="/daily-exercise" class="nav-link">
           <i class="fas fa-running"></i>
           <span class="link-text">Daily Exercise</span>
         </router-link>
-        <router-link to="/feedback" class="nav-link">
-          <i class="fas fa-comment"></i>
-          <span class="link-text">Feedback</span>
-        </router-link>
+        
         <router-link to="/mood-tracker" class="nav-link">
           <i class="fas fa-grin"></i>
-          <span class="link-text">Mood Tracker</span>
+          <span class="link-text">Mood Summary and Feedback</span>
         </router-link>
         <router-link to="/user/userEmpathyC" class="nav-link">
           <i class="fas fa-hand-holding-heart"></i>

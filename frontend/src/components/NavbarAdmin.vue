@@ -9,29 +9,20 @@
     </div>
 
     <div class="navbar-links">
-      <div class="nav-item dropdown">
-        <button class="nav-link dropdown-toggle" @click="toggleDropdown">
-          <i class="fas fa-users"></i>
-          <span class="nav-text">Users</span>
-        </button>
-        <div v-if="dropdownVisible" class="dropdown-menu">
-          <router-link to="/admin/users" class="dropdown-item">Manage Users</router-link>
-          <router-link to="/admin/suspended-users" class="dropdown-item">Suspended Users</router-link>
-          <router-link to="/admin/add-user" class="dropdown-item">Add User</router-link>
-        </div>
-      </div>
+  <!-- Manage Users as a regular nav item instead of a dropdown -->
+  <div class="nav-item">
+    <router-link to="/admin/users" class="nav-link">
+      <i class="fas fa-users"></i>
+      <span class="nav-text">Users</span>
+    </router-link>
+  </div>
       <div class="nav-item">
         <router-link to="/admin/adminFeed" class="nav-link">
           <i class="fas fa-rss"></i>
           <span class="nav-text">Feed</span>
         </router-link>
       </div>
-      <div class="nav-item">
-        <router-link to="/admin/adminEmpathyC" class="nav-link">
-          <i class="fas fa-heart"></i>
-          <span class="nav-text">Empathy Challenge</span>
-        </router-link>
-      </div>
+      
       <div class="nav-item">
         <router-link to="/admin/moodReport" class="nav-link">
           <i class="fas fa-chart-line"></i>
@@ -41,12 +32,12 @@
       <div class="nav-item">
         <router-link to="/admin/adminDashboard" class="nav-link">
           <i class="fas fa-tachometer-alt"></i>
-          <span class="nav-text">Dashboard</span>
+          <span class="nav-text">Feedbacks</span>
         </router-link>
       </div>
       <div class="nav-item">
         <router-link to="/admin/heartToHeartRoom" class="nav-link">
-          <i class="fas fa-comments"></i>
+          <i class="fas fa-heart"></i>
           <span class="nav-text">Heart-to-Heart Room</span>
         </router-link>
       </div>

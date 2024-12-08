@@ -20,10 +20,7 @@
           <i class="fas fa-comments"></i>
           <span class="link-text">Chat Support</span>
         </router-link>
-        <router-link to="/user/userHeartToHeartRoom" class="nav-link">
-          <i class="fas fa-heart"></i>
-          <span class="link-text">Heart-to-Heart Room</span>
-        </router-link>
+        
         <router-link to="/daily-exercise" class="nav-link">
           <i class="fas fa-running"></i>
           <span class="link-text">Daily Exercise</span>

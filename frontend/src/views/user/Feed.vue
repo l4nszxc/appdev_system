@@ -4,21 +4,23 @@
   <div class="content-wrapper">
     <!-- Left Section -->
     <div class="left-section">
-      <h2 class="text-xl font-semibold mb-4 text-green-800">How are you feeling today?</h2>
-      <div class="post-form">
-        <textarea 
-          v-model="newPostContent" 
-          placeholder="Share your thoughts..." 
-          class="post-input"
-        ></textarea>
-        <button 
-          @click="createPost" 
-          class="post-button" 
-          :disabled="!newPostContent.trim()"
-        >
-          Post
-        </button>
-      </div>
+      <div class="card bg-white shadow-md rounded-lg p-6">
+    <h2 class="text-xl font-semibold mb-4 text-green-800">How are you feeling today?</h2>
+    <div class="post-form">
+      <textarea 
+        v-model="newPostContent" 
+        placeholder="Share your thoughts..." 
+        class="post-input border border-gray-300 rounded-md p-2 w-full"
+      ></textarea>
+      <button 
+        @click="createPost" 
+        class="post-button mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
+        :disabled="!newPostContent.trim()"
+      >
+        Post
+      </button>
+    </div>
+  </div>
       <div class="posts-list">
         <div v-for="post in posts" :key="post.id" class="post">
           <div class="post-header">
@@ -59,7 +61,7 @@
     <div class="right-section">
       
       
-      <div class="card bg-white shadow-md rounded-lg p-6">
+      <div class="card heartRoom">
         <h2 class="text-2xl font-semibold mb-4 text-green-800">Heart-to-Heart Room</h2>
 
         
@@ -131,6 +133,55 @@
           </div>
         </div>
       </div>
+
+      <div><br></div>
+
+      <div class="card mood-tracker-card">
+        <h1>Mood Tracker</h1>
+        <div v-if="hasSubmittedToday">
+          <p>You have already submitted your mood for today. Please come back tomorrow.</p>
+        </div>
+        <div v-else>
+          <div class="character-selector">
+            <span 
+              @click="selectMood('Joy')" 
+              class="mood-icon" 
+              title="Joy"
+              :class="{ zoomed: mood === 'Joy' }">
+              😊
+            </span>
+            <span 
+              @click="selectMood('Sadness')" 
+              class="mood-icon" 
+              title="Sadness"
+              :class="{ zoomed: mood === 'Sadness' }">
+              😞
+            </span>
+            <span 
+              @click="selectMood('Anger')" 
+              class="mood-icon" 
+              title="Anger"
+              :class="{ zoomed: mood === 'Anger' }">
+              😡
+            </span>
+            <span 
+              @click="selectMood('Disgust')" 
+              class="mood-icon" 
+              title="Disgust"
+              :class="{ zoomed: mood === 'Disgust' }">
+              🤢
+            </span>
+            <span 
+              @click="selectMood('Fear')" 
+              class="mood-icon" 
+              title="Fear"
+              :class="{ zoomed: mood === 'Fear' }">
+              😨
+            </span>
+          </div>
+        </div>
+        <div v-if="message">{{ message }}</div>
+      </div>
     </div>
   </div>
 
@@ -196,7 +247,11 @@ import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
 import Footer from "@/components/Footer.vue";
-import Modal from '@/components/Modal.vue';
+import Modal from '@/components/Modal.vue'
+import { Pie } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js';
+
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
 // Appointment Scheduling State Variables
 const selectedDate = ref('');
@@ -227,6 +282,74 @@ const showReactions = ref(null);
 const selectedReactionType = ref('Like');
 const reactionTypes = ['Like', 'Heart', 'Haha', 'Care', 'Sad'];
 
+// Mood Tracker State Variables
+const mood = ref('');
+const comment = ref('');
+const message = ref('');
+const hasSubmittedToday = ref(false);
+const weeklyChartData = ref({
+  labels: [],
+  datasets: []
+});
+const monthlyChartData = ref({
+  labels: [],
+  datasets: []
+});
+
+const selectMood = async (selectedMood) => {
+  mood.value = selectedMood;
+  await submitMood();
+};
+
+const submitMood = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post('http://localhost:5000/mood', { mood: mood.value, comment: comment.value }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    message.value = response.data.message;
+    mood.value = '';
+    comment.value = '';
+    hasSubmittedToday.value = true;
+    await fetchMoods();
+  } catch (error) {
+    console.error('Error submitting mood:', error);
+    message.value = 'Failed to submit mood. Please try again.';
+  }
+};
+
+const fetchMoods = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const weeklyResponse = await axios.get('http://localhost:5000/mood/weekly', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const monthlyResponse = await axios.get('http://localhost:5000/mood/monthly', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    updateChartData(weeklyResponse.data, weeklyChartData);
+    updateChartData(monthlyResponse.data, monthlyChartData);
+
+    const today = new Date().toISOString().split('T')[0];
+    hasSubmittedToday.value = weeklyResponse.data.some(mood => mood.created_at.startsWith(today));
+  } catch (error) {
+    console.error('Error fetching moods:', error);
+  }
+};
+
+const updateChartData = (moods, chartData) => {
+  const moodCounts = { Positive: 0, Neutral: 0, Negative: 0 };
+  moods.forEach(mood => {
+    moodCounts[mood.sentiment]++;
+  });
+  chartData.value = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+      data: [moodCounts.Positive, moodCounts.Neutral, moodCounts.Negative],
+      backgroundColor: ['#4caf50', '#ffeb3b', '#f44336']
+    }]
+  };
+};
 // Profile picture helper
 const getProfilePicture = (profilePath) => {
   return profilePath 
@@ -435,6 +558,7 @@ onMounted(async () => {
     await fetchUserDetails();
     await fetchPosts();
     await loadCurrentAppointment();
+    await fetchMoods();
   }
 });
 </script>
@@ -453,6 +577,18 @@ onMounted(async () => {
 .content-wrapper {
   display: flex;
   gap: 16px;
+}
+.mood-tracker-card {
+  background-color: #a0e5d1;
+}
+.heartRoom{
+  background-color: #a0e5d1;
+}
+.character-selector span {
+  font-size: 1.8rem;
+  cursor: pointer;
+  margin: 0 15px;
+  position: relative;
 }
 
 .left-section, .right-section {

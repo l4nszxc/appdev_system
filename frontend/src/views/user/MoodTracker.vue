@@ -1,65 +1,25 @@
 <template>
   <div>
     <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
-    <div class="mood-tracker">
-      <h1>Mood Tracker</h1>
-      <p>Track your mood here.</p>
-      <div v-if="hasSubmittedToday">
-        <p>You have already submitted your mood for today. Please come back tomorrow.</p>
-      </div>
-      <div v-else>
-        <div class="character-selector">
-          <span 
-            @click="selectMood('Joy')" 
-            class="mood-icon" 
-            title="Joy"
-            :class="{ zoomed: mood === 'Joy' }">
-            😊
-          </span>
-          <span 
-            @click="selectMood('Sadness')" 
-            class="mood-icon" 
-            title="Sadness"
-            :class="{ zoomed: mood === 'Sadness' }">
-            😞
-          </span>
-          <span 
-            @click="selectMood('Anger')" 
-            class="mood-icon" 
-            title="Anger"
-            :class="{ zoomed: mood === 'Anger' }">
-            😡
-          </span>
-          <span 
-            @click="selectMood('Disgust')" 
-            class="mood-icon" 
-            title="Disgust"
-            :class="{ zoomed: mood === 'Disgust' }">
-            🤢
-          </span>
-          <span 
-            @click="selectMood('Fear')" 
-            class="mood-icon" 
-            title="Fear"
-            :class="{ zoomed: mood === 'Fear' }">
-            😨
-          </span>
+
+    <div class="container">
+      <!-- Mood Tracker Card -->
+      
+
+      <!-- Mood Dashboard Card -->
+      <div class="card mood-dashboard-card">
+        <h1>Mood Dashboard</h1>
+        <div>
+          <h2>Weekly Mood Summary</h2>
+          <div class="chart-container">
+            <Pie :data="weeklyChartData" v-if="weeklyChartData.datasets.length"></Pie>
+          </div>
         </div>
-      </div>
-      <div v-if="message">{{ message }}</div>
-    </div>
-    <div class="mood-dashboard">
-      <h1>Mood Dashboard</h1>
-      <div>
-        <h2>Weekly Mood Summary</h2>
-        <div class="chart-container">
-          <Pie :data="weeklyChartData" v-if="weeklyChartData.datasets.length"></Pie>
-        </div>
-      </div>
-      <div>
-        <h2>Monthly Mood Summary</h2>
-        <div class="chart-container">
-          <Pie :data="monthlyChartData" v-if="monthlyChartData.datasets.length"></Pie>
+        <div>
+          <h2>Monthly Mood Summary</h2>
+          <div class="chart-container">
+            <Pie :data="monthlyChartData" v-if="monthlyChartData.datasets.length"></Pie>
+          </div>
         </div>
       </div>
     </div>
@@ -182,9 +142,33 @@ export default {
 </script>
 
 <style scoped>
-.mood-tracker {
-  padding: 20px;
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin: 20px;
 }
+
+.card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.mood-tracker-card {
+  background-color: #a0e5d1;
+}
+
+.mood-dashboard-card {
+  background-color: #77cc9a;
+}
+
 
 .character-selector span {
   font-size: 3rem;
@@ -221,11 +205,10 @@ export default {
 }
 
 .chart-container {
-  width: 200px;
-  height: 200px; 
-  margin: 0 auto;
+  margin: 10px auto;
+  width: 90%;
+  max-width: 400px;
 }
-
 ul {
   list-style-type: none;
   padding: 0;

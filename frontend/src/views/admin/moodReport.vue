@@ -4,11 +4,17 @@
     <div class="container">
       <h2 class="text-center">Mood Report</h2>
       
-      <div class="summary">
-        <p><strong>Positive Moods:</strong> {{ summary.Positive }}</p>
-        <p><strong>Neutral Moods:</strong> {{ summary.Neutral }}</p>
-        <p><strong>Negative Moods:</strong> {{ summary.Negative }}</p>
-      </div>
+      <div class="summary-container grid grid-cols-4 gap-6">
+    <div class="summary-item">
+      <p><strong>Positive Moods:</strong> {{ summary.Positive }}</p>
+    </div>
+    <div class="summary-item">
+      <p><strong>Neutral Moods:</strong> {{ summary.Neutral }}</p>
+    </div>
+    <div class="summary-item">
+      <p><strong>Negative Moods:</strong> {{ summary.Negative }}</p>
+    </div>
+  </div>
 
       <!-- Print Report Button -->
       <button class="btn btn-success mb-3" @click="printReport">Print Report</button>
@@ -173,6 +179,30 @@ export default {
 </script>
 
 <style scoped>
+ /* Set up a grid with 4 columns */
+ .summary-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+    gap: 1.5rem; /* space between columns */
+    padding: 1.5rem;
+    margin-left: 15rem
+  }
+
+  .summary-item {
+    background-color: #f4f4f4;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .summary-item p {
+    font-size: 1rem;
+    color: #333;
+  }
+
+  .summary-item strong {
+    font-weight: bold;
+  }
 /* Use table design from User Feedback */
 .container {
   max-width: 1200px;

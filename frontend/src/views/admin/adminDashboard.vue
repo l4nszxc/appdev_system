@@ -1,9 +1,7 @@
 <template>
     <Navbar />
-    
       <h2 class="text-center">User Feedback</h2>
    
-    <div class="table-container">
       <div class="table-responsive">
         <table class="table table-bordered table-hover">
           <thead class="thead-dark">
@@ -26,7 +24,7 @@
           </tbody>
         </table>
       </div>
-    </div>
+    
 </template>
 
 <script>
@@ -81,7 +79,7 @@ h2 {
   font-size: 2rem;
   text-transform: uppercase;
   text-align: center;
-  margin: 0;
+  margin: 5;
 }
 
 /* Table Styling */

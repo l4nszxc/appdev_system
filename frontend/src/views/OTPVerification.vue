@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
+    <div class="max-w-md w-full space-y-8 bg-white shadow-lg rounded-lg p-8">
       <div>
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Verify Your Email</h2>
         <p v-if="email" class="mt-2 text-center text-sm text-gray-600">
@@ -19,7 +19,7 @@
               name="otp"
               type="text"
               required
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
               placeholder="Enter OTP"
               v-model="otp"
             />
@@ -29,7 +29,7 @@
         <div>
           <button
             type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             Verify OTP
           </button>
@@ -123,5 +123,37 @@ const verifyOTP = async () => {
 </script>
 
 <style scoped>
-/* Add your styles here if needed */
+/* Apply a soft green accent to the input border and button hover */
+input:focus {
+  border-color: #48bb78;
+  outline: none;
+}
+
+button:hover {
+  background-color: #38a169;
+}
+
+button:focus {
+  ring-color: #38a169;
+}
+
+/* Card-style container */
+.bg-white {
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+/* Add a green background to the header section */
+h2 {
+  color: #2f855a; /* Green color */
+}
+
+/* Text color for success and error messages */
+.text-green-600 {
+  color: #38a169;
+}
+.text-red-600 {
+  color: #e53e3e;
+}
 </style>

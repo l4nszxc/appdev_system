@@ -1,5 +1,4 @@
 <template>
-  <div class="container">
     <Navbar />
     
       <h2 class="text-center">User Feedback</h2>
@@ -28,7 +27,6 @@
         </table>
       </div>
     </div>
-  </div>
 </template>
 
 <script>

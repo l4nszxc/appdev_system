@@ -1,7 +1,7 @@
 <template>
   <NavbarAdmin/>
   <div>
-    <h1>Admin Heart-to-Heart Room</h1>
+    <h1 class="centered-title">Admin Heart-to-Heart Room</h1>
     
     <h2>Today's Appointments</h2>
     <table class="table-auto w-full border-collapse border border-gray-300 mb-6">
@@ -54,7 +54,7 @@
           <td class="border border-gray-300 p-2">{{ formatDate(appointment.date) }}</td>
           <td class="border border-gray-300 p-2">{{ formatTime(appointment.start_time) }} - {{ formatTime(appointment.end_time) }}</td>
           <td class="border border-gray-300 p-2">{{ appointment.firstname }} {{ appointment.lastname }}</td>
-          <td class="border border-gray- 300 p-2">{{ appointment.status }}</td>
+          <td class="border border-gray-300 p-2">{{ appointment.status }}</td>
         </tr>
       </tbody>
     </table>
@@ -114,7 +114,9 @@ export default {
       } catch (error) {
         console.error('Error loading all appointments:', error);
       }
-    };const showMeetLinkInput = (appointmentId) => {
+    };
+
+    const showMeetLinkInput = (appointmentId) => {
       activeMeetingId.value = appointmentId;
       meetingLink.value = '';
     };
@@ -156,12 +158,18 @@ export default {
 </script>
 
 <style scoped>
+.centered-title {
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  font-size: 2rem;
+  color: #333;
+}
 .table-auto {
   width: 100%;
   border-collapse: collapse;
 }
 .table-auto th, .table-auto td {
-  border: 1px solid #ccc;
+  border: 1px solid #020101;
   padding: 8px;
   text-align: left;
 }

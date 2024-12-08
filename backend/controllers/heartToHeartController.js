@@ -128,9 +128,28 @@ exports.updateMeetingLink = async (req, res) => {
     }
 
     await HeartToHeart.updateMeetingLink(id, meetingLink);
-    res.json({ message: 'Meeting link updated successfully' });
+    
+    // Send back the updated appointment
+    const updatedAppointment = await HeartToHeart.getById(id);
+    res.json(updatedAppointment);
   } catch (error) {
     console.error('Error updating meeting link:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+exports.updateStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['scheduled', 'pending', 'on going', 'complete'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    await HeartToHeart.updateStatus(id, status);
+    res.json({ message: 'Status updated successfully' });
+  } catch (error) {
+    console.error('Error updating status:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

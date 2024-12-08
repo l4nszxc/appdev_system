@@ -73,7 +73,7 @@ class HeartToHeart {
         SELECT * FROM appointments 
         WHERE student_id = ? 
         AND date >= CURDATE() 
-        AND status = 'scheduled'
+        AND status IN ('scheduled', 'on going', 'complete')
         ORDER BY date, start_time 
         LIMIT 1
       `;
@@ -116,7 +116,7 @@ class HeartToHeart {
         SELECT a.*, u.firstname, u.lastname, a.meeting_link
         FROM appointments a
         JOIN users u ON a.student_id = u.student_id
-        WHERE a.date = CURDATE() AND a.status = 'scheduled'
+        WHERE a.date = CURDATE() AND a.status IN ('scheduled', 'on going', 'complete')
       `;
       const [rows] = await pool.execute(query);
       return rows || [];
@@ -131,7 +131,7 @@ class HeartToHeart {
         SELECT a.*, u.firstname, u.lastname 
         FROM appointments a
         JOIN users u ON a.student_id = u.student_id
-        WHERE a.status = 'scheduled'
+        WHERE a.status IN ('scheduled', 'on going', 'complete')
         ORDER BY a.date, a.start_time
       `;
       const [rows] = await pool.execute(query);
@@ -152,6 +152,20 @@ class HeartToHeart {
       return result;
     } catch (error) {
       console.error('Database error while updating meeting link:', error);
+      throw error;
+    }
+  }
+  static async updateStatus(id, status) {
+    try {
+      const query = `
+        UPDATE appointments 
+        SET status = ?
+        WHERE id = ?
+      `;
+      const [result] = await pool.execute(query, [status, id]);
+      return result;
+    } catch (error) {
+      console.error('Database error while updating status:', error);
       throw error;
     }
   }

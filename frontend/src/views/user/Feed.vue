@@ -124,6 +124,7 @@
       </div>
 
       <div><br></div>
+      
       <div class="card heartRoom">
         <h2 class="text-2xl font-semibold mb-4 text-green-800">Heart-to-Heart Room</h2>
 
@@ -166,35 +167,41 @@
         </div>
 
         <!-- Current Appointment Display -->
-        <div v-if="currentAppointment" class="mt-4">
-          <h3 class="text-lg font-semibold mb-2 text-green-700">Your Current Appointment</h3>
-          <div class="card bg-green-50 p-6 rounded-lg">
-            <p class="mb-2">
-              <span class="font-medium">Date:</span>
-              {{ formatDate(currentAppointment.date) }}
-            </p>
-            <p class="mb-2">
-              <span class="font-medium">Time:</span>
-              {{ formatTime(currentAppointment.start_time) }} - {{ formatTime(currentAppointment.end_time) }}
-            </p>
-            <p v-if="currentAppointment.meeting_link" class="mb-4">
-              <span class="font-medium">Meeting Link:</span>
-              <a
-                :href="currentAppointment.meeting_link"
-                target="_blank"
-                class="text-blue-600 hover:underline"
-              >
-                {{ currentAppointment.meeting_link }}
-              </a>
-            </p>
-            <button
-              @click="cancelAppointment"
-              class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all"
-            >
-              Cancel Appointment
-            </button>
-          </div>
-        </div>
+<div v-if="currentAppointment" class="card p-6 rounded-lg"
+     :class="{'bg-green-100 border-2 border-green-500': currentAppointment.status === 'complete'}">
+  <h3 class="text-lg font-semibold mb-2 text-green-700">Your Current Appointment</h3>
+  
+  <div class="flex flex-col gap-2">
+    <p class="mb-2">
+      <span class="font-medium">Date:</span>
+      {{ formatDate(currentAppointment.date) }}
+    </p>
+    <p class="mb-2">
+      <span class="font-medium">Time:</span>
+      {{ formatTime(currentAppointment.start_time) }} - {{ formatTime(currentAppointment.end_time) }}
+    </p>
+    
+    <!-- Only show Complete status -->
+    <div v-if="currentAppointment.status === 'complete'" 
+         class="bg-green-500 text-white px-3 py-1 rounded-full text-center w-fit">
+      Complete
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="mt-4">
+    <button v-if="currentAppointment.status === 'complete'"
+            @click="clearCurrentAppointment"
+            class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+      Schedule New Appointment
+    </button>
+    <button v-else
+            @click="cancelAppointment"
+            class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+      Cancel Appointment
+    </button>
+  </div>
+</div>
       </div>
     </div>
   </div>
@@ -317,6 +324,12 @@ const monthlyChartData = ref({
 const selectMood = async (selectedMood) => {
   mood.value = selectedMood;
   await submitMood();
+};
+const clearCurrentAppointment = () => {
+  currentAppointment.value = null;
+  selectedDate.value = '';
+  error.value = '';
+  loadTimeSlots();
 };
 
 const submitMood = async () => {

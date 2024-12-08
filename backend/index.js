@@ -77,6 +77,7 @@ app.post('/api/appointments', authMiddleware, heartToHeartController.createAppoi
 app.get('/api/appointments', authMiddleware, heartToHeartController.getAppointmentsByDate);
 app.get('/api/appointments/current', authMiddleware, heartToHeartController.getCurrentAppointment);
 app.delete('/api/appointments/:id', authMiddleware, heartToHeartController.cancelAppointment);
+app.put('/api/appointments/:id/status', authMiddleware, heartToHeartController.updateStatus);
 
 app.get('/api/appointments/today', authMiddleware, heartToHeartController.getTodaysAppointments);
 app.get('/api/appointments/all', authMiddleware, heartToHeartController.getAllAppointments);

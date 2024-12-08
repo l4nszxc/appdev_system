@@ -10,17 +10,19 @@
           <th class="border border-gray-300 p-2">Date</th>
           <th class="border border-gray-300 p-2">Time</th>
           <th class="border border-gray-300 p-2">Student</th>
+          <th class="border border-gray-300 p-2">Status</th>
           <th class="border border-gray-300 p-2">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr v-if="todayAppointments.length === 0">
-          <td colspan="4" class="text-center border border-gray-300 p-2">No appointments scheduled for today.</td>
+          <td colspan="5" class="text-center border border-gray-300 p-2">No appointments scheduled for today.</td>
         </tr>
         <tr v-for="appointment in todayAppointments" :key="appointment.id">
           <td class="border border-gray-300 p-2">{{ formatDate(appointment.date) }}</td>
           <td class="border border-gray-300 p-2">{{ formatTime(appointment.start_time) }} - {{ formatTime(appointment.end_time) }}</td>
           <td class="border border-gray-300 p-2">{{ appointment.firstname }} {{ appointment.lastname }}</td>
+          <td :class="statusClass(appointment.status)" class="border border-gray-300 p-2">{{ appointment.status }}</td>
           <td class="border border-gray-300 p-2">
             <button @click="showMeetLinkInput(appointment.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
               Meet
@@ -31,6 +33,9 @@
                 Send Link
               </button>
             </div>
+            <button @click="completeAppointment(appointment.id)" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2">
+              Complete
+            </button>
           </td>
         </tr>
       </tbody>
@@ -54,7 +59,7 @@
           <td class="border border-gray-300 p-2">{{ formatDate(appointment.date) }}</td>
           <td class="border border-gray-300 p-2">{{ formatTime(appointment.start_time) }} - {{ formatTime(appointment.end_time) }}</td>
           <td class="border border-gray-300 p-2">{{ appointment.firstname }} {{ appointment.lastname }}</td>
-          <td class="border border-gray- 300 p-2">{{ appointment.status }}</td>
+          <td :class="statusClass(appointment.status)" class="border border-gray-300 p-2">{{ appointment.status }}</td>
         </tr>
       </tbody>
     </table>
@@ -114,7 +119,9 @@ export default {
       } catch (error) {
         console.error('Error loading all appointments:', error);
       }
-    };const showMeetLinkInput = (appointmentId) => {
+    };
+
+    const showMeetLinkInput = (appointmentId) => {
       activeMeetingId.value = appointmentId;
       meetingLink.value = '';
     };
@@ -126,13 +133,53 @@ export default {
           { meetingLink: meetingLink.value },
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        await axios.put(`http://localhost:5000/api/appointments/${appointmentId}/status`, 
+          { status: 'on going' },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         alert('Meeting link sent successfully!');
         activeMeetingId.value = null;
         meetingLink.value = '';
-        await loadTodaysAppointments();
+        updateAppointmentStatus(appointmentId, 'on going');
       } catch (error) {
         console.error('Error sending meeting link:', error);
         alert('Failed to send meeting link. Please try again.');
+      }
+    };
+
+    const completeAppointment = async (appointmentId) => {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.put(`http://localhost:5000/api/appointments/${appointmentId}/status`, 
+          { status: 'complete' },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        updateAppointmentStatus(appointmentId, 'complete');
+      } catch (error) {
+        console.error('Error completing appointment:', error);
+        alert('Failed to complete appointment. Please try again.');
+      }
+    };
+
+    const updateAppointmentStatus = (appointmentId, status) => {
+      const appointment = todayAppointments.value.find(a => a.id === appointmentId);
+      if (appointment) {
+        appointment.status = status;
+      }
+    };
+
+    const statusClass = (status) => {
+      switch (status) {
+        case 'scheduled':
+          return 'text-blue-500';
+        case 'pending':
+          return 'text-orange-500';
+        case 'on going':
+          return 'text-orange-500';
+        case 'complete':
+          return 'text-green-500';
+        default:
+          return '';
       }
     };
 
@@ -150,6 +197,8 @@ export default {
       meetingLink,
       showMeetLinkInput,
       sendMeetingLink,
+      completeAppointment,
+      statusClass,
     };
   },
 };
@@ -167,5 +216,17 @@ export default {
 }
 .table-auto th {
   background-color: #f2f2f2;
+}
+.text-blue-500 {
+  color: blue;
+}
+.text-orange-500 {
+  color: orange;
+}
+.text-yellow-500 {
+  color: yellow;
+}
+.text-green-500 {
+  color: green;
 }
 </style>

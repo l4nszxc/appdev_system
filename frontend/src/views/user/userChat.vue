@@ -5,125 +5,124 @@
       <!-- Student List Section -->
       <div class="conversations-list">
         <h2>Student List</h2>
-        <div class="search-container">
+        <div class="search-bar">
           <input 
-            v-model="searchQuery" 
-            placeholder="Search by name or student ID..." 
-            class="search-input"
-            @input="handleSearch"
+            type="text" 
+            v-model="searchQuery"
+            placeholder="Search students..."
           />
         </div>
         <div class="students-list">
           <div 
             v-for="student in displayedStudents" 
             :key="student.student_id"
+            :class="['student-item', { active: selectedUser?.student_id === student.student_id }]"
             @click="selectStudent(student)"
-            class="student-item"
-            :class="{ 'selected': selectedUser?.student_id === student.student_id }"
           >
             <img 
-              :src="getProfilePicture(student.profile_picture)" 
+              :src="getProfilePicture(student.profile_picture)"
+              :alt="student.firstname"
               class="student-avatar"
-              alt="Profile"
             />
             <div class="student-info">
-              <div class="student-name">
-                {{ student.firstname }} {{ student.lastname }}
-              </div>
+              <div class="student-name">{{ student.firstname }} {{ student.lastname }}</div>
               <div class="student-id">{{ student.student_id }}</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Messages Section -->
-      <div class="messages-list" v-if="selectedUser">
-        <div class="messages-header">
-          <div class="selected-user-info">
-            <img 
-              :src="getProfilePicture(selectedUser.profile_picture)" 
-              class="selected-user-avatar"
-              alt="Selected Profile"
-            />
-            <div>
-              <h3>{{ selectedUser.firstname }} {{ selectedUser.lastname }}</h3>
-              <span class="student-id">{{ selectedUser.student_id }}</span>
+      <!-- Chat Section -->
+      <div class="chat-section">
+        <div v-if="selectedUser" class="chat-header">
+          <img 
+            :src="getProfilePicture(selectedUser.profile_picture)"
+            :alt="selectedUser.firstname"
+            class="header-avatar"
+          />
+          <div class="header-info">
+            <div class="header-name">{{ selectedUser.firstname }} {{ selectedUser.lastname }}</div>
+            <div class="header-status">{{ selectedUser.student_id }}</div>
+          </div>
+        </div>
+
+        <div v-if="selectedUser" class="messages-container" ref="messagesContainer">
+          <div 
+            v-for="message in sortedMessages" 
+            :key="message.id"
+            :class="['message', message.sender_id === userInfo.student_id ? 'sent' : 'received']"
+          >
+            <div class="message-bubble">
+              <div class="message-sender" v-if="message.sender_id !== userInfo.student_id">
+                {{ message.firstname }} {{ message.lastname }}
+              </div>
+              <div class="message-content">{{ message.message }}</div>
+              <div class="message-footer">
+                <span class="message-time">{{ formatTime(message.created_at) }}</span>
+                <span v-if="message.sender_id === userInfo.student_id" class="message-status">
+                  {{ getMessageStatus(message) }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="messages-container" ref="messagesContainer">
-  <div 
-    v-for="message in messages" 
-    :key="message.id"
-    :class="['message', message.sender_id === userInfo.student_id ? 'sent' : 'received']"
-  >
-    <div class="message-bubble">
-      <div class="message-sender" v-if="message.sender_id !== userInfo.student_id">
-        {{ message.firstname }} {{ message.lastname }}
-      </div>
-      <div class="message-content">{{ message.message }}</div>
-      <div class="message-time">{{ formatTime(message.created_at) }}</div>
-    </div>
-  </div>
-</div>
-
-        <div class="message-input">
+        <div v-if="selectedUser" class="message-input">
           <input 
+            type="text" 
             v-model="newMessage" 
             @keyup.enter="sendMessage"
-            placeholder="Type a message..." 
+            placeholder="Type a message..."
           />
           <button @click="sendMessage" :disabled="!newMessage.trim()">
             Send
           </button>
         </div>
-      </div>
-      
-      <div v-else class="no-chat-selected">
-        <p>Select a student to start chatting</p>
+
+        <div v-else class="no-chat-selected">
+          <p>Select a student to start chatting</p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, onMounted, computed, onUnmounted } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
 
 export default {
   name: 'UserChat',
   components: { Navbar },
-  
   setup() {
-    const searchQuery = ref('');
+    const isLoggedIn = ref(false);
+    const username = ref('');
+    const userInfo = ref({});
     const students = ref([]);
     const selectedUser = ref(null);
     const messages = ref([]);
     const newMessage = ref('');
-    const userInfo = ref({});
-    const isLoggedIn = ref(false);
-    const username = ref('');
+    const searchQuery = ref('');
     const selectedConversationId = ref(null);
     const messagesContainer = ref(null);
+    const pollInterval = ref(null);
 
-    // Computed property for filtered students
+    const sortedMessages = computed(() => {
+      return [...messages.value].sort((a, b) => 
+        new Date(b.created_at) - new Date(a.created_at)
+      );
+    });
+
     const displayedStudents = computed(() => {
       if (!searchQuery.value) return students.value;
       const query = searchQuery.value.toLowerCase();
       return students.value.filter(student => 
         student.student_id.toLowerCase().includes(query) ||
-        `${student.firstname} ${student.lastname}`.toLowerCase().includes(query)
+        student.firstname.toLowerCase().includes(query) ||
+        student.lastname.toLowerCase().includes(query)
       );
     });
-
-    // Handle search with debounce
-    let searchTimeout;
-    const handleSearch = () => {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(fetchStudents, 300);
-    };
 
     const fetchStudents = async () => {
       try {
@@ -131,45 +130,40 @@ export default {
         const response = await axios.get('http://localhost:5000/users/all', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        students.value = response.data.filter(student => 
-          student.role !== 'admin' && 
-          student.student_id !== userInfo.value?.student_id
-        );
+        students.value = response.data;
       } catch (error) {
         console.error('Failed to fetch students:', error);
       }
     };
 
     const selectStudent = async (student) => {
-  selectedUser.value = student;
-  try {
-    const token = localStorage.getItem('token');
-    // First check if conversation exists
-    const response = await axios.get('http://localhost:5000/conversations', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    
-    let conversation = response.data.find(conv => 
-      (conv.student_id === userInfo.value.student_id && conv.participant_id === student.student_id) ||
-      (conv.student_id === student.student_id && conv.participant_id === userInfo.value.student_id)
-    );
+      selectedUser.value = student;
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:5000/conversations', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        let conversation = response.data.find(conv => 
+          (conv.student_id === userInfo.value.student_id && conv.participant_id === student.student_id) ||
+          (conv.student_id === student.student_id && conv.participant_id === userInfo.value.student_id)
+        );
 
-    if (!conversation) {
-      // Create new conversation if none exists
-      const createResponse = await axios.post('http://localhost:5000/conversations', 
-        { participantId: student.student_id },
-        { headers: { Authorization: `Bearer ${token}` }}
-      );
-      selectedConversationId.value = createResponse.data.conversationId;
-    } else {
-      selectedConversationId.value = conversation.id;
-    }
-    
-    await fetchMessages();
-  } catch (error) {
-    console.error('Failed to handle conversation:', error);
-  }
-};
+        if (!conversation) {
+          const createResponse = await axios.post('http://localhost:5000/conversations', 
+            { participantId: student.student_id },
+            { headers: { Authorization: `Bearer ${token}` }}
+          );
+          selectedConversationId.value = createResponse.data.conversationId;
+        } else {
+          selectedConversationId.value = conversation.id;
+        }
+        
+        await fetchMessages();
+      } catch (error) {
+        console.error('Failed to handle conversation:', error);
+      }
+    };
 
     const fetchMessages = async () => {
       if (!selectedConversationId.value) return;
@@ -224,7 +218,13 @@ export default {
       });
     };
 
-    // Initialize component
+    const getMessageStatus = (message) => {
+      if (message.is_seen) {
+        return 'Seen';
+      }
+      return 'Delivered';
+    };
+
     onMounted(async () => {
       isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
       username.value = localStorage.getItem('username') || '';
@@ -238,29 +238,40 @@ export default {
           userInfo.value = response.data;
           await fetchStudents();
         } catch (error) {
-          console.error('Failed to fetch user details:', error);
+          console.error('Failed to fetch user info:', error);
         }
+      }
+
+      pollInterval.value = setInterval(() => {
+        if (selectedConversationId.value) {
+          fetchMessages();
+        }
+      }, 3000);
+    });
+
+    onUnmounted(() => {
+      if (pollInterval.value) {
+        clearInterval(pollInterval.value);
       }
     });
 
-    // Watch for new messages to scroll to bottom
-    watch(messages, scrollToBottom);
-
     return {
-      searchQuery,
-      displayedStudents,
+      isLoggedIn,
+      username,
+      userInfo,
+      students,
       selectedUser,
       messages,
       newMessage,
-      userInfo,
-      isLoggedIn,
-      username,
-      handleSearch,
+      searchQuery,
+      displayedStudents,
+      sortedMessages,
+      messagesContainer,
       selectStudent,
       sendMessage,
       getProfilePicture,
       formatTime,
-      messagesContainer
+      getMessageStatus
     };
   }
 };
@@ -269,44 +280,48 @@ export default {
 <style scoped>
 .chat-container {
   display: flex;
-  gap: 20px;
+  height: calc(100vh - 60px);
   padding: 20px;
-  height: calc(100vh - 100px);
+  gap: 20px;
+  background-color: #f5f5f5;
 }
 
-.conversations-list, .messages-list {
-  flex: 1;
+.conversations-list, .chat-section {
   background: white;
   border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
 }
 
-.search-container {
-  margin-bottom: 15px;
+.conversations-list {
+  width: 300px;
+  padding: 20px;
 }
 
-.search-input {
+.chat-section {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
-}
-
-.students-list {
-  overflow-y: auto;
-  flex-grow: 1;
 }
 
 .student-item {
   display: flex;
   align-items: center;
   padding: 10px;
-  border-bottom: 1px solid #eee;
   cursor: pointer;
+  border-radius: 4px;
   transition: background-color 0.2s;
 }
 
@@ -314,11 +329,11 @@ export default {
   background-color: #f5f5f5;
 }
 
-.student-item.selected {
+.student-item.active {
   background-color: #e8f5e9;
 }
 
-.student-avatar, .selected-user-avatar {
+.student-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -339,60 +354,84 @@ export default {
   color: #666;
 }
 
-.messages-header {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
-  margin-bottom: 15px;
-}
-
-.selected-user-info {
+.chat-header {
   display: flex;
   align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.header-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
 .messages-container {
   flex-grow: 1;
+  padding: 20px;
   overflow-y: auto;
-  padding: 10px;
-  margin: 10px 0;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .message {
   max-width: 70%;
-  margin: 10px 0;
-  position: relative;
+  margin: 5px 0;
 }
 
-.message-content {
+.message-bubble {
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 15px;
+  max-width: 100%;
 }
 
-.message.sent {
-  margin-left: auto;
+.sent {
+  align-self: flex-end;
 }
 
-.message.sent .message-content {
+.sent .message-bubble {
   background-color: #0f6016;
   color: white;
 }
 
-.message.received .message-content {
+.received {
+  align-self: flex-start;
+}
+
+.received .message-bubble {
   background-color: #f0f0f0;
 }
 
-.message-time {
-  font-size: 0.7em;
+.message-sender {
+  font-size: 0.8em;
+  margin-bottom: 4px;
   color: #666;
+}
+
+.message-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7em;
   margin-top: 4px;
-  text-align: right;
+}
+
+.message-status {
+  color: #8e8e8e;
+  margin-left: 8px;
+}
+
+.sent .message-status {
+  color: #a8e6c3;
 }
 
 .message-input {
+  padding: 15px;
   display: flex;
   gap: 10px;
-  padding-top: 15px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #ddd;
 }
 
 .message-input input {
@@ -400,7 +439,6 @@ export default {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
 }
 
 .message-input button {
@@ -413,13 +451,13 @@ export default {
   transition: background-color 0.2s;
 }
 
-.message-input button:hover:not(:disabled) {
-  background-color: #0a4610;
-}
-
 .message-input button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.message-input button:hover:not(:disabled) {
+  background-color: #0a4610;
 }
 
 .no-chat-selected {
@@ -428,65 +466,5 @@ export default {
   align-items: center;
   justify-content: center;
   color: #666;
-  font-size: 1.1em;
-  .messages-container {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding: 10px;
-  margin: 10px 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.message {
-  max-width: 70%;
-  margin: 5px 0;
-  padding: 8px 12px;
-  border-radius: 15px;
-}
-
-.message.sent {
-  align-self: flex-end;
-  background-color: #0f6016;
-  color: white;
-}
-
-.message.received {
-  align-self: flex-start;
-  background-color: #f0f0f0;
-  color: black;
-}
-
-.message-time {
-  font-size: 0.7em;
-  opacity: 0.7;
-  margin-top: 4px;
-}
-.message-bubble {
-  padding: 10px;
-  border-radius: 15px;
-  max-width: 70%;
-  margin: 5px 0;
-}
-
-.sent .message-bubble {
-  background-color: #0f6016;
-  color: white;
-  margin-left: auto;
-}
-
-.received .message-bubble {
-  background-color: #f0f0f0;
-  margin-right: auto;
-}
-
-.message-sender {
-  font-size: 0.8em;
-  margin-bottom: 4px;
-  color: #666;
-}
 }
 </style>
-
-
-

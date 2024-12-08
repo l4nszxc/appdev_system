@@ -21,9 +21,18 @@ const getMessages = (conversationId, callback) => {
       FROM messages m
       JOIN users u ON m.sender_id = u.student_id
       WHERE m.conversation_id = ?
-      ORDER BY m.created_at ASC
+      ORDER BY m.created_at DESC
     `;
     db.query(sql, [conversationId], callback);
+  };
+  
+  const markMessageAsSeen = (messageId, userId, callback) => {
+    const sql = `
+      UPDATE messages 
+      SET is_seen = TRUE, seen_at = CURRENT_TIMESTAMP 
+      WHERE id = ? AND sender_id != ?
+    `;
+    db.query(sql, [messageId, userId], callback);
   };
 
 const searchUsers = (query, callback) => {
@@ -43,5 +52,6 @@ module.exports = {
   createMessage,
   getMessages,
   searchUsers,
-  getAllUsers
+  getAllUsers,
+  markMessageAsSeen
 };

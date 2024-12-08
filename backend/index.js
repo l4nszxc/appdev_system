@@ -99,6 +99,8 @@ app.post('/messages', authMiddleware, chatController.createMessage);
 app.get('/messages/:conversationId', authMiddleware, chatController.getMessages);
 app.get('/users/search', authMiddleware, chatController.searchUsers);
 app.get('/users/all', authMiddleware, chatController.getAllUsers);
+app.get('/conversations/unread', authMiddleware, chatController.getUnreadMessages);
+app.post('/messages/:conversationId/read', authMiddleware, chatController.markMessagesAsRead);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

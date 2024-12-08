@@ -1,33 +1,71 @@
 <template>
-    <div>
-      <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
-      <div v-if="challenge">
-        <h2>Empathy Challenge</h2>
-        <div>
-          <h3>Comment Challenge - Level {{ challenge.comment_level }}</h3>
-          <p>Comment on {{ challenge.comment_level * 5 }} posts. Progress: {{ challenge.comments_count }} / {{ challenge.comment_level * 5 }}</p>
-          <p v-if="challenge.comments_count >= challenge.comment_level * 5" class="completed">Completed</p>
-          <p v-else>{{ challenge.comment_level * 5 - challenge.comments_count }} comments left to proceed to the next level.</p>
+  
+    <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
+    <h2 class="challenge-title">Empathy Challenge</h2>
+        <!-- Redesigned Dates Section -->
+        <div class="challenge-dates">
+      <div class="dates-container">
+        <div class="date-box">
+          <p class="date-label">Start Date:</p>
+          <p class="date-value">{{ new Date(challenge.start_date).toLocaleDateString() }}</p>
         </div>
-        <div>
-          <h3>Reaction Challenge - Level {{ challenge.reaction_level }}</h3>
-          <p>React to {{ challenge.reaction_level * 5 }} posts. Progress: {{ challenge.reactions_count }} / {{ challenge.reaction_level * 5 }}</p>
-          <p v-if="challenge.reactions_count >= challenge.reaction_level * 5" class="completed">Completed</p>
-          <p v-else>{{ challenge.reaction_level * 5 - challenge.reactions_count }} reactions left to proceed to the next level.</p>
+        <div class="date-box">
+          <p class="date-label">End Date:</p>
+          <p class="date-value">{{ new Date(challenge.end_date).toLocaleDateString() }}</p>
         </div>
-        <br>
-        <div>
-          <p>Challenge Start Date: {{ new Date(challenge.start_date).toLocaleDateString() }}</p>
-          <p>Challenge End Date: {{ new Date(challenge.end_date).toLocaleDateString() }}</p>
-        </div>
-        <br>
-        <p v-if="challengeCompleted">You've already completed the challenge!</p>
-        <p v-if="challenge.message" class="completed-message">{{ challenge.message }}</p>
-        <br>
-        <button @click="goToFeed">Go to Feed</button>
       </div>
     </div>
-  </template>
+
+    <div v-if="challenge" class="challenge-content">
+  
+  
+      <div class="challenge-section">
+        <h3>Comment Challenge - Level {{ challenge.comment_level }}</h3>
+        <div class="progress-container">
+          <p>Comment on <strong>{{ challenge.comment_level * 5 }}</strong> posts</p>
+          <div class="progress-bar">
+            <div
+              class="progress"
+              :style="{ width: ((challenge.comments_count / (challenge.comment_level * 5)) * 100) + '%' }"
+            ></div>
+          </div>
+          <p class="progress-text">Progress: {{ challenge.comments_count }} / {{ challenge.comment_level * 5 }}</p>
+          <p v-if="challenge.comments_count >= challenge.comment_level * 5" class="status completed">Completed</p>
+          <p v-else class="status">{{ challenge.comment_level * 5 - challenge.comments_count }} comments left to proceed.</p>
+        </div>
+      </div>
+
+      <div class="challenge-section">
+        <h3>Reaction Challenge - Level {{ challenge.reaction_level }}</h3>
+        <div class="progress-container">
+          <p>React to <strong>{{ challenge.reaction_level * 5 }}</strong> posts</p>
+          <div class="progress-bar">
+            <div
+              class="progress"
+              :style="{ width: ((challenge.reactions_count / (challenge.reaction_level * 5)) * 100) + '%' }"
+            ></div>
+          </div>
+          <p class="progress-text">Progress: {{ challenge.reactions_count }} / {{ challenge.reaction_level * 5 }}</p>
+          <p v-if="challenge.reactions_count >= challenge.reaction_level * 5" class="status completed">Completed</p>
+          <p v-else class="status">{{ challenge.reaction_level * 5 - challenge.reactions_count }} reactions left to proceed.</p>
+        </div>
+      </div>
+
+      <div v-if="challengeCompleted" class="message">
+        <p class="success-message">You've already completed the challenge!</p>
+      </div>
+      <div v-if="challenge.message" class="message">
+        <p class="completed-message">{{ challenge.message }}</p>
+      </div>
+
+      
+    </div>
+    <div class="button-container">
+        <button @click="goToFeed" class="feed-button">Go to Feed</button>
+      </div>
+  
+</template>
+
   
   <script>
   import { ref, onMounted } from 'vue';
@@ -57,26 +95,33 @@
       const router = useRouter();
   
       const fetchChallenge = async () => {
-        try {
-          const token = localStorage.getItem('token');
-          const challengeResponse = await axios.get('http://localhost:5000/empathy-challenge', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          challenge.value = challengeResponse.data;
-  
-          if (challenge.value.comment_level > 10 && challenge.value.reaction_level > 10) {
-            challengeCompleted.value = true;
-          }
-  
-          if (challenge.value.comments_count >= challenge.value.comment_level * 5 && challenge.value.reactions_count >= challenge.value.reaction_level * 5) {
-            challenge.value.message = "Level for today was completed, please come back tomorrow for more levels.";
-          }
-        } catch (error) {
-          console.error('Failed to fetch challenge:', error);
-        }
-      };
+  try {
+    const token = localStorage.getItem('token');
+    const challengeResponse = await axios.get('http://localhost:5000/empathy-challenge', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    challenge.value = challengeResponse.data;
+
+    // Ensure the challenge duration is 1 week
+    const startDate = new Date(challenge.value.start_date);
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 7); // Add 7 days
+    challenge.value.end_date = endDate.toISOString();
+
+    if (challenge.value.comment_level > 10 && challenge.value.reaction_level > 10) {
+      challengeCompleted.value = true;
+    }
+
+    if (challenge.value.comments_count >= challenge.value.comment_level * 5 &&
+        challenge.value.reactions_count >= challenge.value.reaction_level * 5) {
+      challenge.value.message = "Level for today was completed, please come back tomorrow for more levels.";
+    }
+  } catch (error) {
+    console.error('Failed to fetch challenge:', error);
+  }
+};
   
       const goToFeed = () => {
         router.push('/feed');
@@ -116,17 +161,178 @@
   </script>
   
   <style scoped>
-  .completed {
-    border: 2px solid green;
-    padding: 5px;
-    display: inline-block;
-    margin-top: 5px;
+/* General Layout */
+.challenge-container {
+  font-family: Arial, sans-serif;
+  margin: 20px auto;
+  max-width: 800px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.challenge-title {
+  text-align: center;
+  font-size: 3rem;
+  color: #333;
+}
+
+/* Dates Section Styling */
+.challenge-dates {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #9addbb;
+  border: 1px solid #239633;
+  border-radius: 8px;
+}
+
+.dates-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date-box {
+  text-align: center;
+  flex: 1;
+}
+
+.date-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #287e3b;
+}
+
+.date-value {
+  font-size: 1.3rem;
+  color: #333;
+  margin-top: 5px;
+}
+
+.date-box:not(:last-child) {
+  border-right: 1px solid #2c7e37;
+  padding-right: 10px;
+}
+
+.dates-container > div {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.challenge-content {
+  padding: 15px;
+  display: grid;
+  font-size: 1.5rem;
+  grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+  gap: 20px; /* Space between the items */
+  max-width: 1200px; /* Centered layout with a maximum width */
+  margin: 0 auto; /* Center the content on the page */
+}
+
+.challenge-section {
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effects */
+}
+
+.challenge-section:hover {
+  transform: translateY(-3px); /* Subtle lift effect on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* More prominent shadow on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .challenge-content {
+    grid-template-columns: 1fr; /* Stack in a single column on smaller screens */
   }
-  
-  .completed-message {
-    border: 2px solid blue;
-    padding: 10px;
-    display: inline-block;
-    margin-top: 10px;
-  }
-  </style>
+}
+
+.progress-container {
+  margin: 10px 0;
+}
+
+.progress-bar {
+  height: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 10px;
+  background: #28a745;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+.status {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.completed {
+  color: #28a745;
+}
+
+.challenge-dates {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.message {
+  margin-top: 20px;
+  padding: 10px;
+  background: #e6f7ff;
+  border: 1px solid #91d5ff;
+  border-radius: 5px;
+  color: #0050b3;
+  text-align: center;
+}
+
+.success-message {
+  color: #28a745;
+}
+
+.completed-message {
+  color: #0050b3;
+}
+
+/* Buttons */
+.button-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.feed-button {
+  background-color: #077203; /* Bright, modern blue */
+  width: 100%;
+  color: white;
+  padding: 12px 25px; /* Slightly larger padding for better click feel */
+  border: none;
+  border-radius: 8px; /* More rounded corners for a softer look */
+  cursor: pointer;
+  font-size: 16px; /* Clear, readable font size */
+  font-weight: bold; /* Emphasize text for better readability */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for a 3D effect */
+  transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.feed-button:hover {
+  background-color: #27af50; /* Darker shade of blue for hover effect */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Enhance shadow for hover */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+
+
+</style>

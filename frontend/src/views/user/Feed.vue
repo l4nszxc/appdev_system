@@ -641,6 +641,7 @@ onMounted(async () => {
   border-radius: 5px;
   padding: 15px;
   margin-bottom: 20px;
+  font-size: 1.5rem;
 }
 
 .post-header {
@@ -659,10 +660,12 @@ onMounted(async () => {
 
 .author-name {
   font-weight: bold;
+  margin-right: 1rem;
 }
 
 .post-content {
   margin-bottom: 10px;
+  font-size: 1.5rem;
 }
 
 .post-actions {

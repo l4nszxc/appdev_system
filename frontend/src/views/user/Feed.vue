@@ -25,13 +25,16 @@
       <div class="posts-list">
         <div v-for="post in posts" :key="post.id" class="post bg-white shadow-md rounded-lg p-6 mb-4">
           <div class="post-header">
-            <img 
-              :src="getProfilePicture(post.profile_picture)" 
-              :alt="post.username" 
-              class="author-avatar"
-            />
-            <div class="author-name">{{ post.username }}</div>
-            <div class="post-menu" v-if="post.student_id === userInfo.student_id">
+  <img 
+    :src="getProfilePicture(post.profile_picture)" 
+    :alt="post.username" 
+    class="author-avatar"
+  />
+  <div class="author-info">
+    <div class="author-name">{{ post.username }}</div>
+    <span class="post-date">{{ formatDate(post.created_at) }}</span>
+  </div>
+  <div class="post-menu" v-if="post.student_id === userInfo.student_id">
               <button @click="togglePostMenu(post.id)" class="post-menu-button">⋮</button>
               <div v-if="post.showMenu" class="post-menu-dropdown">
                 <button @click="editPost(post.id)">Edit</button>
@@ -198,30 +201,35 @@
 
   <!-- Comments Modal -->
   <Modal :show="showCommentsModal" @close="closeCommentsModal">
-    <div class="modal-content">
-      <h2>Comments</h2>
-      <textarea 
-        v-model="currentPost.newComment" 
-        placeholder="Write a comment..." 
-        class="comment-input">
-      </textarea>
-      <button 
-        @click="addComment(currentPost.id, currentPost.newComment)" 
-        class="add-comment-button">
-        Add Comment
-      </button>
+  <div class="modal-content">
+    <h2>Comments</h2>
+    <textarea 
+      v-model="currentPost.newComment" 
+      placeholder="Write a comment..." 
+      class="comment-input">
+    </textarea>
+    <button 
+      @click="addComment(currentPost.id, currentPost.newComment)" 
+      class="add-comment-button">
+      Add Comment
+    </button>
 
-      <div v-for="comment in currentPost.comments" :key="comment.id" class="comment">
+    <div v-for="comment in currentPost.comments" :key="comment.id" class="comment">
+      <div class="comment-header">
         <img 
           :src="getProfilePicture(comment.profile_picture)" 
           :alt="comment.username" 
           class="comment-author-avatar" 
         />
-        <span class="comment-author">{{ comment.username }}</span>
-        <p class="comment-content">{{ comment.content }}</p>
+        <div class="comment-info">
+          <span class="comment-author">{{ comment.username }}</span>
+          <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+        </div>
       </div>
+      <p class="comment-content">{{ comment.content }}</p>
     </div>
-  </Modal>
+  </div>
+</Modal>
 
   <!-- Reactions Modal -->
   <Modal :show="showReactionsModal" @close="closeReactionsModal">

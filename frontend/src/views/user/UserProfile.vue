@@ -41,7 +41,7 @@
           <span class="author-name">{{ post.username }}</span>
           <span class="text-gray-500 ml-2 text-sm">{{ formatDate(post.created_at) }}</span>
           <span v-if="post.emotion" class="emotion-badge">{{ post.emotion }}</span>
-          <button @click="openEditModal(post)" class="edit-post-btn">Edit</button>
+          <button @click="openEditModal(post)" class="edit-post-btn"><i class="fas fa-edit"></i></button>
         </div>
         <p class="post-content">{{ post.content }}</p>
       </div>
@@ -357,7 +357,7 @@ export default {
 }
 
 .edit-post-btn {
-  background-color: #007bff;
+  background-color: #dd9f4e;
   color: white;
   padding: 6px 12px;
   border-radius: 5px;
@@ -368,7 +368,7 @@ export default {
 }
 
 .edit-post-btn:hover {
-  background-color: #0056b3;
+  background-color: #b47d15;
 }
 
 .post-content {

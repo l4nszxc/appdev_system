@@ -132,12 +132,21 @@ exports.getUnreadMessages = (req, res) => {
 exports.markMessagesAsRead = (req, res) => {
   const { conversationId } = req.params;
   const userId = req.user.student_id;
-  
-  chatModel.markMessagesAsRead(conversationId, userId, (err) => {
+
+  const sql = `
+    UPDATE messages 
+    SET is_seen = TRUE, 
+        seen_at = CURRENT_TIMESTAMP 
+    WHERE conversation_id = ? 
+    AND sender_id != ?
+    AND is_seen = FALSE
+  `;
+
+  db.query(sql, [conversationId, userId], (err, result) => {
     if (err) {
       console.error('Error marking messages as read:', err);
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ error: 'Failed to mark messages as read' });
     }
-    res.json({ success: true });
+    res.status(200).json({ message: 'Messages marked as read' });
   });
 };

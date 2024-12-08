@@ -103,4 +103,4 @@ app.get('/users/all', authMiddleware, chatController.getAllUsers);
 app.get('/conversations/unread', authMiddleware, chatController.getUnreadMessages);
 // In your Express routes
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log('Server running on port ${PORT}'));

@@ -1,8 +1,10 @@
 <template>
-  <div>
+  <div class="container">
     <Navbar />
-    <div class="container mt-5">
-      <h2 class="text-center mb-4">User Feedback</h2>
+    
+      <h2 class="text-center">User Feedback</h2>
+   
+    <div class="table-container">
       <div class="table-responsive">
         <table class="table table-bordered table-hover">
           <thead class="thead-dark">
@@ -67,55 +69,72 @@ export default {
 </script>
 
 <style scoped>
+/* General Layout */
 .container {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 
 h2 {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  color: #343a40;
+  font-size: 2rem;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0;
+}
+
+/* Table Styling */
+.table-container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .table {
-  margin-top: 20px;
-  border-collapse: separate;
-  border-spacing: 0 10px;
+  border-collapse: collapse;
+  margin-top: 10px;
+  width: 100%;
 }
 
-.table thead {
+.table th {
   background-color: #343a40;
-  color: #fff;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  padding: 12px 15px;
+  text-transform: uppercase;
 }
 
-.table th,
 .table td {
-  padding: 12px 15px;
-  vertical-align: middle;
+  font-size: 14px;
+  text-align: center;
+  padding: 10px 12px;
+  color: #555555;
 }
 
 .table-hover tbody tr:hover {
-  background-color: #e9ecef;
+  background-color: #f1f1f1;
 }
 
-.table-responsive {
-  overflow-x: auto;
-}
-
+/* Borders and Spacing */
 .table-bordered th,
 .table-bordered td {
   border: 1px solid #dee2e6;
 }
 
 .table-bordered {
-  border: 1px solid #dee2e6;
   border-radius: 8px;
   overflow: hidden;
+}
+
+/* Responsive Table */
+.table-responsive {
+  overflow-x: auto;
 }
 
 .table th:first-child,

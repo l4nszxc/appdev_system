@@ -143,7 +143,7 @@ export default {
 
 .feed-title {
   text-align: center;
-  color: #2a9d8f;
+  color: #000000;
   margin-bottom: 20px;
 }
 

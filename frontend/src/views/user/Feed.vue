@@ -60,7 +60,54 @@
     <!-- Right Section -->
     <div class="right-section">
       
-      
+      <div class="card mood-tracker-card">
+        <h1>Mood Tracker</h1>
+        <div v-if="hasSubmittedToday">
+          <p>You have already submitted your mood for today. Please come back tomorrow.</p>
+        </div>
+        <div v-else>
+          <div class="character-selector">
+            <span 
+              @click="selectMood('Joy')" 
+              class="mood-icon" 
+              title="Joy"
+              :class="{ zoomed: mood === 'Joy' }">
+              😊
+            </span>
+            <span 
+              @click="selectMood('Sadness')" 
+              class="mood-icon" 
+              title="Sadness"
+              :class="{ zoomed: mood === 'Sadness' }">
+              😞
+            </span>
+            <span 
+              @click="selectMood('Anger')" 
+              class="mood-icon" 
+              title="Anger"
+              :class="{ zoomed: mood === 'Anger' }">
+              😡
+            </span>
+            <span 
+              @click="selectMood('Disgust')" 
+              class="mood-icon" 
+              title="Disgust"
+              :class="{ zoomed: mood === 'Disgust' }">
+              🤢
+            </span>
+            <span 
+              @click="selectMood('Fear')" 
+              class="mood-icon" 
+              title="Fear"
+              :class="{ zoomed: mood === 'Fear' }">
+              😨
+            </span>
+          </div>
+        </div>
+        <div v-if="message">{{ message }}</div>
+      </div>
+
+      <div><br></div>
       <div class="card heartRoom">
         <h2 class="text-2xl font-semibold mb-4 text-green-800">Heart-to-Heart Room</h2>
 
@@ -132,55 +179,6 @@
             </button>
           </div>
         </div>
-      </div>
-
-      <div><br></div>
-
-      <div class="card mood-tracker-card">
-        <h1>Mood Tracker</h1>
-        <div v-if="hasSubmittedToday">
-          <p>You have already submitted your mood for today. Please come back tomorrow.</p>
-        </div>
-        <div v-else>
-          <div class="character-selector">
-            <span 
-              @click="selectMood('Joy')" 
-              class="mood-icon" 
-              title="Joy"
-              :class="{ zoomed: mood === 'Joy' }">
-              😊
-            </span>
-            <span 
-              @click="selectMood('Sadness')" 
-              class="mood-icon" 
-              title="Sadness"
-              :class="{ zoomed: mood === 'Sadness' }">
-              😞
-            </span>
-            <span 
-              @click="selectMood('Anger')" 
-              class="mood-icon" 
-              title="Anger"
-              :class="{ zoomed: mood === 'Anger' }">
-              😡
-            </span>
-            <span 
-              @click="selectMood('Disgust')" 
-              class="mood-icon" 
-              title="Disgust"
-              :class="{ zoomed: mood === 'Disgust' }">
-              🤢
-            </span>
-            <span 
-              @click="selectMood('Fear')" 
-              class="mood-icon" 
-              title="Fear"
-              :class="{ zoomed: mood === 'Fear' }">
-              😨
-            </span>
-          </div>
-        </div>
-        <div v-if="message">{{ message }}</div>
       </div>
     </div>
   </div>
@@ -579,10 +577,10 @@ onMounted(async () => {
   gap: 16px;
 }
 .mood-tracker-card {
-  background-color: #a0e5d1;
+  background: linear-gradient(109.6deg, rgb(0, 204, 130) 11.2%, rgb(58, 181, 46) 91.7%);
 }
 .heartRoom{
-  background-color: #a0e5d1;
+  background: linear-gradient(109.6deg, rgb(0, 204, 130) 11.2%, rgb(58, 181, 46) 91.7%);
 }
 .character-selector span {
   font-size: 1.8rem;

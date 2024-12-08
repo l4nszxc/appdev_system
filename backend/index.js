@@ -13,7 +13,7 @@ const postController = require('./controllers/postController');
 const authMiddleware = require('./middleware/authMiddleware');
 const adminManageUsersController = require('./controllers/adminManageUsersController');
 const empathyChallengeController = require('./controllers/empathyChallengeController');
-
+const chatController = require('./controllers/chatController');
 
 const app = express();
 app.use(cors());
@@ -91,6 +91,16 @@ app.get('/empathy-challenge', authMiddleware, empathyChallengeController.getUser
 app.post('/empathy-challenge/comment-progress', authMiddleware, empathyChallengeController.updateCommentChallengeProgress);
 app.post('/empathy-challenge/reaction-progress', authMiddleware, empathyChallengeController.updateReactionChallengeProgress);
 app.post('/admin/reset-empathy-challenges', authMiddleware, empathyChallengeController.resetChallenges);
+
+// Chat routes
+app.post('/conversations', authMiddleware, chatController.createConversation);
+app.get('/conversations', authMiddleware, chatController.getConversations);
+app.post('/messages', authMiddleware, chatController.createMessage);
+app.get('/messages/:conversationId', authMiddleware, chatController.getMessages);
+app.get('/users/search', authMiddleware, chatController.searchUsers);
+app.get('/users/all', authMiddleware, chatController.getAllUsers);
+app.get('/conversations/unread', authMiddleware, chatController.getUnreadMessages);
+app.post('/messages/:conversationId/read', authMiddleware, chatController.markMessagesAsRead);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

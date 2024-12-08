@@ -21,7 +21,6 @@ import UserEmpathyC from '@/views/user/userEmpathyC.vue';
 import AdminHome from '@/views/admin/adminHome.vue';
 import AdminEmpathyC from '@/views/admin/adminEmpathyC.vue';
 import AdminFeed from '@/views/admin/adminFeed.vue';
-import AdminMessages from '@/views/admin/adminMessages.vue';
 import HeartToHeartRoom from '@/views/admin/heartToHeartRoom.vue';
 import MoodReport from '@/views/admin/moodReport.vue';
 import Users from '@/views/admin/users.vue';
@@ -152,12 +151,6 @@ const routes = [
     path: '/admin/adminFeed',
     name: 'adminFeed',
     component: AdminFeed,
-    meta: { requiresAuth: true, requiresAdmin: true },
-  },
-  {
-    path: '/admin/adminMessages',
-    name: 'adminMessages',
-    component: AdminMessages,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
   {

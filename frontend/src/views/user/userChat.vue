@@ -2,7 +2,7 @@
   <div class="chat-app">
     <Navbar :isLoggedIn="isLoggedIn" :username="username" :profilePicture="userInfo.profile_picture" />
     <div class="chat-container">
-      <!-- Student List Section -->
+      <!-- Students List Section -->
       <div class="conversations-list">
         <h2 class="section-title">Student List</h2>
         <div class="search-bar">
@@ -15,19 +15,28 @@
         </div>
         <div class="students-list">
           <div 
-            v-for="student in displayedStudents" 
+            v-for="student in sortedStudents" 
             :key="student.student_id"
-            :class="['student-item', { active: selectedUser?.student_id === student.student_id }]"
+            :class="getStudentItemClasses(student)"
             @click="selectStudent(student)"
           >
-            <img 
-              :src="getProfilePicture(student.profile_picture)"
-              :alt="student.firstname"
-              class="student-avatar"
-            />
+            <div class="student-avatar-container">
+              <img 
+                :src="getProfilePicture(student.profile_picture)"
+                :alt="student.firstname"
+                class="student-avatar"
+              />
+              <span v-if="hasUnreadMessages(student.student_id)" class="unread-indicator"></span>
+            </div>
             <div class="student-info">
               <div class="student-name">{{ student.firstname }} {{ student.lastname }}</div>
               <div class="student-id">{{ student.student_id }}</div>
+              <div 
+                v-if="lastMessages[student.student_id]" 
+                :class="['last-message', { 'unread': hasUnreadMessages(student.student_id) }]"
+              >
+                {{ lastMessages[student.student_id] }}
+              </div>
             </div>
           </div>
         </div>
@@ -61,7 +70,7 @@
               <div class="message-footer">
                 <span class="message-time">{{ formatTime(message.created_at) }}</span>
                 <span v-if="message.sender_id === userInfo.student_id" class="message-status">
-                  {{ getMessageStatus(message) }}
+                  {{ message.is_seen ? 'Seen' : 'Delivered' }}
                 </span>
               </div>
             </div>
@@ -106,6 +115,10 @@ const searchQuery = ref('');
 const selectedConversationId = ref(null);
 const messagesContainer = ref(null);
 const pollInterval = ref(null);
+const unreadMessages = ref({});
+const lastSeenTimestamp = ref({});
+const lastMessages = ref({});
+
 
 const sortedMessages = computed(() => {
   return [...messages.value].sort((a, b) => 
@@ -113,15 +126,46 @@ const sortedMessages = computed(() => {
   );
 });
 
-const displayedStudents = computed(() => {
-  if (!searchQuery.value) return students.value;
-  const query = searchQuery.value.toLowerCase();
-  return students.value.filter(student => 
-    student.student_id.toLowerCase().includes(query) ||
-    student.firstname.toLowerCase().includes(query) ||
-    student.lastname.toLowerCase().includes(query)
-  );
+const sortedStudents = computed(() => {
+  let filtered = searchQuery.value
+    ? students.value.filter(student => 
+        student.student_id.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        `${student.firstname} ${student.lastname}`.toLowerCase().includes(searchQuery.value.toLowerCase())
+      )
+    : [...students.value];
+
+  return filtered.sort((a, b) => {
+    // Sort by unread messages first
+    const aUnread = unreadMessages.value[a.student_id] || 0;
+    const bUnread = unreadMessages.value[b.student_id] || 0;
+    if (aUnread !== bUnread) {
+      return bUnread - aUnread;
+    }
+    
+    // Then sort by last message timestamp
+    const aTimestamp = lastSeenTimestamp.value[a.student_id] || 0;
+    const bTimestamp = lastSeenTimestamp.value[b.student_id] || 0;
+    return bTimestamp - aTimestamp;
+  });
 });
+
+const getStudentItemClasses = (student) => {
+  return {
+    'student-item': true,
+    'active': selectedUser?.student_id === student.student_id,
+    'unread': hasUnreadMessages(student.student_id),
+    'with-animation': true
+  };
+};
+
+const hasUnreadMessages = (studentId) => {
+  return (unreadMessages.value[studentId] || 0) > 0;
+};
+
+const updateLastMessage = (studentId, message) => {
+  lastMessages.value[studentId] = message.message;
+  lastSeenTimestamp.value[studentId] = new Date(message.created_at).getTime();
+};
 
 const fetchStudents = async () => {
   try {
@@ -158,7 +202,9 @@ const selectStudent = async (student) => {
       selectedConversationId.value = conversation.id;
     }
     
+    unreadMessages.value[student.student_id] = 0;
     await fetchMessages();
+    await markMessagesAsRead();
   } catch (error) {
     console.error('Failed to handle conversation:', error);
   }
@@ -173,10 +219,43 @@ const fetchMessages = async () => {
       { headers: { Authorization: `Bearer ${token}` }}
     );
     messages.value = response.data;
+    
+    if (selectedUser.value && response.data.length > 0) {
+      const lastMessage = response.data[response.data.length - 1];
+      updateLastMessage(selectedUser.value.student_id, lastMessage);
+      
+      const unreadCount = response.data.filter(m => 
+        m.sender_id !== userInfo.value.student_id && !m.is_seen
+      ).length;
+      
+      if (selectedUser.value.student_id === selectedUser.value.student_id) {
+        await markMessagesAsRead();
+      } else {
+        unreadMessages.value[selectedUser.value.student_id] = unreadCount;
+      }
+    }
+    
     await nextTick();
     scrollToBottom();
   } catch (error) {
     console.error('Failed to fetch messages:', error);
+  }
+};
+
+const markMessagesAsRead = async () => {
+  if (!selectedConversationId.value) return;
+  try {
+    const token = localStorage.getItem('token');
+    await axios.post(
+      `http://localhost:5000/messages/${selectedConversationId.value}/read`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` }}
+    );
+    if (selectedUser.value) {
+      unreadMessages.value[selectedUser.value.student_id] = 0;
+    }
+  } catch (error) {
+    console.error('Failed to mark messages as read:', error);
   }
 };
 
@@ -204,20 +283,16 @@ const scrollToBottom = () => {
 };
 
 const getProfilePicture = (profilePicture) => {
-      return profilePicture 
-        ? `http://localhost:5000${profilePicture}` 
-        : require('@/assets/defaultProfile.png');
-    };
+  return profilePicture 
+    ? `http://localhost:5000${profilePicture}` 
+    : require('@/assets/defaultProfile.png');
+};
 
 const formatTime = (timestamp) => {
   return new Date(timestamp).toLocaleTimeString([], { 
     hour: '2-digit', 
     minute: '2-digit' 
   });
-};
-
-const getMessageStatus = (message) => {
-  return message.is_seen ? 'Seen' : 'Delivered';
 };
 
 onMounted(async () => {
@@ -494,5 +569,80 @@ onUnmounted(() => {
   height: 4rem;
   color: #ccc;
   margin-bottom: 1rem;
+}
+.student-item.unread {
+  background-color: #e8f5e9;
+  border-left: 4px solid #0f6016;
+  animation: slideIn 0.3s ease-out;
+}
+
+.student-avatar-container {
+  position: relative;
+  margin-right: 0.75rem;
+}
+
+.unread-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #0f6016;
+  border-radius: 50%;
+  border: 2px solid white;
+  animation: pulse 2s infinite;
+}
+
+/* Animation keyframes */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Smooth transitions */
+.students-list {
+  will-change: contents;
+}
+
+.student-item {
+  will-change: transform;
+  transition: all 0.3s ease-in-out;
+  border-left: 4px solid transparent;
+}
+
+/* Last message preview */
+.last-message {
+  font-size: 0.8rem;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 0.25rem;
+}
+
+.last-message.unread {
+  color: #0f6016;
+  font-weight: 500;
 }
 </style>

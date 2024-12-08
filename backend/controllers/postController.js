@@ -85,3 +85,24 @@ exports.updatePost = (req, res) => {
     res.status(200).json({ message: 'Post updated successfully' });
   });
 };
+exports.getReactionsByPostId = (req, res) => {
+  const postId = req.params.id;
+
+  postModel.getReactionsByPostId(postId, (err, reactions) => {
+    if (err) {
+      return res.status(500).json({ message: 'Failed to fetch reactions', error: err });
+    }
+    res.status(200).json(reactions);
+  });
+};
+
+exports.getCommentsByPostId = (req, res) => {
+  const postId = req.params.id;
+
+  postModel.getCommentsByPostId(postId, (err, comments) => {
+    if (err) {
+      return res.status(500).json({ message: 'Failed to fetch comments', error: err });
+    }
+    res.status(200).json(comments);
+  });
+};

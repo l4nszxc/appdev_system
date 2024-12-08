@@ -63,12 +63,14 @@ app.post('/user/profile-picture', authMiddleware, upload.single('profilePicture'
 
 // Post routes
 app.get('/posts', authMiddleware, postController.getPosts);
-app.get('/posts/user', authMiddleware, postController.getPostsByUser); // Add this line
+app.get('/posts/user', authMiddleware, postController.getPostsByUser);
 app.post('/posts', authMiddleware, postController.createPost);
 app.post('/posts/reactions', authMiddleware, postController.addReaction);
 app.post('/posts/comments', authMiddleware, postController.addComment);
 app.delete('/posts/:id', authMiddleware, postController.deletePost);
-app.put('/posts/:id', authMiddleware, postController.updatePost); // Add this line
+app.put('/posts/:id', authMiddleware, postController.updatePost);
+app.get('/posts/:id/reactions', authMiddleware, postController.getReactionsByPostId);
+app.get('/posts/:id/comments', authMiddleware, postController.getCommentsByPostId);
 
 // Appointment routes
 app.post('/api/appointments', authMiddleware, heartToHeartController.createAppointment);

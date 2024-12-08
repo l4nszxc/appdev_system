@@ -183,6 +183,35 @@ const getPostsByUser = (studentId, callback) => {
   });
 };
 
+const getReactionsByPostId = (postId, callback) => {
+  const sql = `
+    SELECT 
+      r.id,
+      r.reaction_type,
+      u.username, 
+      u.profile_picture 
+    FROM posts_reactions r
+    JOIN users u ON r.student_id = u.student_id
+    WHERE r.post_id = ?
+  `;
+  db.query(sql, [postId], callback);
+};
+
+const getCommentsByPostId = (postId, callback) => {
+  const sql = `
+    SELECT 
+      c.id, 
+      c.content, 
+      c.created_at, 
+      u.username, 
+      u.profile_picture 
+    FROM posts_comments c
+    JOIN users u ON c.student_id = u.student_id
+    WHERE c.post_id = ?
+  `;
+  db.query(sql, [postId], callback);
+};
+
 const updatePost = (postData, callback) => {
   const sql = 'UPDATE posts SET content = ?, emotion = ? WHERE id = ? AND student_id = ?';
   db.query(sql, [postData.content, postData.emotion, postData.postId, postData.studentId], callback);
@@ -198,4 +227,6 @@ module.exports = {
   deleteReactionsByPostId,
   deletePost,
   updatePost,
+  getReactionsByPostId,
+  getCommentsByPostId,
 };

@@ -255,14 +255,8 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 // Appointment Scheduling State Variables
 const selectedDate = ref('');
 const timeSlots = ref([
-  { time: '08:00:00', available: true },
-  { time: '09:00:00', available: true },
   { time: '10:00:00', available: true },
-  { time: '11:00:00', available: true },
-  { time: '13:00:00', available: true },
-  { time: '14:00:00', available: true },
-  { time: '15:00:00', available: true },
-  { time: '16:00:00', available: true },
+  { time: '15:00:00', available: true }
 ]);
 const currentAppointment = ref(null);
 const error = ref('');

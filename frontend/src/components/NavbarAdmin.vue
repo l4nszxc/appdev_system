@@ -39,12 +39,6 @@
         </router-link>
       </div>
       <div class="nav-item">
-        <router-link to="/admin/adminMessages" class="nav-link">
-          <i class="fas fa-envelope"></i>
-          <span class="nav-text">Message</span>
-        </router-link>
-      </div>
-      <div class="nav-item">
         <router-link to="/admin/adminDashboard" class="nav-link">
           <i class="fas fa-tachometer-alt"></i>
           <span class="nav-text">Dashboard</span>

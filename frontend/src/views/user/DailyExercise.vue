@@ -34,6 +34,27 @@
       </div>
     </div>
   </div>
+  <!-- Modal for Assessment -->
+<div v-if="showAssessmentModal" class="modal-overlay">
+  <div class="modal-content">
+    <h2>Daily Exercise Assessment</h2>
+    <p>How helpful was today's exercise?</p>
+    <div class="rating-container">
+      <label v-for="rating in [1, 2, 3, 4, 5]" :key="rating">
+        <input
+          type="radio"
+          :value="rating"
+          v-model="assessmentRating"
+        />
+        <span>{{ rating === 1 ? 'Not so helpful' : rating === 5 ? 'Very helpful' : `Rating: ${rating}` }}</span>
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button @click="submitAssessment" class="submit-btn">Submit</button>
+      <button @click="closeModal" class="cancel-btn">Cancel</button>
+    </div>
+  </div>
+</div>
   <Footer />
 </template>
   
@@ -50,6 +71,8 @@ const todayExercise = ref(null);
 const exerciseCompleted = ref(false);
 const weeklyProgress = ref(Array(7).fill(false));
 const isLoading = ref(false);
+const showAssessmentModal = ref(false);
+const assessmentRating = ref(null);
   
   const exercises = [
     {
@@ -135,29 +158,51 @@ const isLoading = ref(false);
   }
   
   async function completeExercise() {
-    if (isLoading.value) return;
-    isLoading.value = true;
-    try {
-      const response = await axios.post('http://localhost:5000/exercises', {
-        exerciseType: todayExercise.value.category,
-        exerciseTitle: todayExercise.value.title
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      console.log('Exercise completion response:', response.data);
-      exerciseCompleted.value = true;
-      const today = new Date();
-      const dayIndex = today.getDay();
-      weeklyProgress.value[dayIndex] = true;
-      await fetchWeeklyExercises();
-    } catch (error) {
-      console.error('Error completing exercise:', error.response ? error.response.data : error.message);
-      alert(`Failed to mark exercise as completed. Error: ${error.response ? error.response.data.error : error.message}`);
-    } finally {
-      isLoading.value = false;
-    }
+  if (isLoading.value) return;
+  isLoading.value = true;
+  try {
+    await axios.post('http://localhost:5000/exercises', {
+      exerciseType: todayExercise.value.category,
+      exerciseTitle: todayExercise.value.title
+    }, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    exerciseCompleted.value = true;
+    const today = new Date();
+    const dayIndex = today.getDay();
+    weeklyProgress.value[dayIndex] = true;
+    await fetchWeeklyExercises();
+    showAssessmentModal.value = true; // Show modal after completing exercise
+  } catch (error) {
+    console.error('Error completing exercise:', error.response ? error.response.data : error.message);
+  } finally {
+    isLoading.value = false;
   }
-  
+}
+function closeModal() {
+  showAssessmentModal.value = false;
+}
+
+async function submitAssessment() {
+  if (!assessmentRating.value) {
+    alert("Please select a rating.");
+    return;
+  }
+
+  try {
+    await axios.post('http://localhost:5000/assessment', {
+      rating: assessmentRating.value,
+      exerciseType: todayExercise.value.category,
+      exerciseTitle: todayExercise.value.title,
+    }, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    alert("Thank you for your feedback!");
+    closeModal();
+  } catch (error) {
+    console.error('Error submitting assessment:', error.response ? error.response.data : error.message);
+  }
+}
   onMounted(async () => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
   username.value = localStorage.getItem('username') || '';
@@ -288,4 +333,88 @@ const isLoading = ref(false);
   .progress-day .completed {
     color: #0f6016;
   }
+
+  /* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.submit-btn {
+  background-color: #0f6016;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #ccc;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background-color: #0a4610;
+}
+
+.cancel-btn:hover {
+  background-color: #bbb;
+}
+.rating-container {
+  display: flex;
+  justify-content: space-around;
+  margin: 10px 0;
+}
+
+.rating-container label {
+  cursor: pointer;
+}
+
+.rating-container input[type="radio"] {
+  display: none;
+}
+
+.rating-container span {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.rating-container input[type="radio"]:checked + span {
+  background-color: #0f6016;
+  color: white;
+}
   </style>

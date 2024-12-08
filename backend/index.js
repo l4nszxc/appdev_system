@@ -50,6 +50,7 @@ app.get('/api/students/program/:program', authMiddleware, adminManageUsersContro
 // Exercise routes
 app.get('/exercises', authMiddleware, exerciseController.getWeeklyExercises);
 app.post('/exercises', authMiddleware, exerciseController.saveExercise);
+app.post('/exercises/:id/rating', authMiddleware, exerciseController.saveRating);
 
 // Feedback routes
 app.post('/api/feedback', authMiddleware, userFeedbackController.submitFeedback);
@@ -100,7 +101,6 @@ app.get('/messages/:conversationId', authMiddleware, chatController.getMessages)
 app.get('/users/search', authMiddleware, chatController.searchUsers);
 app.get('/users/all', authMiddleware, chatController.getAllUsers);
 app.get('/conversations/unread', authMiddleware, chatController.getUnreadMessages);
-app.post('/messages/:conversationId/read', authMiddleware, chatController.markMessagesAsRead);
-
+// In your Express routes
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

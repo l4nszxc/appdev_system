@@ -35,29 +35,29 @@
     </div>
   </div>
   <!-- Modal for Assessment -->
-<div v-if="showAssessmentModal" class="modal-overlay">
-  <div class="modal-content">
-    <h2>Daily Exercise Assessment</h2>
-    <p>How helpful was today's exercise?</p>
-    <div class="rating-container">
-      <label v-for="rating in [1, 2, 3, 4, 5]" :key="rating">
-        <input
-          type="radio"
-          :value="rating"
-          v-model="assessmentRating"
-        />
-        <span>{{ rating === 1 ? 'Not so helpful' : rating === 5 ? 'Very helpful' : `Rating: ${rating}` }}</span>
-      </label>
-    </div>
-    <div class="modal-actions">
-      <button @click="submitAssessment" class="submit-btn">Submit</button>
-      <button @click="closeModal" class="cancel-btn">Cancel</button>
+  <div v-if="showAssessmentModal" class="modal-overlay">
+    <div class="modal-content">
+      <h2>Daily Exercise Survey</h2>
+      <p>Tell us how helpful was today's exercise</p>
+      <div class="rating-container">
+        <label v-for="(label, rating) in ratingLabels" :key="rating">
+          <input
+            type="radio"
+            :value="rating"
+            v-model="assessmentRating"
+          />
+          <span>{{ label }}</span>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button @click="submitAssessment" class="submit-btn">Submit</button>
+        <button @click="closeModal" class="cancel-btn">Skip</button>
+      </div>
     </div>
   </div>
-</div>
   <Footer />
 </template>
-  
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -73,114 +73,126 @@ const weeklyProgress = ref(Array(7).fill(false));
 const isLoading = ref(false);
 const showAssessmentModal = ref(false);
 const assessmentRating = ref(null);
-  
-  const exercises = [
-    {
-      category: "Breathing Technique",
-      title: "4-7-8 Breathing",
-      description: "This breathing technique can help reduce anxiety and promote relaxation.",
-      steps: [
-        "Sit comfortably and close your eyes.",
-        "Inhale quietly through your nose for 4 seconds.",
-        "Hold your breath for 7 seconds.",
-        "Exhale completely through your mouth for 8 seconds.",
-        "Repeat this cycle 4 times."
-      ]
-    },
-    {
-      category: "Guided Meditation",
-      title: "Body Scan Meditation",
-      description: "This meditation helps increase body awareness and reduce tension.",
-      steps: [
-        "Lie down comfortably and close your eyes.",
-        "Focus on your breath for a few moments.",
-        "Gradually shift your attention to your toes, then move up through each part of your body.",
-        "Notice any sensations without judgment.",
-        "When you reach the top of your head, take a deep breath and slowly open your eyes."
-      ]
-    },
-    {
-      category: "Breathing Technique",
-      title: "Box Breathing",
-      description: "Box breathing is a simple technique that can help you relax and reduce stress.",
-      steps: [
-        "Sit in a comfortable position with your back straight.",
-        "Slowly exhale through your mouth, getting all the oxygen out of your lungs.",
-        "Inhale slowly and deeply through your nose to the count of 4.",
-        "Hold your breath for 4 seconds.",
-        "Exhale through your mouth for 4 seconds.",
-        "Hold your breath for 4 seconds.",
-        "Repeat this process for 4 rounds or until you feel calm."
-      ]
-    },
-    {
-      category: "Guided Meditation",
-      title: "Loving-Kindness Meditation",
-      description: "This meditation helps cultivate compassion for yourself and others.",
-      steps: [
-        "Sit comfortably and close your eyes.",
-        "Take a few deep breaths to center yourself.",
-        "Bring to mind someone you care about and silently repeat: 'May you be happy, may you be healthy, may you be safe, may you live with ease.'",
-        "Now direct these wishes to yourself: 'May I be happy, may I be healthy, may I be safe, may I live with ease.'",
-        "Extend these wishes to all beings everywhere: 'May all beings be happy, be healthy, be safe, and live with ease.'",
-        "Sit with these feelings of kindness and compassion for a few moments before opening your eyes."
-      ]
-    }
-  ];
-  
-  function getRandomExercise() {
-    return exercises[Math.floor(Math.random() * exercises.length)];
+const currentExerciseId = ref(null); // Add this to store the exercise ID
+
+const ratingLabels = {
+  1: 'Not Helpful',
+  2: 'Somewhat Helpful',
+  3: 'Helpful',
+  4: 'Quite Helpful',
+  5: 'Very Helpful'
+};
+
+const exercises = [
+  {
+    category: "Breathing Technique",
+    title: "4-7-8 Breathing",
+    description: "This breathing technique can help reduce anxiety and promote relaxation.",
+    steps: [
+      "Sit comfortably and close your eyes.",
+      "Inhale quietly through your nose for 4 seconds.",
+      "Hold your breath for 7 seconds.",
+      "Exhale completely through your mouth for 8 seconds.",
+      "Repeat this cycle 4 times."
+    ]
+  },
+  {
+    category: "Guided Meditation",
+    title: "Body Scan Meditation",
+    description: "This meditation helps increase body awareness and reduce tension.",
+    steps: [
+      "Lie down comfortably and close your eyes.",
+      "Focus on your breath for a few moments.",
+      "Gradually shift your attention to your toes, then move up through each part of your body.",
+      "Notice any sensations without judgment.",
+      "When you reach the top of your head, take a deep breath and slowly open your eyes."
+    ]
+  },
+  {
+    category: "Breathing Technique",
+    title: "Box Breathing",
+    description: "Box breathing is a simple technique that can help you relax and reduce stress.",
+    steps: [
+      "Sit in a comfortable position with your back straight.",
+      "Slowly exhale through your mouth, getting all the oxygen out of your lungs.",
+      "Inhale slowly and deeply through your nose to the count of 4.",
+      "Hold your breath for 4 seconds.",
+      "Exhale through your mouth for 4 seconds.",
+      "Hold your breath for 4 seconds.",
+      "Repeat this process for 4 rounds or until you feel calm."
+    ]
+  },
+  {
+    category: "Guided Meditation",
+    title: "Loving-Kindness Meditation",
+    description: "This meditation helps cultivate compassion for yourself and others.",
+    steps: [
+      "Sit comfortably and close your eyes.",
+      "Take a few deep breaths to center yourself.",
+      "Bring to mind someone you care about and silently repeat: 'May you be happy, may you be healthy, may you be safe, may you live with ease.'",
+      "Now direct these wishes to yourself: 'May I be happy, may I be healthy, may I be safe, may I live with ease.'",
+      "Extend these wishes to all beings everywhere: 'May all beings be happy, be healthy, be safe, and live with ease.'",
+      "Sit with these feelings of kindness and compassion for a few moments before opening your eyes."
+    ]
   }
-  
-  function getDayName(index) {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    return days[index];
+];
+
+function getRandomExercise() {
+  return exercises[Math.floor(Math.random() * exercises.length)];
+}
+
+function getDayName(index) {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return days[index];
+}
+
+async function fetchWeeklyExercises() {
+  try {
+    const response = await axios.get('http://localhost:5000/exercises', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    const exercises = response.data;
+    exercises.forEach(exercise => {
+      const exerciseDate = new Date(exercise.exercise_date);
+      const dayIndex = exerciseDate.getDay();
+      weeklyProgress.value[dayIndex] = true;
+    });
+    const today = new Date();
+    exerciseCompleted.value = exercises.some(exercise => 
+      new Date(exercise.exercise_date).toDateString() === today.toDateString()
+    );
+  } catch (error) {
+    console.error('Error fetching weekly exercises:', error.response ? error.response.data : error.message);
   }
-  
-  async function fetchWeeklyExercises() {
-    try {
-      const response = await axios.get('http://localhost:5000/exercises', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      const exercises = response.data;
-      exercises.forEach(exercise => {
-        const exerciseDate = new Date(exercise.exercise_date);
-        const dayIndex = exerciseDate.getDay();
-        weeklyProgress.value[dayIndex] = true;
-      });
-      const today = new Date();
-      exerciseCompleted.value = exercises.some(exercise => 
-        new Date(exercise.exercise_date).toDateString() === today.toDateString()
-      );
-    } catch (error) {
-      console.error('Error fetching weekly exercises:', error.response ? error.response.data : error.message);
-    }
-  }
-  
-  async function completeExercise() {
+}
+
+async function completeExercise() {
   if (isLoading.value) return;
   isLoading.value = true;
   try {
-    await axios.post('http://localhost:5000/exercises', {
+    const exerciseData = {
       exerciseType: todayExercise.value.category,
       exerciseTitle: todayExercise.value.title
-    }, {
+    };
+
+    const response = await axios.post('http://localhost:5000/exercises', exerciseData, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     });
-    exerciseCompleted.value = true;
-    const today = new Date();
-    const dayIndex = today.getDay();
-    weeklyProgress.value[dayIndex] = true;
-    await fetchWeeklyExercises();
-    showAssessmentModal.value = true; // Show modal after completing exercise
+    
+    currentExerciseId.value = response.data.id; // Store the exercise ID
+    showAssessmentModal.value = true;
   } catch (error) {
     console.error('Error completing exercise:', error.response ? error.response.data : error.message);
+    alert("Failed to complete exercise. Please try again.");
   } finally {
     isLoading.value = false;
   }
 }
+
 function closeModal() {
   showAssessmentModal.value = false;
+  assessmentRating.value = null;
+  currentExerciseId.value = null; // Reset the exercise ID
 }
 
 async function submitAssessment() {
@@ -190,20 +202,26 @@ async function submitAssessment() {
   }
 
   try {
-    await axios.post('http://localhost:5000/assessment', {
-      rating: assessmentRating.value,
-      exerciseType: todayExercise.value.category,
-      exerciseTitle: todayExercise.value.title,
+    await axios.post(`http://localhost:5000/exercises/${currentExerciseId.value}/rating`, {
+      rating: assessmentRating.value
     }, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     });
+    
     alert("Thank you for your feedback!");
+    exerciseCompleted.value = true;
+    const today = new Date();
+    const dayIndex = today.getDay();
+    weeklyProgress.value[dayIndex] = true;
     closeModal();
+    await fetchWeeklyExercises();
   } catch (error) {
-    console.error('Error submitting assessment:', error.response ? error.response.data : error.message);
+    console.error('Error submitting assessment:', error.response?.data || error.message);
+    alert("Failed to submit assessment. Please try again.");
   }
 }
-  onMounted(async () => {
+
+onMounted(async () => {
   isLoggedIn.value = localStorage.getItem('isLoggedIn') === 'true';
   username.value = localStorage.getItem('username') || '';
   
@@ -228,113 +246,113 @@ async function submitAssessment() {
     }
   }
 });
-  </script>
-  
-  <style scoped>
-  .daily-exercise {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .exercise-container {
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 20px;
-  }
-  
-  h1, h2 {
-    color: #0f6016;
-    text-align: center;
-  }
-  
-  .exercise-card {
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }
-  
-  h3 {
-    color: #333;
-    margin-bottom: 15px;
-  }
-  
-  p {
-    margin-bottom: 15px;
-  }
-  
-  ol {
-    padding-left: 20px;
-  }
-  
-  li {
-    margin-bottom: 10px;
-  }
-  
-  .complete-btn {
-    background-color: #0f6016;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 15px;
-  }
-  
-  .complete-btn:hover {
-    background-color: #0a4610;
-  }
-  
-  .complete-btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .completion-message {
-    color: #0f6016;
-    font-weight: bold;
-  }
-  
-  .warning-message {
-    color: #d32f2f;
-    font-weight: bold;
-  }
-  
-  .weekly-progress {
-    margin-top: 30px;
-  }
-  
-  .progress-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    margin-top: 15px;
-  }
-  
-  .progress-day {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: white;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .progress-day span:first-child {
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .progress-day .completed {
-    color: #0f6016;
-  }
+</script>
 
-  /* Modal Styles */
+<style scoped>
+.daily-exercise {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.exercise-container {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+h1, h2 {
+  color: #0f6016;
+  text-align: center;
+}
+
+.exercise-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+p {
+  margin-bottom: 15px;
+}
+
+ol {
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+.complete-btn {
+  background-color: #0f6016;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 15px;
+}
+
+.complete-btn:hover {
+  background-color: #0a4610;
+}
+
+.complete-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.completion-message {
+  color: #0f6016;
+  font-weight: bold;
+}
+
+.warning-message {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.weekly-progress {
+  margin-top: 30px;
+}
+
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.progress-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-day span:first-child {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.progress-day .completed {
+  color: #0f6016;
+}
+
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -367,6 +385,7 @@ textarea {
 .modal-actions {
   display: flex;
   justify-content: space-between;
+  margin-top: 20px;
 }
 
 .submit-btn {
@@ -393,6 +412,7 @@ textarea {
 .cancel-btn:hover {
   background-color: #bbb;
 }
+
 .rating-container {
   display: flex;
   justify-content: space-around;
@@ -417,4 +437,4 @@ textarea {
   background-color: #0f6016;
   color: white;
 }
-  </style>
+</style>

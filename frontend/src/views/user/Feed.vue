@@ -5,53 +5,66 @@
     <!-- Left Section -->
     <div class="left-section">
       <div class="card bg-white shadow-md rounded-lg p-6">
-    <h2 class="text-xl font-semibold mb-4 text-green-800">How are you feeling today?</h2>
-    <div class="post-form">
-      <textarea 
-        v-model="newPostContent" 
-        placeholder="Share your thoughts..." 
-        class="post-input border border-gray-300 rounded-md p-2 w-full"
-      ></textarea>
-      <button 
-        @click="createPost" 
-        class="post-button mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
-        :disabled="!newPostContent.trim()"
-      >
-        Post
-      </button>
-    </div>
-  </div>
+        <h2 class="text-xl font-semibold mb-4 text-green-800">How are you feeling today?</h2>
+        <div class="post-form">
+          <textarea 
+            v-model="newPostContent" 
+            placeholder="Share your thoughts..." 
+            class="post-input border border-gray-300 rounded-md p-2 w-full"
+          ></textarea>
+          <button 
+            @click="createPost" 
+            class="post-button mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
+            :disabled="!newPostContent.trim()"
+          >
+            Post
+          </button>
+        </div>
+      </div>
+
       <div class="posts-list">
-        <div v-for="post in posts" :key="post.id" class="post">
+        <div v-for="post in posts" :key="post.id" class="post bg-white shadow-md rounded-lg p-6 mb-4">
           <div class="post-header">
             <img 
               :src="getProfilePicture(post.profile_picture)" 
               :alt="post.username" 
-              class="author-avatar" 
+              class="author-avatar"
             />
-            <span class="author-name">{{ post.username }}</span>
-            <span class="text-gray-500 ml-2 text-sm">
-              {{ formatDate(post.created_at) }}
-            </span>
-          </div>
-          <p class="post-content">{{ post.content }}</p>
-          <div class="post-actions">
-            <div class="reaction-button-container" @mouseover="showReactions = post.id" @mouseleave="showReactions = null">
-              <button class="reaction-button">React</button>
-              <div v-if="showReactions === post.id" class="reaction-options">
-                <button @click="addReaction(post.id, 'Like')" class="reaction-option">👍 Like</button>
-                <button @click="addReaction(post.id, 'Heart')" class="reaction-option">❤️ Heart</button>
-                <button @click="addReaction(post.id, 'Haha')" class="reaction-option">😂 Haha</button>
-                <button @click="addReaction(post.id, 'Care')" class="reaction-option">🤗 Care</button>
-                <button @click="addReaction(post.id, 'Sad')" class="reaction-option">😢 Sad</button>
+            <div class="author-name">{{ post.username }}</div>
+            <div class="post-menu" v-if="post.student_id === userInfo.student_id">
+              <button @click="togglePostMenu(post.id)" class="post-menu-button">⋮</button>
+              <div v-if="post.showMenu" class="post-menu-dropdown">
+                <button @click="editPost(post.id)">Edit</button>
+                <button @click="deletePost(post.id)">Delete</button>
               </div>
             </div>
-            <button @click="openReactionsModal(post)" class="reaction-count-button">
-              {{ post.reactions_count }} Reactions
-            </button>
-            <button @click="openCommentsModal(post)" class="comment-count-button">
-              {{ post.comments_count }} Comments
-            </button>
+          </div>
+          <div class="post-content">
+            <div v-if="post.isEditing">
+              <textarea v-model="post.editedContent" class="edit-textarea"></textarea>
+              <button @click="updatePost(post.id)" class="update-button">Update</button>
+            </div>
+            <div v-else>
+              <p>{{ post.content }}</p>
+              <div class="post-actions">
+                <div class="reaction-button-container" @mouseover="showReactions = post.id" @mouseleave="showReactions = null">
+                  <button class="reaction-button">React</button>
+                  <div v-if="showReactions === post.id" class="reaction-options">
+                    <button @click="addReaction(post.id, 'Like')" class="reaction-option">👍 Like</button>
+                    <button @click="addReaction(post.id, 'Heart')" class="reaction-option">❤️ Heart</button>
+                    <button @click="addReaction(post.id, 'Haha')" class="reaction-option">😂 Haha</button>
+                    <button @click="addReaction(post.id, 'Care')" class="reaction-option">🤗 Care</button>
+                    <button @click="addReaction(post.id, 'Sad')" class="reaction-option">😢 Sad</button>
+                  </div>
+                </div>
+                <button @click="openReactionsModal(post)" class="reaction-count-button">
+                  {{ post.reactions_count }} Reactions
+                </button>
+                <button @click="openCommentsModal(post)" class="comment-count-button">
+                  {{ post.comments_count }} Comments
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -245,8 +258,7 @@ import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Navbar.vue';
 import Footer from "@/components/Footer.vue";
-import Modal from '@/components/Modal.vue'
-import { Pie } from 'vue-chartjs';
+import Modal from '@/components/Modal.vue';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
@@ -348,6 +360,7 @@ const updateChartData = (moods, chartData) => {
     }]
   };
 };
+
 // Profile picture helper
 const getProfilePicture = (profilePath) => {
   return profilePath 
@@ -378,11 +391,14 @@ const fetchPosts = async () => {
     });
     posts.value = response.data.map(post => ({
       ...post,
+      showMenu: false,
       showComments: false,
       showReactions: false,
       newComment: '',
       comments: post.comments || [],
       reactions: post.reactions || [],
+      isEditing: false,
+      editedContent: post.content,
     }));
   } catch (error) {
     console.error('Failed to fetch posts:', error);
@@ -403,6 +419,54 @@ const createPost = async () => {
     await fetchPosts();
   } catch (error) {
     console.error('Failed to create post:', error);
+  }
+};
+
+// Toggle post menu
+const togglePostMenu = (postId) => {
+  posts.value = posts.value.map(post => ({
+    ...post,
+    showMenu: post.id === postId ? !post.showMenu : false,
+  }));
+};
+
+// Edit post
+const editPost = (postId) => {
+  posts.value = posts.value.map(post => ({
+    ...post,
+    isEditing: post.id === postId ? true : post.isEditing,
+  }));
+};
+
+// Update post
+const updatePost = async (postId) => {
+  const post = posts.value.find(post => post.id === postId);
+  if (!post.editedContent.trim()) return;
+  try {
+    const token = localStorage.getItem('token');
+    await axios.put(
+      `http://localhost:5000/posts/${postId}`,
+      { content: post.editedContent },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    post.isEditing = false;
+    await fetchPosts();
+  } catch (error) {
+    console.error('Failed to update post:', error);
+  }
+};
+
+// Delete post
+const deletePost = async (postId) => {
+  if (!confirm('Are you sure you want to delete this post?')) return;
+  try {
+    const token = localStorage.getItem('token');
+    await axios.delete(`http://localhost:5000/posts/${postId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    await fetchPosts();
+  } catch (error) {
+    console.error('Failed to delete post:', error);
   }
 };
 
@@ -933,5 +997,62 @@ onMounted(async () => {
 .modal-content {
   max-height: 400px; /* Adjust the height as needed */
   overflow-y: auto;
+}
+.post-menu {
+  position: relative;
+  margin-left: auto;
+}
+
+.post-menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.post-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.post-menu-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.post-menu-dropdown button:hover {
+  background: #f0f0f0;
+}
+.edit-textarea {
+  width: 100%;
+  height: 100px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.update-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.update-button:hover {
+  background-color: #45a049;
 }
 </style>

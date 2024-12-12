@@ -4,26 +4,76 @@
   <div class="content-wrapper">
     <!-- Left Section -->
     <div class="left-section">
-      <div class="card bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-xl font-semibold mb-4 text-green-800">How are you feeling today?</h2>
+      <div class="mood-tracker-wrapper">
+        <div class="card mood-tracker-card">
+          <h2 class="card-title">Mood Tracker</h2>
+          <div v-if="hasSubmittedToday">
+            <p>You have already submitted your mood for today. Please come back tomorrow.</p>
+          </div>
+          <div v-else>
+            <div class="character-selector">
+              <span 
+                @click="selectMood('Joy')" 
+                class="mood-icon" 
+                title="Joy"
+                :class="{ zoomed: mood === 'Joy' }">
+                😊
+              </span>
+              <span 
+                @click="selectMood('Sadness')" 
+                class="mood-icon" 
+                title="Sadness"
+                :class="{ zoomed: mood === 'Sadness' }">
+                😞
+              </span>
+              <span 
+                @click="selectMood('Anger')" 
+                class="mood-icon" 
+                title="Anger"
+                :class="{ zoomed: mood === 'Anger' }">
+                😡
+              </span>
+              <span 
+                @click="selectMood('Disgust')" 
+                class="mood-icon" 
+                title="Disgust"
+                :class="{ zoomed: mood === 'Disgust' }">
+                🤢
+              </span>
+              <span 
+                @click="selectMood('Fear')" 
+                class="mood-icon" 
+                title="Fear"
+                :class="{ zoomed: mood === 'Fear' }">
+                😨
+              </span>
+            </div>
+          </div>
+          <div v-if="message">{{ message }}</div>
+        </div>
+      </div>
+    <br>
+      <div class="card">
+        <h2 class="card-title">How are you feeling today?</h2>
         <div class="post-form">
           <textarea 
             v-model="newPostContent" 
             placeholder="Share your thoughts..." 
-            class="post-input border border-gray-300 rounded-md p-2 w-full"
+            class="post-input"
           ></textarea>
           <button 
             @click="createPost" 
-            class="post-button mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
+            class="post-button"
             :disabled="!newPostContent.trim()"
           >
             Post
           </button>
         </div>
       </div>
+      <br>
 
       <div class="posts-list">
-        <div v-for="post in posts" :key="post.id" class="post bg-white shadow-md rounded-lg p-6 mb-4">
+        <div v-for="post in posts" :key="post.id" class="post card">
           <div class="post-header">
             <img 
               :src="getProfilePicture(post.profile_picture)" 
@@ -71,57 +121,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Right Section -->
-    <div class="right-section">
-      <div class="card mood-tracker-card">
-        <h1>Mood Tracker</h1>
-        <div v-if="hasSubmittedToday">
-          <p>You have already submitted your mood for today. Please come back tomorrow.</p>
-        </div>
-        <div v-else>
-          <div class="character-selector">
-            <span 
-              @click="selectMood('Joy')" 
-              class="mood-icon" 
-              title="Joy"
-              :class="{ zoomed: mood === 'Joy' }">
-              😊
-            </span>
-            <span 
-              @click="selectMood('Sadness')" 
-              class="mood-icon" 
-              title="Sadness"
-              :class="{ zoomed: mood === 'Sadness' }">
-              😞
-            </span>
-            <span 
-              @click="selectMood('Anger')" 
-              class="mood-icon" 
-              title="Anger"
-              :class="{ zoomed: mood === 'Anger' }">
-              😡
-            </span>
-            <span 
-              @click="selectMood('Disgust')" 
-              class="mood-icon" 
-              title="Disgust"
-              :class="{ zoomed: mood === 'Disgust' }">
-              🤢
-            </span>
-            <span 
-              @click="selectMood('Fear')" 
-              class="mood-icon" 
-              title="Fear"
-              :class="{ zoomed: mood === 'Fear' }">
-              😨
-            </span>
-          </div>
-        </div>
-        <div v-if="message">{{ message }}</div>
-      </div>
-      <div><br></div>
     </div>
   </div>
 
@@ -468,81 +467,36 @@ onMounted(async () => {
 });
 </script>
 
+
 <style scoped>
-.card {
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* General styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  margin: 0;
 }
+
 .content-wrapper {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
   gap: 16px;
-}
-.mood-tracker-card {
-  background: linear-gradient(109.6deg, rgb(0, 204, 130) 11.2%, rgb(58, 181, 46) 91.7%);
-}
-.character-selector span {
-  font-size: 1.8rem;
-  cursor: pointer;
-  margin: 0 15px;
-  position: relative;
-}
-
-.left-section, .right-section {
-  width: 48%;
-}
-
-.left-section {
-  flex: 3; /* Left section is wider */
-  padding: 16px;
-}
-
-.right-section {
-  flex: 2; /* Right section is smaller */
-  padding: 16px;
-}
-
-.post-form {
-  margin-bottom: 20px;
-}
-
-.post-input {
   width: 100%;
-  height: 100px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  resize: none;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.post-button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #2a9d8f;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.post-button:disabled {
-  background-color: #a0a0a0;
-  cursor: not-allowed;
-}
-
-.posts-list {
-  margin-top: 20px;
-}
-
+/* Post styles */
 .post {
   background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  padding: 20px;
+  width: 100%;
 }
 
 .post-header {
@@ -559,89 +513,30 @@ onMounted(async () => {
   object-fit: cover;
 }
 
-.author-name {
+.post-author {
   font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.post-time {
+  font-size: 0.9rem;
+  color: #888;
 }
 
 .post-content {
-  margin-bottom: 10px;
+  margin-top: 10px;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 .post-actions {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.reaction-button-container {
-  position: relative;
-}
-
-.reaction-button {
-  background-color: #2a9d8f;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.reaction-options {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-}
-
-.reaction-option {
-  padding: 5px 10px;
-  cursor: pointer;
-  background-color: white;
-  border: none;
-  text-align: left;
-}
-
-.reaction-option:hover {
-  background-color: #f0f0f0;
-}
-
-.comment-button, .reaction-count-button, .comment-count-button {
-  background-color: #2a9d8f;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-
-.feed-title {
-  text-align: center;
-  color: #2a9d8f;
-  margin-bottom: 20px;
-}
-
-.post-form {
-  margin-bottom: 20px;
-}
-
-.post-input {
-  width: 100%;
-  height: 100px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  resize: none;
+  margin-top: 10px;
 }
 
 .post-button {
-  margin-top: 10px;
   padding: 10px 20px;
   background-color: #2a9d8f;
   color: white;
@@ -651,61 +546,16 @@ onMounted(async () => {
 }
 
 .post-button:disabled {
-  background-color: #a0a0a0;
-  cursor: not-allowed;
+  background-color: #ccc;
 }
 
-.posts-list {
-  margin-top: 20px;
+.post-button:hover {
+  background-color: #21867a;
 }
 
-.post {
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 15px;
-  margin-bottom: 20px;
-}
-
-.post-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.author-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-  object-fit: cover;
-}
-
-.author-name {
-  font-weight: bold;
-}
-
-.post-content {
-  margin-bottom: 10px;
-}
-
-.post-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+/* Reaction styles */
 .reaction-button-container {
   position: relative;
-}
-
-.reaction-button {
-  background-color: #2a9d8f;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
 }
 
 .reaction-options {
@@ -713,7 +563,6 @@ onMounted(async () => {
   top: 100%;
   left: 0;
   display: flex;
-  flex-direction: column;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -724,24 +573,21 @@ onMounted(async () => {
 .reaction-option {
   padding: 5px 10px;
   cursor: pointer;
-  background-color: white;
-  border: none;
-  text-align: left;
 }
 
 .reaction-option:hover {
   background-color: #f0f0f0;
 }
 
-.comment-button, .reaction-count-button, .comment-count-button {
-  background-color: #2a9d8f;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
+.reaction-author-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 5px;
+  object-fit: cover;
 }
 
+/* Comment styles */
 .comments-section {
   margin-top: 10px;
 }
@@ -754,21 +600,17 @@ onMounted(async () => {
   object-fit: cover;
 }
 
-.comment-author {
-  font-weight: bold;
+.comment {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .comment-content {
-  margin-top: 5px;
-}
-
-.comment-input {
-  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 10px;
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  resize: none;
-  margin-bottom: 10px;
+  flex: 1;
 }
 
 .add-comment-button {
@@ -778,6 +620,121 @@ onMounted(async () => {
   border-radius: 5px;
   padding: 5px 10px;
   cursor: pointer;
+}
+
+.add-comment-button:hover {
+  background-color: #21867a;
+}
+
+/* Post menu dropdown */
+.post-menu-dropdown {
+  position: relative;
+}
+
+.post-menu-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.post-menu-dropdown button:hover {
+  background: #f0f0f0;
+}
+
+/* Update button */
+.update-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.update-button:hover {
+  background-color: #45a049;
+}
+
+/* Delete button */
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}
+
+/* Additional styles */
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.mood-tracker-card {
+  background: linear-gradient(109.6deg, rgb(0, 204, 130) 11.2%, rgb(58, 181, 46) 91.7%);
+}
+
+.character-selector span {
+  font-size: 1.8rem;
+  cursor: pointer;
+  margin: 0 15px;
+  position: relative;
+}
+
+.post-form {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.post-input {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: none;
+}
+
+.comment-button, .reaction-count-button, .comment-count-button {
+  background-color: #2a9d8f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.feed-title {
+  text-align: center;
+  color: #2a9d8f;
+  margin-bottom: 20px;
+}
+
+.comment-author {
+  font-weight: bold;
+}
+
+.comment-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: none;
+  margin-bottom: 10px;
 }
 
 .reactions-section {
@@ -811,26 +768,15 @@ onMounted(async () => {
   align-items: center;
 }
 
-.reaction-author-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  margin-right: 5px;
-  object-fit: cover;
-}
-
-.reaction-author {
-  font-weight: bold;
-}
-
 .reaction-type {
   margin-left: 5px;
 }
 
 .modal-content {
-  max-height: 400px; /* Adjust the height as needed */
+  max-height: 400px;
   overflow-y: auto;
 }
+
 .post-menu {
   position: relative;
   margin-left: auto;
@@ -843,30 +789,6 @@ onMounted(async () => {
   font-size: 1.5rem;
 }
 
-.post-menu-dropdown {
-  position: absolute;
-  right: 0;
-  top: 100%;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-}
-
-.post-menu-dropdown button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background: none;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-}
-
-.post-menu-dropdown button:hover {
-  background: #f0f0f0;
-}
 .edit-textarea {
   width: 100%;
   height: 100px;
@@ -874,18 +796,5 @@ onMounted(async () => {
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
-}
-
-.update-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.update-button:hover {
-  background-color: #45a049;
 }
 </style>

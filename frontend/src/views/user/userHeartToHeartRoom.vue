@@ -60,6 +60,7 @@
                 <span class="font-medium">Time:</span>
                 {{ formatTime(currentAppointment.start_time) }} - {{ formatTime(currentAppointment.end_time) }}
               </p>
+              <br>
               <a
                 :href="currentAppointment.meeting_link"
                 target="_blank"
@@ -67,6 +68,7 @@
               >
                 {{ currentAppointment.meeting_link }}
               </a>
+              <br><br>
               <button
                 @click="cancelAppointment"
                 class="cancel w-full"
@@ -260,7 +262,7 @@ export default {
 <style scoped>
 /* Container styles */
 .container {
-  max-width: 1200px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
 }

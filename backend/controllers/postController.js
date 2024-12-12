@@ -1,16 +1,31 @@
 const postModel = require('../models/postModel');
+const multer = require('multer');
+const path = require('path');
 
-exports.createPost = (req, res) => {
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/posts/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'post-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
+
+exports.createPost = [upload.single('image'), (req, res) => {
   const { content, emotion } = req.body;
   const studentId = req.user.student_id;
+  const imageUrl = req.file ? `/uploads/posts/${req.file.filename}` : null;
 
-  postModel.createPost({ studentId, content, emotion }, (err, result) => {
+  postModel.createPost({ studentId, content, emotion, imageUrl }, (err, result) => {
     if (err) {
       return res.status(500).json({ message: 'Failed to create post', error: err });
     }
     res.status(201).json({ message: 'Post created successfully', postId: result.insertId });
   });
-};
+}];
 
 exports.getPosts = (req, res) => {
   postModel.getPosts((err, results) => {

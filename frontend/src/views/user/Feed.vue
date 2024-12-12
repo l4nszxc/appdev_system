@@ -53,23 +53,39 @@
         </div>
       </div>
     <br>
-      <div class="card">
-        <h2 class="card-title">How are you feeling today?</h2>
-        <div class="post-form">
-          <textarea 
-            v-model="newPostContent" 
-            placeholder="Share your thoughts..." 
-            class="post-input"
-          ></textarea>
-          <button 
-            @click="createPost" 
-            class="post-button"
-            :disabled="!newPostContent.trim()"
-          >
-            Post
-          </button>
+    <div class="card">
+    <h2 class="card-title">How are you feeling today?</h2>
+    <div class="post-form">
+      <textarea 
+        v-model="newPostContent" 
+        placeholder="Share your thoughts..." 
+        class="post-input"
+      ></textarea>
+      <div class="image-upload">
+        <input 
+          type="file" 
+          ref="imageInput"
+          @change="handleImageSelect"
+          accept="image/*"
+          class="hidden"
+        />
+        <button @click="triggerImageUpload" class="upload-btn">
+          📷 Add Image
+        </button>
+        <div v-if="selectedImage" class="image-preview">
+          <img :src="imagePreview" alt="Preview" />
+          <button @click="removeImage" class="remove-image">×</button>
         </div>
       </div>
+      <button 
+        @click="createPost" 
+        class="post-button"
+        :disabled="!newPostContent.trim()"
+      >
+        Post
+      </button>
+    </div>
+  </div>
       <br>
 
       <div class="posts-list">
@@ -99,6 +115,14 @@
             </div>
             <div v-else>
               <p>{{ post.content }}</p>
+              <!-- Add image display -->
+              <img 
+                v-if="post.image_url" 
+                :src="`http://localhost:5000${post.image_url}`" 
+                alt="Post image"
+                class="post-image"
+                @error="handleImageError"
+              />
               <div class="post-actions">
                 <div class="reaction-button-container" @mouseover="showReactions = post.id" @mouseleave="showReactions = null">
                   <button class="reaction-button">React</button>
@@ -206,6 +230,8 @@ const currentPost = ref({});
 const showReactions = ref(null);
 const selectedReactionType = ref('Like');
 const reactionTypes = ['Like', 'Heart', 'Haha', 'Care', 'Sad'];
+const selectedImage = ref(null);
+const imagePreview = ref('');
 
 // Mood Tracker State Variables
 const mood = ref('');
@@ -224,6 +250,10 @@ const monthlyChartData = ref({
 const selectMood = async (selectedMood) => {
   mood.value = selectedMood;
   await submitMood();
+};
+const handleImageError = (e) => {
+  e.target.style.display = 'none'; // Hide broken images
+  console.error('Failed to load image');
 };
 
 const submitMood = async () => {
@@ -302,7 +332,7 @@ const fetchPosts = async () => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get('http://localhost:5000/posts', {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${token}` }
     });
     posts.value = response.data.map(post => ({
       ...post,
@@ -314,23 +344,53 @@ const fetchPosts = async () => {
       reactions: post.reactions || [],
       isEditing: false,
       editedContent: post.content,
+      image_url: post.image_url
     }));
   } catch (error) {
     console.error('Failed to fetch posts:', error);
+  }
+};
+const handleImageSelect = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    selectedImage.value = file;
+    imagePreview.value = URL.createObjectURL(file);
+  }
+};
+
+const triggerImageUpload = () => {
+  document.querySelector('input[type="file"]').click();
+};
+
+const removeImage = () => {
+  selectedImage.value = null;
+  imagePreview.value = '';
+  if (document.querySelector('input[type="file"]')) {
+    document.querySelector('input[type="file"]').value = '';
   }
 };
 
 // Create a new post
 const createPost = async () => {
   if (!newPostContent.value.trim()) return;
+  
   try {
+    const formData = new FormData();
+    formData.append('content', newPostContent.value);
+    if (selectedImage.value) {
+      formData.append('image', selectedImage.value);
+    }
+    
     const token = localStorage.getItem('token');
-    await axios.post(
-      'http://localhost:5000/posts',
-      { content: newPostContent.value },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    await axios.post('http://localhost:5000/posts', formData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    
     newPostContent.value = '';
+    removeImage();
     await fetchPosts();
   } catch (error) {
     console.error('Failed to create post:', error);
@@ -796,5 +856,54 @@ body {
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
+}
+.image-upload {
+  margin: 10px 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.upload-btn {
+  background-color: #4a9eff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.image-preview {
+  position: relative;
+  margin-top: 10px;
+  max-width: 300px;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.remove-image {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.post-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+  object-fit: contain;
 }
 </style>

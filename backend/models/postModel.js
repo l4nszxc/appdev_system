@@ -1,8 +1,8 @@
 const db = require('../config/db');
 
 const createPost = (postData, callback) => {
-  const sql = 'INSERT INTO posts (student_id, content, emotion) VALUES (?, ?, ?)';
-  db.query(sql, [postData.studentId, postData.content, postData.emotion], callback);
+  const sql = 'INSERT INTO posts (student_id, content, emotion, image_url) VALUES (?, ?, ?, ?)';
+  db.query(sql, [postData.studentId, postData.content, postData.emotion, postData.imageUrl], callback);
 };
 
 const getPosts = (callback) => {
@@ -11,6 +11,7 @@ const getPosts = (callback) => {
       p.id, 
       p.content, 
       p.emotion, 
+      p.image_url, 
       p.reactions,
       p.comments_count,
       p.created_at, 

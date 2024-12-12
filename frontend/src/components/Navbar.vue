@@ -20,7 +20,6 @@
           <i class="fas fa-comments"></i>
           <span class="link-text">Chat Support</span>
         </router-link>
-        
         <router-link to="/daily-exercise" class="nav-link">
           <i class="fas fa-running"></i>
           <span class="link-text">Daily Exercise</span>
@@ -36,6 +35,10 @@
         <router-link to="/user/userEmpathyC" class="nav-link">
           <i class="fas fa-hand-holding-heart"></i>
           <span class="link-text">Empathy Challenge</span>
+        </router-link>
+        <router-link to="/user/userHeartToHeartRoom" class="nav-link">
+          <i class="fas fa-heart"></i>
+          <span class="link-text">Heart to Heart</span>
         </router-link>
         <div class="profile-menu">
           <img 
@@ -68,8 +71,6 @@
     </div>
   </nav>
 </template>
-
-
 
 <script>
 import { ref, computed } from 'vue';

@@ -71,12 +71,12 @@ exports.getAppointmentsByDate = async (req, res) => {
 
 exports.getCurrentAppointment = async (req, res) => {
   try {
-      const appointment = await HeartToHeart.getCurrentAppointment(req.user.student_id);
-      console.log('Current Appointment:', appointment); // Log the appointment
-      res.json(appointment);
+    const appointment = await HeartToHeart.getCurrentAppointment(req.user.student_id);
+    console.log('Current Appointment:', appointment); // Log the appointment
+    res.json(appointment);
   } catch (error) {
-      console.error('Error getting current appointment:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    console.error('Error getting current appointment:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 

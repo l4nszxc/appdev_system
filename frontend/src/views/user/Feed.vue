@@ -25,16 +25,16 @@
       <div class="posts-list">
         <div v-for="post in posts" :key="post.id" class="post bg-white shadow-md rounded-lg p-6 mb-4">
           <div class="post-header">
-  <img 
-    :src="getProfilePicture(post.profile_picture)" 
-    :alt="post.username" 
-    class="author-avatar"
-  />
-  <div class="author-info">
-    <div class="author-name">{{ post.username }}</div>
-    <span class="post-date">{{ formatDate(post.created_at) }}</span>
-  </div>
-  <div class="post-menu" v-if="post.student_id === userInfo.student_id">
+            <img 
+              :src="getProfilePicture(post.profile_picture)" 
+              :alt="post.username" 
+              class="author-avatar"
+            />
+            <div class="author-info">
+              <div class="author-name">{{ post.username }}</div>
+              <span class="post-date">{{ formatDate(post.created_at) }}</span>
+            </div>
+            <div class="post-menu" v-if="post.student_id === userInfo.student_id">
               <button @click="togglePostMenu(post.id)" class="post-menu-button">⋮</button>
               <div v-if="post.showMenu" class="post-menu-dropdown">
                 <button @click="editPost(post.id)">Edit</button>
@@ -75,7 +75,6 @@
 
     <!-- Right Section -->
     <div class="right-section">
-      
       <div class="card mood-tracker-card">
         <h1>Mood Tracker</h1>
         <div v-if="hasSubmittedToday">
@@ -122,121 +121,41 @@
         </div>
         <div v-if="message">{{ message }}</div>
       </div>
-
       <div><br></div>
-      
-      <div class="card heartRoom">
-        <h2 class="text-2xl font-semibold mb-4 text-green-800">Heart-to-Heart Room</h2>
-
-        
-        <!-- Appointment Scheduling Section -->
-        <div v-if="!currentAppointment">
-          <h3 class="text-lg font-semibold mb-4 text-green-700">Schedule an Appointment</h3>
-
-          <!-- Date Selection -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
-            <input
-              type="date"
-              v-model="selectedDate"
-              class="w-full p-3 border rounded-lg focus:ring-green-500 focus:border-green-500"
-              :min="today"
-              @change="loadTimeSlots"
-            />
-          </div>
-
-          <!-- Time Slots -->
-          <div v-if="selectedDate" class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Available Time Slots</label>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <div
-                v-for="slot in timeSlots"
-                :key="slot.time"
-                @click="selectTimeSlot(slot)"
-                :class="[ 'card p-3 rounded-lg text-center cursor-pointer transition-all',
-                          slot.available ? 'bg-green-100 hover:bg-green-200 text-green-800' : 'bg-gray-100 text-gray-400 cursor-not-allowed' ]"
-              >
-                {{ formatTime(slot.time) }}
-              </div>
-            </div>
-          </div>
-
-          <div v-if="error" class="text-red-600 mb-4">
-            {{ error }}
-          </div>
-        </div>
-
-        <!-- Current Appointment Display -->
-<div v-if="currentAppointment" class="card p-6 rounded-lg"
-     :class="{'bg-green-100 border-2 border-green-500': currentAppointment.status === 'complete'}">
-  <h3 class="text-lg font-semibold mb-2 text-green-700">Your Current Appointment</h3>
-  
-  <div class="flex flex-col gap-2">
-    <p class="mb-2">
-      <span class="font-medium">Date:</span>
-      {{ formatDate(currentAppointment.date) }}
-    </p>
-    <p class="mb-2">
-      <span class="font-medium">Time:</span>
-      {{ formatTime(currentAppointment.start_time) }} - {{ formatTime(currentAppointment.end_time) }}
-    </p>
-    
-    <!-- Only show Complete status -->
-    <div v-if="currentAppointment.status === 'complete'" 
-         class="bg-green-500 text-white px-3 py-1 rounded-full text-center w-fit">
-      Complete
-    </div>
-  </div>
-
-  <!-- Action buttons -->
-  <div class="mt-4">
-    <button v-if="currentAppointment.status === 'complete'"
-            @click="clearCurrentAppointment"
-            class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-      Schedule New Appointment
-    </button>
-    <button v-else
-            @click="cancelAppointment"
-            class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-      Cancel Appointment
-    </button>
-  </div>
-</div>
-      </div>
     </div>
   </div>
 
   <!-- Comments Modal -->
   <Modal :show="showCommentsModal" @close="closeCommentsModal">
-  <div class="modal-content">
-    <h2>Comments</h2>
-    <textarea 
-      v-model="currentPost.newComment" 
-      placeholder="Write a comment..." 
-      class="comment-input">
-    </textarea>
-    <button 
-      @click="addComment(currentPost.id, currentPost.newComment)" 
-      class="add-comment-button">
-      Add Comment
-    </button>
+    <div class="modal-content">
+      <h2>Comments</h2>
+      <textarea 
+        v-model="currentPost.newComment" 
+        placeholder="Write a comment..." 
+        class="comment-input">
+      </textarea>
+      <button 
+        @click="addComment(currentPost.id, currentPost.newComment)" 
+        class="add-comment-button">
+        Add Comment
+      </button>
 
-    <div v-for="comment in currentPost.comments" :key="comment.id" class="comment">
-      <div class="comment-header">
-        <img 
-          :src="getProfilePicture(comment.profile_picture)" 
-          :alt="comment.username" 
-          class="comment-author-avatar" 
-        />
-        <div class="comment-info">
-          <span class="comment-author">{{ comment.username }}</span>
-          <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+      <div v-for="comment in currentPost.comments" :key="comment.id" class="comment">
+        <div class="comment-header">
+          <img 
+            :src="getProfilePicture(comment.profile_picture)" 
+            :alt="comment.username" 
+            class="comment-author-avatar" 
+          />
+          <div class="comment-info">
+            <span class="comment-author">{{ comment.username }}</span>
+            <span class="comment-date">{{ formatDate(comment.created_at) }}</span>
+          </div>
         </div>
+        <p class="comment-content">{{ comment.content }}</p>
       </div>
-      <p class="comment-content">{{ comment.content }}</p>
     </div>
-  </div>
-</Modal>
+  </Modal>
 
   <!-- Reactions Modal -->
   <Modal :show="showReactionsModal" @close="closeReactionsModal">
@@ -266,8 +185,6 @@
   <Footer />
 </template>
 
-
-
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
@@ -277,22 +194,6 @@ import Modal from '@/components/Modal.vue';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
-
-// Appointment Scheduling State Variables
-const selectedDate = ref('');
-const timeSlots = ref([
-  { time: '08:00:00', available: true },
-  { time: '09:00:00', available: true },
-  { time: '10:00:00', available: true },
-  { time: '11:00:00', available: true },
-  { time: '13:00:00', available: true },
-  { time: '14:00:00', available: true },
-  { time: '15:00:00', available: true },
-  { time: '16:00:00', available: true },
-]);
-const currentAppointment = ref(null);
-const error = ref('');
-const today = new Date().toISOString().split('T')[0];
 
 // User Details and Posts State Variables
 const posts = ref([]);
@@ -324,12 +225,6 @@ const monthlyChartData = ref({
 const selectMood = async (selectedMood) => {
   mood.value = selectedMood;
   await submitMood();
-};
-const clearCurrentAppointment = () => {
-  currentAppointment.value = null;
-  selectedDate.value = '';
-  error.value = '';
-  loadTimeSlots();
 };
 
 const submitMood = async () => {
@@ -532,78 +427,6 @@ const addComment = async (postId, content) => {
   }
 };
 
-// Appointment Scheduling Functions
-const loadTimeSlots = async () => {
-  if (!selectedDate.value) return;
-  try {
-    error.value = '';
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`http://localhost:5000/api/appointments`, {
-      params: { date: selectedDate.value },
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    timeSlots.value = timeSlots.value.map(slot => ({ ...slot, available: true }));
-    response.data.forEach(appointment => {
-      const slot = timeSlots.value.find(s => s.time === appointment.start_time);
-      if (slot) slot.available = false;
-    });
-    if (response.data.length >= 2) {
-      timeSlots.value = timeSlots.value.map(slot => ({ ...slot, available: false }));
-    }
-  } catch (err) {
-    console.error('Error loading time slots:', err);
-    error.value = err.response?.data?.message || 'Failed to load available time slots';
-  }
-};
-
-const selectTimeSlot = async (slot) => {
-  if (!slot.available) return;
-  try {
-    error.value = '';
-    const token = localStorage.getItem('token');
-    const response = await axios.post('http://localhost:5000/api/appointments', {
-      date: selectedDate.value,
-      start_time: slot.time
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    currentAppointment.value = response.data;
-    await loadTimeSlots();
-  } catch (err) {
-    console.error('Error scheduling appointment:', err);
-    error.value = err.response?.data?.message || 'Failed to schedule appointment';
-  }
-};
-
-const cancelAppointment = async () => {
-  if (!currentAppointment.value) return;
-  try {
-    error.value = '';
-    const token = localStorage.getItem('token');
-    await axios.delete(`http://localhost:5000/api/appointments/${currentAppointment.value.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    currentAppointment.value = null;
-    await loadTimeSlots();
-  } catch (err) {
-    console.error('Error canceling appointment:', err);
-    error.value = err.response?.data?.message || 'Failed to cancel appointment';
-  }
-};
-
-const loadCurrentAppointment = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get('http://localhost:5000/api/appointments/current', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    currentAppointment.value = response.data;
-  } catch (err) {
-    console.error('Error loading current appointment:', err);
-    error.value = err.response?.data?.message || 'Failed to load current appointment';
-  }
-};
-
 // Date formatting utility
 const formatTime = (time) => new Date(`2000-01-01T${time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -640,13 +463,10 @@ onMounted(async () => {
   if (isLoggedIn.value) {
     await fetchUserDetails();
     await fetchPosts();
-    await loadCurrentAppointment();
     await fetchMoods();
   }
 });
 </script>
-
-
 
 <style scoped>
 .card {
@@ -662,9 +482,6 @@ onMounted(async () => {
   gap: 16px;
 }
 .mood-tracker-card {
-  background: linear-gradient(109.6deg, rgb(0, 204, 130) 11.2%, rgb(58, 181, 46) 91.7%);
-}
-.heartRoom{
   background: linear-gradient(109.6deg, rgb(0, 204, 130) 11.2%, rgb(58, 181, 46) 91.7%);
 }
 .character-selector span {
@@ -686,11 +503,6 @@ onMounted(async () => {
 .right-section {
   flex: 2; /* Right section is smaller */
   padding: 16px;
-}
-
-
-.feed-container {
-  max-width: 100%;
 }
 
 .post-form {

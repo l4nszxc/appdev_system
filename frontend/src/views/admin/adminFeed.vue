@@ -459,4 +459,54 @@ body {
   width: 50px;
   text-align: right;
 }
+.sentiment-results {
+  padding: 20px;
+}
+
+.sentiment-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.emotions-breakdown {
+  margin-top: 20px;
+}
+
+.emotion-bar {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  gap: 10px;
+}
+
+.emotion-label {
+  width: 100px;
+  text-transform: capitalize;
+}
+
+.progress-container {
+  flex: 1;
+  background: #eee;
+  height: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background: #4CAF50;
+  transition: width 0.3s ease;
+}
+
+.confidence-value {
+  min-width: 60px;
+  text-align: right;
+}
+
+.content-section {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
 </style>

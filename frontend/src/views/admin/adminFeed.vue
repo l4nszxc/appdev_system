@@ -70,12 +70,35 @@
       </div>
     </Modal>
     <Modal :show="showSentimentModal" @close="showSentimentModal = false">
-      <div class="modal-content">
-        <h2>Sentiment Analysis</h2>
-        <p><strong>Sentiment:</strong> {{ sentiment }}</p>
-        <p><strong>Translated Content:</strong> {{ translatedContent }}</p>
+    <div class="modal-content">
+      <h2>Sentiment Analysis</h2>
+      <div class="sentiment-results">
+        <div class="sentiment-header">
+          <span :class="['sentiment-badge', sentiment.toLowerCase()]">
+            {{ sentiment }} ({{ confidence }}% confidence)
+          </span>
+        </div>
+        
+        <div class="content-section">
+          <p><strong>Original Content:</strong><br>{{ currentPost?.content }}</p>
+          <p v-if="translatedContent && translatedContent !== currentPost?.content">
+            <strong>Translated Content:</strong><br>{{ translatedContent }}
+          </p>
+        </div>
+
+        <div class="emotions-breakdown">
+          <h3>Emotion Analysis:</h3>
+          <div v-for="emotion in emotions" :key="emotion.emotion" class="emotion-bar">
+            <span class="emotion-label">{{ emotion.emotion }}</span>
+            <div class="progress-container">
+              <div class="progress" :style="{ width: emotion.confidence + '%' }"></div>
+            </div>
+            <span class="confidence-value">{{ Math.round(emotion.confidence) }}%</span>
+          </div>
+        </div>
       </div>
-    </Modal>
+    </div>
+  </Modal>
   </div>
 </template>
 
@@ -92,6 +115,7 @@ export default {
   data() {
     return {
       posts: [],
+      currentPost: null,
       successMessage: '',
       showReactionsModal: false,
       showCommentsModal: false,
@@ -102,6 +126,8 @@ export default {
       translatedContent: '',
       selectedReactionType: 'Like',
       reactionTypes: ['Like', 'Heart', 'Haha', 'Care', 'Sad'],
+      confidence: 0,
+      emotions: [],
     };
   },
   computed: {
@@ -170,17 +196,15 @@ export default {
     },
     async analyzeSentiment(post) {
       try {
-        console.log('Analyzing sentiment for post:', post);
+        this.currentPost = post;
         const response = await axios.post('http://localhost:5001/analyze-sentiment', {
           content: post.content,
         });
-        console.log('Sentiment analysis response:', response.data);
         this.sentiment = response.data.sentiment;
+        this.confidence = response.data.confidence;
+        this.emotions = response.data.emotions;
         this.translatedContent = response.data.translated_content;
-        console.log('Sentiment:', this.sentiment);
-        console.log('Translated Content:', this.translatedContent);
         this.showSentimentModal = true;
-        console.log('Show Modal:', this.showSentimentModal);
       } catch (error) {
         console.error('Failed to analyze sentiment:', error);
       }
@@ -374,5 +398,65 @@ body {
 .reaction-tab.active-tab {
   background-color: #2a9d8f;
   color: white;
+}
+.sentiment-results {
+  padding: 15px;
+}
+
+.sentiment-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.sentiment-badge.positive {
+  background-color: #4caf50;
+  color: white;
+}
+
+.sentiment-badge.negative {
+  background-color: #f44336;
+  color: white;
+}
+
+.sentiment-badge.neutral {
+  background-color: #9e9e9e;
+  color: white;
+}
+
+.emotion-breakdown {
+  margin-top: 20px;
+}
+
+.emotion-bar {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  gap: 10px;
+}
+
+.emotion-label {
+  width: 100px;
+  text-transform: capitalize;
+}
+
+.progress-bar {
+  flex-grow: 1;
+  height: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #2196f3;
+  transition: width 0.3s ease;
+}
+
+.emotion-score {
+  width: 50px;
+  text-align: right;
 }
 </style>

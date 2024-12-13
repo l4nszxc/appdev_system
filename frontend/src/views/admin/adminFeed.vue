@@ -87,13 +87,13 @@
           </div>
 
           <div class="emotions-breakdown">
-            <h3>Emotion Analysis:</h3>
-            <div v-for="emotion in emotions" :key="emotion.emotion" class="emotion-bar">
-              <span class="emotion-label">{{ emotion.emotion }}</span>
+            <h3>Sentiment Analysis:</h3>
+            <div v-for="(score, type) in sentiment_scores" :key="type" class="emotion-bar">
+              <span class="emotion-label">{{ type }}</span>
               <div class="progress-container">
-                <div class="progress" :style="{ width: emotion.confidence + '%' }"></div>
+                <div class="progress" :class="type.toLowerCase()" :style="{ width: Math.round(score) + '%' }"></div>
               </div>
-              <span class="confidence-value">{{ Math.round(emotion.confidence) }}%</span>
+              <span class="confidence-value">{{ Math.round(score) }}%</span>
             </div>
           </div>
         </div>
@@ -138,6 +138,11 @@ export default {
       reactionTypes: ['Like', 'Heart', 'Haha', 'Care', 'Sad'],
       confidence: 0,
       emotions: [],
+      sentiment_scores: {
+        positive: 0,
+        neutral: 0,
+        negative: 0
+      },
       showDeleteModal: false,
       postToDelete: null,
     };
@@ -225,6 +230,7 @@ export default {
         this.confidence = response.data.confidence;
         this.emotions = response.data.emotions;
         this.translatedContent = response.data.translated_content;
+        this.sentiment_scores = response.data.sentiment_scores;
         this.showSentimentModal = true;
       } catch (error) {
         console.error('Failed to analyze sentiment:', error);
@@ -517,6 +523,18 @@ body {
   height: 100%;
   background: #4CAF50;
   transition: width 0.3s ease;
+}
+
+.progress.positive {
+  background: #4CAF50;
+}
+
+.progress.negative {
+  background: #f44336;
+}
+
+.progress.neutral {
+  background: #9e9e9e;
 }
 
 .confidence-value {

@@ -28,6 +28,7 @@
           <button @click="openEditModal(post)" class="edit-post-btn">Edit</button>
         </div>
         <p class="post-content">{{ post.content }}</p>
+        <img v-if="post.image_url" :src="`http://localhost:5000${post.image_url}`" alt="Post Image" class="post-image" />
       </div>
     </div>
     <Footer />
@@ -238,6 +239,13 @@ export default {
 
 .post-content {
   margin-bottom: 10px;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin-top: 10px;
 }
 
 .edit-post-btn {

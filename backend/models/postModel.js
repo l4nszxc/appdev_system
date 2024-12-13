@@ -125,6 +125,7 @@ const getPostsByUser = (studentId, callback) => {
       p.id, 
       p.content, 
       p.emotion, 
+      p.image_url, 
       p.reactions,
       p.comments_count,
       p.created_at, 

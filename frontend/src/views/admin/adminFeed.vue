@@ -70,35 +70,45 @@
       </div>
     </Modal>
     <Modal :show="showSentimentModal" @close="showSentimentModal = false">
-    <div class="modal-content">
-      <h2>Sentiment Analysis</h2>
-      <div class="sentiment-results">
-        <div class="sentiment-header">
-          <span :class="['sentiment-badge', sentiment.toLowerCase()]">
-            {{ sentiment }} ({{ confidence }}% confidence)
-          </span>
-        </div>
-        
-        <div class="content-section">
-          <p><strong>Original Content:</strong><br>{{ currentPost?.content }}</p>
-          <p v-if="translatedContent && translatedContent !== currentPost?.content">
-            <strong>Translated Content:</strong><br>{{ translatedContent }}
-          </p>
-        </div>
+      <div class="modal-content">
+        <h2>Sentiment Analysis</h2>
+        <div class="sentiment-results">
+          <div class="sentiment-header">
+            <span :class="['sentiment-badge', sentiment.toLowerCase()]">
+              {{ sentiment }} ({{ confidence }}% confidence)
+            </span>
+          </div>
+          
+          <div class="content-section">
+            <p><strong>Original Content:</strong><br>{{ currentPost?.content }}</p>
+            <p v-if="translatedContent && translatedContent !== currentPost?.content">
+              <strong>Translated Content:</strong><br>{{ translatedContent }}
+            </p>
+          </div>
 
-        <div class="emotions-breakdown">
-          <h3>Emotion Analysis:</h3>
-          <div v-for="emotion in emotions" :key="emotion.emotion" class="emotion-bar">
-            <span class="emotion-label">{{ emotion.emotion }}</span>
-            <div class="progress-container">
-              <div class="progress" :style="{ width: emotion.confidence + '%' }"></div>
+          <div class="emotions-breakdown">
+            <h3>Emotion Analysis:</h3>
+            <div v-for="emotion in emotions" :key="emotion.emotion" class="emotion-bar">
+              <span class="emotion-label">{{ emotion.emotion }}</span>
+              <div class="progress-container">
+                <div class="progress" :style="{ width: emotion.confidence + '%' }"></div>
+              </div>
+              <span class="confidence-value">{{ Math.round(emotion.confidence) }}%</span>
             </div>
-            <span class="confidence-value">{{ Math.round(emotion.confidence) }}%</span>
           </div>
         </div>
       </div>
-    </div>
-  </Modal>
+    </Modal>
+    <Modal :show="showDeleteModal" @close="closeDeleteModal">
+      <div class="delete-modal">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete this post?</p>
+        <div class="modal-buttons">
+          <button @click="executeDelete" class="btn-delete">Delete</button>
+          <button @click="closeDeleteModal" class="btn-cancel">Cancel</button>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -128,6 +138,8 @@ export default {
       reactionTypes: ['Like', 'Heart', 'Haha', 'Care', 'Sad'],
       confidence: 0,
       emotions: [],
+      showDeleteModal: false,
+      postToDelete: null,
     };
   },
   computed: {
@@ -136,6 +148,35 @@ export default {
     }
   },
   methods: {
+    confirmDelete(postId) {
+      this.postToDelete = postId;
+      this.showDeleteModal = true;
+    },
+
+    closeDeleteModal() {
+      this.showDeleteModal = false;
+      this.postToDelete = null;
+    },
+
+    async executeDelete() {
+      if (!this.postToDelete) return;
+      
+      try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`http://localhost:5000/posts/${this.postToDelete}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        this.successMessage = 'Post deleted successfully';
+        this.fetchPosts();
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
+      } catch (error) {
+        console.error('Failed to delete post:', error);
+      } finally {
+        this.closeDeleteModal();
+      }
+    },
     async fetchPosts() {
       try {
         const token = localStorage.getItem('token');
@@ -148,26 +189,6 @@ export default {
         }));
       } catch (error) {
         console.error('Failed to fetch posts:', error);
-      }
-    },
-    confirmDelete(postId) {
-      if (window.confirm('Are you sure you want to delete this post?')) {
-        this.deletePost(postId);
-      }
-    },
-    async deletePost(postId) {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.delete(`http://localhost:5000/posts/${postId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        this.successMessage = 'Post deleted successfully';
-        this.fetchPosts();
-        setTimeout(() => {
-          this.successMessage = '';
-        }, 3000);
-      } catch (error) {
-        console.error('Failed to delete post:', error);
       }
     },
     async fetchReactions(postId) {
@@ -508,5 +529,54 @@ body {
   padding: 15px;
   background: #f5f5f5;
   border-radius: 8px;
+}
+.delete-modal {
+  text-align: center;
+  padding: 20px;
+}
+
+.delete-modal h2 {
+  color: #dc3545;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.delete-modal p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
 }
 </style>

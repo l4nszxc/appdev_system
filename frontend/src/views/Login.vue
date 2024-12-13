@@ -53,6 +53,15 @@
       Logged in as: {{ username }} <!-- Use local state instead -->
     </div>
   </div>
+
+  <!-- Login Success Modal -->
+  <Modal :show="showSuccessModal" @close="handleModalClose">
+    <div class="success-modal">
+      <i class="fas fa-check-circle success-icon"></i>
+      <h2>Login Successful!</h2>
+      <p>Welcome back, {{ username }}!</p>
+    </div>
+  </Modal>
 </template>
 
 <script setup>
@@ -60,13 +69,16 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { Mail, Lock, ArrowRight } from 'lucide-vue-next';
 import Navbar from '../components/Navbar.vue';
+import Modal from '../components/Modal.vue';
 import axios from 'axios';
 
 const email = ref('');
 const password = ref('');
 const isLoggedIn = ref(false);
 const username = ref('');
+const showLoginSuccessModal = ref(false);
 const router = useRouter();
+const showSuccessModal = ref(false);
 
 const handleSubmit = async () => {
   try {
@@ -74,24 +86,32 @@ const handleSubmit = async () => {
       email: email.value,
       password: password.value,
     });
-    alert(response.data.message);
-    
-    // Store login information
+
+    // Store user data
     localStorage.setItem('token', response.data.token);
     localStorage.setItem('username', response.data.username);
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('role', response.data.role);
 
-    // Routing based on role
-    if (response.data.role === 'admin') {
-      router.push({ name: 'adminHome' });
-    } else {
-      router.push({ name: 'userHome' });
-    }
+    // Update local state
+    username.value = response.data.username;
+    showSuccessModal.value = true;
+
+    // Delay navigation
+    setTimeout(() => {
+      showSuccessModal.value = false;
+      if (response.data.role === 'admin') {
+        router.push('/admin-home');
+      } else {
+        router.push('/user-home');
+      }
+    }, 2000);
+
   } catch (error) {
-    alert(error.response?.data?.message || 'An error occurred');
+    alert(error.response?.data?.message || 'Login failed');
   }
 };
+
 
 onMounted(() => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -105,6 +125,9 @@ onMounted(() => {
     }
   }
 });
+const handleModalClose = () => {
+  showSuccessModal.value = false;
+};
 </script>
 
 <style scoped>
@@ -235,7 +258,8 @@ onMounted(() => {
 .login-footer {
   padding: 1rem 1.5rem;
   background-color: #0f6016;
-  border-top: 1px solid #2a9d8f;}
+  border-top: 1px solid #2a9d8f;
+}
 
 .footer-links {
   display: flex;
@@ -263,5 +287,34 @@ onMounted(() => {
   margin-top: 1rem;
   font-size: 1rem;
   color: #f1faee; /* Adjust color as needed */
+}
+.success-modal {
+  text-align: center;
+  padding: 2rem;
+}
+
+.success-modal h2 {
+  color: #0f6016;
+  margin: 1rem 0;
+  font-size: 1.5rem;
+}
+
+.success-modal p {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.success-icon {
+  font-size: 3rem;
+  color: #0f6016;
+  margin-bottom: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 400px;
+  margin: auto;
 }
 </style>

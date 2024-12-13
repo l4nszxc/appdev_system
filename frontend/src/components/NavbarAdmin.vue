@@ -52,35 +52,54 @@
       </div>
     </div>
   </nav>
+  <Modal :show="showLogoutModal" @close="handleModalClose">
+    <div class="logout-modal">
+      <h2>Confirm Logout</h2>
+      <p>Are you sure you want to log out?</p>
+      <div class="modal-buttons">
+        <button class="btn-confirm" @click="handleLogout">Yes, Logout</button>
+        <button class="btn-cancel" @click="handleModalClose">Cancel</button>
+      </div>
+    </div>
+  </Modal>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import Modal from './Modal.vue';
 
 export default {
   name: 'NavbarAdmin',
+  components: {
+    Modal
+  },
   setup() {
     const router = useRouter();
     const dropdownVisible = ref(false);
     const isLoggedIn = ref(false);
     const username = ref('');
+    const showLogoutModal = ref(false);
 
     const toggleDropdown = () => {
       dropdownVisible.value = !dropdownVisible.value;
     };
 
     const logout = () => {
-      const confirmed = window.confirm("Are you sure you want to log out?");
-      if (confirmed) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('username');
-        localStorage.removeItem('role');
-        router.push('/login');
-      } else {
-        console.log('Logout canceled');
-      }
+      showLogoutModal.value = true;
+    };
+
+    const handleLogout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('username');
+      localStorage.removeItem('role');
+      showLogoutModal.value = false;
+      router.push('/login');
+    };
+
+    const handleModalClose = () => {
+      showLogoutModal.value = false;
     };
 
     onMounted(() => {
@@ -88,7 +107,16 @@ export default {
       username.value = localStorage.getItem('username');
     });
 
-    return { logout, toggleDropdown, dropdownVisible, isLoggedIn, username };
+    return {
+      logout,
+      toggleDropdown,
+      dropdownVisible,
+      isLoggedIn,
+      username,
+      showLogoutModal,
+      handleLogout,
+      handleModalClose
+    };
   }
 };
 </script>
@@ -239,5 +267,54 @@ export default {
 
 .dropdown-item:hover {
   background-color: rgba(0, 0, 0, 0.1);
+}
+.logout-modal {
+  text-align: center;
+  padding: 20px;
+}
+
+.logout-modal h2 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.logout-modal p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-confirm {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-confirm:hover {
+  background-color: #c82333;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
 }
 </style>

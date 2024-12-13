@@ -204,6 +204,16 @@
       </div>
     </div>
   </Modal>
+  <Modal :show="showDeleteModal" @close="closeDeleteModal">
+  <div class="delete-modal">
+    <h2>Confirm Delete</h2>
+    <p>Are you sure you want to delete this post?</p>
+    <div class="modal-buttons">
+      <button @click="executeDelete" class="btn-delete">Delete</button>
+      <button @click="closeDeleteModal" class="btn-cancel">Cancel</button>
+    </div>
+  </div>
+</Modal>
 
   <Footer />
 </template>
@@ -232,6 +242,8 @@ const selectedReactionType = ref('Like');
 const reactionTypes = ['Like', 'Heart', 'Haha', 'Care', 'Sad'];
 const selectedImage = ref(null);
 const imagePreview = ref('');
+const showDeleteModal = ref(false);
+const postToDelete = ref(null);
 
 // Mood Tracker State Variables
 const mood = ref('');
@@ -432,14 +444,26 @@ const updatePost = async (postId) => {
 };
 
 // Delete post
-const deletePost = async (postId) => {
-  if (!confirm('Are you sure you want to delete this post?')) return;
+const deletePost = (postId) => {
+  postToDelete.value = postId;
+  showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false;
+  postToDelete.value = null;
+};
+
+const executeDelete = async () => {
+  if (!postToDelete.value) return;
+  
   try {
     const token = localStorage.getItem('token');
-    await axios.delete(`http://localhost:5000/posts/${postId}`, {
+    await axios.delete(`http://localhost:5000/posts/${postToDelete.value}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     await fetchPosts();
+    closeDeleteModal();
   } catch (error) {
     console.error('Failed to delete post:', error);
   }
@@ -905,5 +929,54 @@ body {
   margin-top: 10px;
   border-radius: 8px;
   object-fit: contain;
+}
+.delete-modal {
+  text-align: center;
+  padding: 20px;
+}
+
+.delete-modal h2 {
+  color: #dc3545;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.delete-modal p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
 }
 </style>

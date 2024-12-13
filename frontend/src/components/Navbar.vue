@@ -69,15 +69,31 @@
       <span class="bar"></span>
       <span class="bar"></span>
     </div>
+
+    <!-- Logout Confirmation Modal -->
+    <Modal :show="showLogoutModal" @close="showLogoutModal = false">
+      <div class="logout-modal">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to log out?</p>
+        <div class="modal-buttons">
+          <button class="btn-confirm" @click="handleLogout">Yes, Logout</button>
+          <button class="btn-cancel" @click="showLogoutModal = false">Cancel</button>
+        </div>
+      </div>
+    </Modal>
   </nav>
 </template>
 
 <script>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import Modal from './Modal.vue';
 
 export default {
   name: 'Navbar',
+  components: {
+    Modal
+  },
   props: {
     isLoggedIn: {
       type: Boolean,
@@ -96,6 +112,7 @@ export default {
     const dropdownVisible = ref(false);
     const router = useRouter();
     const menuVisible = ref(false);
+    const showLogoutModal = ref(false);
 
     const profilePictureUrl = computed(() => {
       if (props.profilePicture) {
@@ -109,13 +126,16 @@ export default {
     };
 
     const confirmLogout = () => {
-      if (confirm('Are you sure you want to log out?')) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('username');
-        dropdownVisible.value = false;
-        router.push('/login');
-      }
+      dropdownVisible.value = false;
+      showLogoutModal.value = true;
+    };
+
+    const handleLogout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('username');
+      showLogoutModal.value = false;
+      router.push('/login');
     };
 
     const toggleMenu = () => {
@@ -125,6 +145,8 @@ export default {
     return {
       toggleDropdown,
       confirmLogout,
+      handleLogout,
+      showLogoutModal,
       toggleMenu,
       dropdownVisible,
       menuVisible,
@@ -217,6 +239,7 @@ export default {
     border-radius: 5px;
   }
 }
+
 /* Logo and title container */
 .logo-title {
   display: flex;
@@ -347,5 +370,56 @@ export default {
   object-fit: cover;
   cursor: pointer;
 }
+}
+
+/* Modal styles */
+.logout-modal {
+  text-align: center;
+  padding: 20px;
+}
+
+.logout-modal h2 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.logout-modal p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-confirm {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-confirm:hover {
+  background-color: #c82333;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
 }
 </style>

@@ -69,23 +69,32 @@
         </div>
       </div>
     </div>
+    <Modal :show="showModal" @close="showModal = false">
+      <div v-if="modalMessage">
+        <p>{{ modalMessage }}</p>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
 import NavbarAdmin from '@/components/NavbarAdmin.vue';
+import Modal from '@/components/Modal.vue';
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 
 export default {
   components: {
     NavbarAdmin,
+    Modal,
   },
   setup() {
     const todayAppointments = ref([]);
     const allAppointments = ref([]);
     const activeMeetingId = ref(null);
     const meetingLink = ref('');
+    const showModal = ref(false);
+    const modalMessage = ref('');
 
     const formatTime = (time) => {
       return new Date(`2000-01-01T${time}`).toLocaleTimeString([], {
@@ -143,13 +152,15 @@ export default {
           { status: 'on going' },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        alert('Meeting link sent successfully!');
+        modalMessage.value = 'Meeting link sent successfully!';
+        showModal.value = true;
         activeMeetingId.value = null;
         meetingLink.value = '';
         updateAppointmentStatus(appointmentId, 'on going');
       } catch (error) {
         console.error('Error sending meeting link:', error);
-        alert('Failed to send meeting link. Please try again.');
+        modalMessage.value = 'Failed to send meeting link. Please try again.';
+        showModal.value = true;
       }
     };
 
@@ -161,9 +172,12 @@ export default {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         updateAppointmentStatus(appointmentId, 'complete');
+        modalMessage.value = 'Appointment completed successfully!';
+        showModal.value = true;
       } catch (error) {
         console.error('Error completing appointment:', error);
-        alert('Failed to complete appointment. Please try again.');
+        modalMessage.value = 'Failed to complete appointment. Please try again.';
+        showModal.value = true;
       }
     };
 
@@ -201,6 +215,8 @@ export default {
       formatDate,
       activeMeetingId,
       meetingLink,
+      showModal,
+      modalMessage,
       showMeetLinkInput,
       sendMeetingLink,
       completeAppointment,

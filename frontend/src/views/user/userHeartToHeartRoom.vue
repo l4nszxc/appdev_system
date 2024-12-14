@@ -339,7 +339,6 @@ input[type="date"]:focus {
 .time-slot.unavailable {
   background-color: #f3f4f6;
   color: #9ca3af;
-  cursor: not-allowed;
   border: 2px solid #e5e7eb;
 }
 

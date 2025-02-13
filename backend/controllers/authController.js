@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const userModel = require('../models/userModel');
+const Usermodel = require('../models/Usermodel');
 
 // Nodemailer configuration
 const transporter = nodemailer.createTransport({
@@ -23,11 +23,11 @@ exports.register = (req, res) => {
     return res.status(400).json({ message: 'Passwords do not match!' });
   }
 
-  userModel.findUserByEmail(email, (err, results) => {
+  Usermodel.findUserByEmail(email, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     if (results.length > 0) return res.status(400).json({ message: 'Email already exists!' });
 
-    userModel.findUserByStudentId(student_id, (err, results) => {
+    Usermodel.findUserByStudentId(student_id, (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
       if (results.length > 0) return res.status(400).json({ message: 'Student ID already exists!' });
 
@@ -53,7 +53,7 @@ exports.register = (req, res) => {
           isVerified: false
         };
 
-        userModel.createUser(newUser, (err) => {
+        Usermodel.createUser(newUser, (err) => {
           if (err) return res.status(500).json({ error: err.message });
 
           const mailOptions = {
@@ -85,7 +85,7 @@ exports.verifyOTP = (req, res) => {
 
   console.log(`Attempting to verify OTP for email: ${email}`);
 
-  userModel.findUserByEmail(email, (err, results) => {
+  Usermodel.findUserByEmail(email, (err, results) => {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'An error occurred while verifying the OTP.' });
@@ -118,7 +118,7 @@ exports.verifyOTP = (req, res) => {
       return res.status(400).json({ message: 'OTP has expired.' });
     }
 
-    userModel.updateUser({ email, isVerified: true, otp: null, otpExpires: null }, (updateErr) => {
+    Usermodel.updateUser({ email, isVerified: true, otp: null, otpExpires: null }, (updateErr) => {
       if (updateErr) {
         console.error('Error updating user:', updateErr);
         return res.status(500).json({ error: 'An error occurred while verifying the email.' });
@@ -133,7 +133,7 @@ exports.verifyOTP = (req, res) => {
 exports.login = (req, res) => {
   const { email, password } = req.body;
 
-  userModel.findUserByEmail(email, (err, results) => {
+  Usermodel.findUserByEmail(email, (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     if (results.length === 0) return res.status(400).json({ message: 'User not found!' });
 
@@ -167,7 +167,7 @@ exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
     const user = await new Promise((resolve, reject) => {
-      userModel.findUserByEmail(email, (err, results) => {
+      Usermodel.findUserByEmail(email, (err, results) => {
         if (err) reject(err);
         resolve(results[0]); // Get the first (and should be only) result
       });
@@ -181,7 +181,7 @@ exports.forgotPassword = async (req, res) => {
     const resetTokenExpires = new Date(Date.now() + 300000); // 5 minutes
 
     await new Promise((resolve, reject) => {
-      userModel.updateUser({
+      Usermodel.updateUser({
         email,
         reset_password_token: resetToken,
         reset_password_expires: resetTokenExpires
@@ -212,7 +212,7 @@ exports.verifyResetOTP = async (req, res) => {
   try {
     console.log('Verifying OTP for email:', email);
     const user = await new Promise((resolve, reject) => {
-      userModel.findUserByEmail(email, (err, results) => {
+      Usermodel.findUserByEmail(email, (err, results) => {
         if (err) reject(err);
         resolve(results[0]);
       });
@@ -247,7 +247,7 @@ exports.resetPassword = async (req, res) => {
   try {
     console.log('Resetting password for email:', email);
     const user = await new Promise((resolve, reject) => {
-      userModel.findUserByEmail(email, (err, results) => {
+      Usermodel.findUserByEmail(email, (err, results) => {
         if (err) reject(err);
         resolve(results[0]);
       });
@@ -271,7 +271,7 @@ exports.resetPassword = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await new Promise((resolve, reject) => {
-      userModel.updateUser({
+      Usermodel.updateUser({
         email,
         password: hashedPassword,
         reset_password_token: null,
